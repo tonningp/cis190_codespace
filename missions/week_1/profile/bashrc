@@ -1,0 +1,12 @@
+source ~/.bashrc
+cmd_hook() {
+  echo "⏱️ Last command finished at Sat Jun  7 16:53:53 UTC 2025"
+}
+export PROMPT_COMMAND=cmd_hook
+export PS1="$ "
+export NO_COLOR=1
+unset LS_COLORS
+alias ls='ls --color=never'
+alias grep='grep --color=never'
+echo "Type 'exit' or press Ctrl+D when finished."
+echo 
