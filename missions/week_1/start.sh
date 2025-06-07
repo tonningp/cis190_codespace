@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export BASE_DIR="$(dirname "$(realpath "$0")")"
 echo "🚀 Installing Tools ..."
 
 # Ensure pip is available
@@ -22,4 +23,4 @@ Welcome to your first Linux mission.
 
 Good luck, on your Linux missions.
 EOF
-./run_lecture.sh
+${BASE_DIR}/.scripts/run_lecture.sh

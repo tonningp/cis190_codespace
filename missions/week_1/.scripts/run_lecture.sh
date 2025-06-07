@@ -6,13 +6,12 @@ function pause() {
 }
 # Set directories
 export -f pause
-VPLAYER="asciinema play -i 2.5"
-CAT_CMD='python3 -m rich.markdown'
+export VPLAYER="asciinema play -i 2.5"
+export CAT_CMD='python3 -m rich.markdown'
 
-BASE_DIR="$(dirname "$(realpath "$0")")"
-DEMO_DIR="$BASE_DIR/demos"
-MARKDOWN_DIR="$BASE_DIR/content"
-PROFILE_DIR="$BASE_DIR/profile"
+export DEMO_DIR="$BASE_DIR/.demos"
+export MARKDOWN_DIR="$BASE_DIR/.content"
+export PROFILE_DIR="$BASE_DIR/.profile"
 # List of base names for the lecture modules
 MODULES=(
   01_intro
@@ -51,9 +50,9 @@ for module in "${MODULES[@]}"; do
   if [[ -f "$script_file" && -x "$script_file" ]]; then
     #echo "Executing demo script in a recorded shell: $script_file"
     if [[ ! -s "${script_file}" ]];then
-        ./recorder.sh
+        ${BASE_DIR}/.scripts/recorder.sh
     else
-        ./recorder.sh ${script_file}
+        ${BASE_DIR}/.scripts/recorder.sh ${script_file}
     fi
     pause
   fi
