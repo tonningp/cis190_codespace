@@ -82,7 +82,7 @@ def main():
     now = datetime.now().isoformat(timespec='seconds')
     cursor.execute("""
     INSERT INTO students (id, firstname, lastname,email, updated_at)
-    VALUES (?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?)
     ON CONFLICT(id) DO UPDATE SET
         firstname=excluded.firstname,
         lastname=excluded.lastname,
