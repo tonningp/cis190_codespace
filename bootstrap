@@ -1,0 +1,27 @@
+#!/bin/bash
+
+BIN_PATH="$PWD/bin"
+SHELL_RC="$HOME/.bashrc"  # Or use detection if students may use zsh
+PROFILE_DB="$PWD/.db/profile.sqlite3"
+
+if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
+  echo "🔧 Adding $BIN_PATH to PATH..."
+  echo "export PATH=\"$BIN_PATH:\$PATH\"" >> "$SHELL_RC"
+  export PATH="$BIN_PATH:$PATH"
+  echo "✅ Path updated! Either restart your terminal or run the following command:"
+  echo
+  echo "    source $SHELL_RC"
+  echo
+fi
+
+if [[ ! -f $PROFILE_DB ]];then
+   python3 ${BIN_PATH}/get_student_info.py
+fi
+
+if [[ ! -x ${BIN_PATH}/start ]];then
+   chmod +x ${BIN_PATH}/start
+fi
+
+echo
+echo "🚀 bootstrap was successful, remember, you only need to run this once"
+echo
