@@ -4,7 +4,7 @@
 *.swp
 *.swo
 *.tmp
-
+./archive/
 # Ignore log files
 *.log
 
