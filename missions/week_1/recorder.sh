@@ -6,7 +6,7 @@ TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 
 TARGET_SCRIPT="$1"
 
-LOG_BASE="./history"
+LOG_BASE="./.history"
 
 if [[ ! -d "$LOG_BASE" ]]; then
     mkdir -p "$LOG_BASE"
