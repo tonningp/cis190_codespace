@@ -2,7 +2,8 @@
 
 BIN_PATH="$PWD/bin"
 SHELL_RC="$HOME/.bashrc"  # Or use detection if students may use zsh
-PROFILE_DB="$PWD/.db/profile.sqlite3"
+PROFILE_DIR="${PWD}"
+PROFILE_DB="${PROFILE_DIR}/.db/profile.sqlite3"
 
 if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
   echo "🔧 Adding $BIN_PATH to PATH..."
@@ -13,7 +14,13 @@ if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
   echo "    source $SHELL_RC"
   echo
 fi
+if [[ ! -d $BIN_PATH ]];then
+  mkdir -p $BIN_PATH
+fi
 
+if [[ ! -d $PROFILE_DIR ]];then
+  mkdir -p $PROFILE_DIR
+fi
 #if [[ ! -f $PROFILE_DB ]];then
 python3 ${BIN_PATH}/get_student_info.py --db=${PROFILE_DB}
 #fi
