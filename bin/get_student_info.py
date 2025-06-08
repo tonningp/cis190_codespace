@@ -97,8 +97,6 @@ def main():
     conn.commit()
     conn.close()
 
-    print(f"\n✅ Profile saved to: {db_path}")
-
 
 if __name__ == "__main__":
     main()
