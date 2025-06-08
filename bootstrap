@@ -2,17 +2,13 @@
 
 BIN_PATH="$PWD/bin"
 SHELL_RC="$HOME/.bashrc"  # Or use detection if students may use zsh
+ALIASES_FILE="$HOME/.bash_aliases"
 PROFILE_DIR="${PWD}/.db"
 PROFILE_DB="${PROFILE_DIR}/profile.sqlite3"
 
 if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
-  echo "🔧 Adding $BIN_PATH to PATH..."
   echo "export PATH=\"$BIN_PATH:\$PATH\"" >> "$SHELL_RC"
   export PATH="$BIN_PATH:$PATH"
-  echo "✅ Path updated! Either restart your terminal or run the following command:"
-  echo
-  echo "    source $SHELL_RC"
-  echo
 fi
 if [[ ! -d $BIN_PATH ]];then
   mkdir -p $BIN_PATH
@@ -28,7 +24,27 @@ python3 ${BIN_PATH}/get_student_info.py --db=${PROFILE_DB}
 if [[ ! -x ${BIN_PATH}/start ]];then
    chmod +x ${BIN_PATH}/start
 fi
+python3 -m pip install --quiet  --upgrade pip
+# Ensure pip is available
+if ! command -v pip3 &> /dev/null; then
+    echo "❌ pip not found. Please install Python and pip first."
+    echo " You can install pip using your package manager, for example:"
+    echo "   sudo apt install python3-pip"
+    exit 1
+fi
+
+
+for PACKAGE in rich asciinema;do
+	if ! pip3 show "$PACKAGE" > /dev/null 2>&1; then
+	    echo "🔍 $PACKAGE not found. Installing..."
+	    pip3 install --no-warn-script-location --quiet "$PACKAGE"
+	fi
+done
 
 echo
 echo "🚀 bootstrap was successful, remember, you only need to run this once"
+echo "✅ To use new changes immediately, either restart your terminal or run "
+echo "   the following command:"
+echo
+echo "    source $SHELL_RC"
 echo

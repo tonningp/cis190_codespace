@@ -1,7 +1,6 @@
 #!/bin/bash
 
 echo "🚀 Starting the exercises ..."
-python3 -m pip install --quiet  --upgrade pip
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 export BASE_DIR=${PWD}
 export PROFILE_DB="$(dirname $TOP_DIR)/.db/profile.sqlite3"
@@ -18,19 +17,6 @@ if [[ "$BASE_DIR" != *week_* ]]; then
   exit 1
 fi
 
-# Ensure pip is available
-if ! command -v pip3 &> /dev/null; then
-    echo "❌ pip not found. Please install Python and pip first."
-    exit 1
-fi
-
-
-for PACKAGE in rich asciinema;do
-	if ! pip3 show "$PACKAGE" > /dev/null 2>&1; then
-	    echo "🔍 $PACKAGE not found. Installing..."
-	    pip3 install --no-warn-script-location --quiet "$PACKAGE"
-	fi
-done
 source "$TOP_DIR/environment.sh"
 if [[ ${BASE_DIR} != *module* ]]; then
   echo "❌ This script must be run in a module directory."
