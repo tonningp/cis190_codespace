@@ -20,26 +20,28 @@ BASE_NAME="$(basename "$TARGET_SCRIPT" .sh)"
 LOG_FILE="${LOG_BASE}/${BASE_NAME}_${TIMESTAMP}.log"
 HIST_FILE="${LOG_BASE}/${BASE_NAME}_${TIMESTAMP}.history.txt"
 
-#echo "Recording session running '$TARGET_SCRIPT'"
-#echo "Log: ${LOG_BASE}/$LOG_FILE"
-#echo "Command history: $HIST_FILE"
 if [[ ! -d "${BASE_DIR}/.profile" ]]; then
     mkdir -p "${BASE_DIR}/.profile"
 fi
-RCFILE="${BASE_DIR}/.profile/bashrc"
+export RCFILE="${BASE_DIR}/.profile/bashrc"
+if [[ -f $RCFILE ]];then
+    rm $RCFILE
+fi
 cat > ${RCFILE} <<EOF
 source ~/.bashrc
 cmd_hook() {
-  echo "⏱️ Last command finished at $(date)"
+  echo "To exit the shell, type 'exit' or press Ctrl+D."
 }
 export PROMPT_COMMAND="cmd_hook"
 export CURRENT_LAB=${BASE_NAME}
-export PS1="$ "
 export NO_COLOR=1
 unset LS_COLORS
+export HISTFILE="${HIST_FILE}"
+export HISTTIMEFORMAT="%F %T"
+export PS1="$ "
 alias ls='ls --color=never'
 alias grep='grep --color=never'
-echo "Type 'exit' or press Ctrl+D when finished with the shell."
+alias passwd='sim_passwd.sh'
 EOF
 
 export STARTUP_OPTIONS="--rcfile ${RCFILE}"
@@ -48,18 +50,11 @@ if [[ ! -f "$TARGET_SCRIPT" || ! -x "$TARGET_SCRIPT" ]]; then
 if [[ ! -d "${BASE_DIR}/home" ]]; then
     mkdir -p "${BASE_DIR}/home"
 fi
-HISTFILE="./${HIST_FILE}" \
-HISTTIMEFORMAT="%F %T" \
-PS1="$ " \
 	script -q -c  "cd ${BASE_DIR}/home && exec bash ${STARTUP_OPTIONS}" "$LOG_FILE"
 else
-
 # Start a new shell with the target script
 # Notify user
 # Set up history logging
-HISTFILE="./${HIST_FILE}" \
-HISTTIMEFORMAT="%F %T" \
-PS1="$ " \
   script -q -c "cd ${BASE_DIR} && exec bash ${STARTUP_OPTIONS} $TARGET_SCRIPT" "$LOG_FILE"
 fi
 
