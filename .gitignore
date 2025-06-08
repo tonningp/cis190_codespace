@@ -15,7 +15,9 @@
 .bashrc
 .bash_profile
 .profile
-.history
+.profile/
+.history/
+history/
 
 # Ignore compiled binaries (just in case)
 *.out

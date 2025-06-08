@@ -2,20 +2,6 @@
 
 echo "🚀 Starting the exercises ..."
 export TOP_DIR="$(dirname "$(realpath "$0")")"
-export BASE_DIR=${PWD}
-export PROFILE_DB="$(dirname $TOP_DIR)/.db/profile.sqlite3"
-
-if [[ ! -f ${PROFILE_DB} ]];then
-   echo 
-   echo "❌ student profile not found. Please run ./bootstrap again."
-   echo
-   exit 1
-fi
-if [[ "$BASE_DIR" != *week_* ]]; then
-  echo "❌ No modules found, make sure to start this in directory for the week"
-  echo "For example /workspaces/codespaces-blank/cis190_codespace/missions/week_1"
-  exit 1
-fi
 
 source "$TOP_DIR/environment.sh"
 if [[ ${BASE_DIR} != *module* ]]; then
