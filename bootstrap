@@ -2,8 +2,8 @@
 
 BIN_PATH="$PWD/bin"
 SHELL_RC="$HOME/.bashrc"  # Or use detection if students may use zsh
-PROFILE_DIR="${PWD}"
-PROFILE_DB="${PROFILE_DIR}/.db/profile.sqlite3"
+PROFILE_DIR="${PWD}/.db"
+PROFILE_DB="${PROFILE_DIR}/profile.sqlite3"
 
 if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
   echo "🔧 Adding $BIN_PATH to PATH..."
