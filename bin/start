@@ -1,8 +1,16 @@
 #!/bin/bash
+target_dir=""
+if [[ $# -ne 0 ]]; then
+  echo "Usage: $0"
+  target_dir=$1
+  echo "This script starts the exercises in the current module."
+fi
 
 echo "🚀 Starting the exercises ..."
 export TOP_DIR="$(dirname "$(realpath "$0")")"
-
+if [[ ! -z "$target_dir" ]]; then
+    cd $(dirname "$TOP_DIR")/missions/"$target_dir"
+fi
 source "$TOP_DIR/environment.sh"
 if [[ ${BASE_DIR} != *module* ]]; then
   echo "❌ This script must be run in a module directory."
