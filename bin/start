@@ -28,8 +28,14 @@ fi
 for PACKAGE in rich asciinema;do
 	if ! pip3 show "$PACKAGE" > /dev/null 2>&1; then
 	    echo "🔍 $PACKAGE not found. Installing..."
-	    pip3 install --quiet "$PACKAGE"
+	    pip3 install --no-warn-script-location --quiet "$PACKAGE"
 	fi
 done
 source "$TOP_DIR/environment.sh"
+if [[ ${BASE_DIR} != *module* ]]; then
+  echo "❌ This script must be run in a module directory."
+  echo "Please navigate to a module directory and try again."
+  echo $(ls -1 ${BASE_DIR})
+  exit 1
+fi
 run_lecture

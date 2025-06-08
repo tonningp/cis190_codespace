@@ -37,6 +37,9 @@ for module in "${MODULES[@]}"; do
     else
         recorder ${script_file}
     fi
+    if [[ ${script_file} == *"grade"* ]]; then
+        echo "This topic is going to be graded."
+    fi
     pause
   fi
 done
