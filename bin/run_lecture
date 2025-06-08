@@ -29,7 +29,6 @@ for module in "${MODULES[@]}"; do
     pause
   fi
 
-  #echo "processing $script_file"
   if [[ -f "$script_file" && -x "$script_file" ]]; then
     #echo "Executing demo script in a recorded shell: $script_file"
     if [[ ! -s "${script_file}" ]];then
@@ -38,6 +37,7 @@ for module in "${MODULES[@]}"; do
         recorder ${script_file}
     fi
     if [[ ${script_file} == *"grade"* ]]; then
+        echo "${0}"
         echo "This topic is going to be graded."
     fi
     pause
