@@ -1,5 +1,7 @@
 #!/bin/bash
 export content_base="missions"
+export module_start="run_module"
+
 function pause() {
     echo
     read -p "Press ENTER to continue..."

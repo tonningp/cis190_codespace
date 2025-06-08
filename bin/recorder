@@ -58,4 +58,4 @@ else
   script -q -c "cd ${BASE_DIR} && exec bash ${STARTUP_OPTIONS} $TARGET_SCRIPT" "$LOG_FILE"
 fi
 
-echo "✅ Session complete."
+echo "✅ Topic Session complete."

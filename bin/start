@@ -1,16 +1,56 @@
 #!/bin/bash
 target_dir=""
+echo "🚀 Starting the exercises ..."
 if [[ $# -ne 0 ]]; then
   echo "Usage: $0"
   target_dir=$1
-  echo "This script starts the exercises in the current module."
+
 fi
 
-echo "🚀 Starting the exercises ..."
+#!/bin/bash
+
 export TOP_DIR="$(dirname "$(realpath "$0")")"
+
 if [[ ! -z "$target_dir" ]]; then
-    cd $(dirname "$TOP_DIR")/missions/"$target_dir"
+    cd "$(dirname "$TOP_DIR")/missions/$target_dir"
+else
+    cd "$(dirname "$TOP_DIR")/missions"
+
+    # Collect module list (strip ./, keep relative paths)
+    mapfile -t modules < <(find . -mindepth 1 -maxdepth 2 -type d -name "*module*" | sed 's|^\./||' | sort -u)
+
+    # Exit if no modules found
+    if [[ ${#modules[@]} -eq 0 ]]; then
+        echo "No modules found."
+        exit 1
+    fi
+
+    # Build options array for dialog (tag=number, item=path)
+    OPTIONS=()
+    for i in "${!modules[@]}"; do
+        OPTIONS+=("$i" "${modules[$i]}")
+    done
+
+    # Show dialog menu
+    selection=$(dialog --clear \
+        --backtitle "Select Module" \
+        --title "Available Modules" \
+        --menu "Choose a module:" 20 70 12 \
+        "${OPTIONS[@]}" \
+        2>&1 >/dev/tty)
+
+    clear
+
+    if [[ -n "$selection" ]]; then
+        module="${modules[$selection]}"
+        cd "$module"
+    else
+        echo "No module selected."
+        exit 1
+    fi
 fi
+
+#echo "This script starts the exercises in the current module."
 source "$TOP_DIR/environment.sh"
 if [[ ${BASE_DIR} != *module* ]]; then
   echo "❌ This script must be run in a module directory."
@@ -18,4 +58,5 @@ if [[ ${BASE_DIR} != *module* ]]; then
   echo $(ls -1 ${BASE_DIR})
   exit 1
 fi
-run_lecture
+
+$module_start
