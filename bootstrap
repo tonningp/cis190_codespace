@@ -14,9 +14,9 @@ if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
   echo
 fi
 
-if [[ ! -f $PROFILE_DB ]];then
-   python3 ${BIN_PATH}/get_student_info.py
-fi
+#if [[ ! -f $PROFILE_DB ]];then
+python3 ${BIN_PATH}/get_student_info.py --db=${PROFILE_DB}
+#fi
 
 if [[ ! -x ${BIN_PATH}/start ]];then
    chmod +x ${BIN_PATH}/start

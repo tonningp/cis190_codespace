@@ -1,9 +1,11 @@
 #!/bin/bash
 
-#export BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
-#export BASE_DIR="$(dirname "$(realpath "$0")")"
+echo "🚀 Starting the exercises ..."
+python3 -m pip install --quiet  --upgrade pip
+export TOP_DIR="$(dirname "$(realpath "$0")")"
 export BASE_DIR=${PWD}
-export PROFILE_DB="$PWD/.db/profile.sqlite3"
+export PROFILE_DB="$(dirname $TOP_DIR)/.db/profile.sqlite3"
+
 if [[ ! -f ${PROFILE_DB} ]];then
    echo 
    echo "❌ student profile not found. Please run ./bootstrap again."
@@ -12,7 +14,7 @@ if [[ ! -f ${PROFILE_DB} ]];then
 fi
 if [[ "$BASE_DIR" != *week_* ]]; then
   echo "❌ No modules found, make sure to start this in directory for the week"
-  echo "For example ${HOME}/cis190_codespace/missions/week_1"
+  echo "For example /workspaces/codespaces-blank/cis190_codespace/missions/week_1"
   exit 1
 fi
 
@@ -22,7 +24,6 @@ if ! command -v pip3 &> /dev/null; then
     exit 1
 fi
 
-python3 -m pip install --quiet  --upgrade pip
 
 for PACKAGE in rich asciinema;do
 	if ! pip3 show "$PACKAGE" > /dev/null 2>&1; then
@@ -30,17 +31,5 @@ for PACKAGE in rich asciinema;do
 	    pip3 install --quiet "$PACKAGE"
 	fi
 done
-
-
-# If running from week1/, week2/, etc.
-#if [[ -f "$MODULE_FILE" ]]; then
-#    # Use mdv, rich, or mdcat to display the content
-#    # Example using `rich`
-#    cat "$MODULE_FILE" | python -m rich.markdown - || exit 1
-#else
-#    echo "❌ No markdown module found for '$WEEK_DIR'. Expected: $MODULE_FILE"
-#    exit 1
-#fi
-
-#${BASE_DIR}/.scripts/run_lecture.sh
+source "$TOP_DIR/environment.sh"
 run_lecture

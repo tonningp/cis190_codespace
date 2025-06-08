@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
 import os
+import argparse
 import sys
 import sqlite3
 import re
 from datetime import datetime
-
-# ----------------------------
-# Configuration
-# ----------------------------
-DB_PATH = os.path.expanduser("~/profile.sqlite3")
-
 
 # ----------------------------
 # Utilities
@@ -48,8 +43,17 @@ def get_student_input():
 # ----------------------------
 
 def main():
+    parser = argparse.ArgumentParser(description="Gather student profile info.")
+    parser.add_argument(
+        "--db",
+        type=str,
+        default=os.path.expanduser("/workspaces/codespaces-blank/.db/profile.sqlite3"),
+        help="Path to SQLite database file"
+    )
+    args = parser.parse_args()
+    db_path = os.path.abspath(os.path.expanduser(args.db))
     # Connect to DB
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     # Create table if it doesn't exist
@@ -93,8 +97,7 @@ def main():
     conn.commit()
     conn.close()
 
-    print(f"\n✅ Profile saved to: {DB_PATH}")
-    print(f"🕒 Timestamp: {now}\n")
+    print(f"\n✅ Profile saved to: {db_path}")
 
 
 if __name__ == "__main__":

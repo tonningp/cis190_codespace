@@ -1,35 +1,18 @@
 #!/bin/bash
 
-function pause() {
-    echo
-    read -p "Press ENTER to continue..."
-}
-# Set directories
-export -f pause
-export VPLAYER="asciinema play -i 2.5"
-export CAT_CMD='python3 -m rich.markdown'
-
-export DEMO_DIR="$BASE_DIR/.demos"
-export MARKDOWN_DIR="$BASE_DIR/.content"
-export PROFILE_DIR="$BASE_DIR/.profile"
+# Change to the base directory
+cd "$BASE_DIR" || exit 1
+#clear
 # List of base names for the lecture modules
 # Auto-detect module base names from markdown files or directories in .content
-echo "DEMO_DIR $DEMO_DIR"
-echo "MARKDOWN_DIR $MARKDOWN_DIR"
-echo "PROFILE_DIR $PROFILE_DIR"
-MODULES=(
+export MODULES=(
   $(find "$MARKDOWN_DIR" -maxdepth 1 -type f -name "*.md" \
     -exec basename {} .md \; | sort)
 )
 
-echo "run_lecture - markdown: $MODULES"
-
-# Change to the base directory
-cd "$BASE_DIR" || exit 1
-#clear
-
 # Loop through modules
 for module in "${MODULES[@]}"; do
+  clear
   md_file="$MARKDOWN_DIR/${module}.md"
   cast_file="$DEMO_DIR/${module}.cast"
   script_file="$DEMO_DIR/${module}.sh"

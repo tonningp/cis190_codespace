@@ -2,23 +2,10 @@
 
 Welcome to the course content repository for **Introduction to Linux**. This repository contains all the instructional materials used in this course, including:
 
-## 📂 Repository Contents
-
-- `/demos/`  
-  Contains lecture notes (`.md`), terminal recording files (`.cast`), and supporting demo scripts (`.sh`).
-
-- `/projects/`  
-  Project folders for hands-on exercises aligned with weekly topics.
-
-- `/quizzes/`  
-  Weekly quizzes and review questions.
-
-- `run_lecture.sh`  
-  A shell script that plays terminal-based lectures using `mdcat` and `asciinema`.
-
 ## ⚙️ How to Use This Repository
 
-This repository **only contains course materials**. To work on the labs and assignments, you will **clone this into your own Codespaces environment**.
+This repository **only contains course materials**. To work on the labs and assignments, you will 
+**clone this into your own Codespaces environment**.
 
 ### 📥 Instructions for Students
 
@@ -64,9 +51,3 @@ This course follows *Sobell's A Practical Guide to Linux Commands, Editors, and 
 
 Reach out via your course’s GitHub Discussions board or email your instructor.
 
-```
-
----
-
-Let me know the actual repository name and organization/user and I’ll fill it in directly for you.
-```
