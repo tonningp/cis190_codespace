@@ -19,6 +19,7 @@ for module in "${MODULES[@]}"; do
 
   #echo "processing $md_file"
   if [[ -f "$md_file" ]]; then
+    echo "📖 Reading module: ${module}"
     ${CAT_CMD} ${md_file}
     pause
   fi
