@@ -68,34 +68,41 @@ def main():
     """)
 
     print("\n📝 Please enter your student profile information:\n")
-    student_id, firstname, lastname,email = get_student_input()
-
-    # Check if student ID already exists
-    cursor.execute("SELECT * FROM students WHERE id = ?", (student_id,))
-    existing = cursor.fetchone()
-
-    if existing:
-        print(f"\n⚠️  A record already exists for Student ID: {student_id}")
-        confirm = input("🔁 Do you want to overwrite it? [y/N]: ").strip().lower()
-        if confirm != 'y':
+    while True:
+        student_id, firstname, lastname,email = get_student_input()
+        resp = input("🔍 Do you want to save your profile information? [Y/n]: ").strip().lower()
+        if resp == 'n':
             print("🚫 Operation canceled. No changes made.")
             conn.close()
             return
 
-    # Insert or update
-    now = datetime.now().isoformat(timespec='seconds')
-    cursor.execute("""
-    INSERT INTO students (id, firstname, lastname,email, updated_at)
-    VALUES (?, ?, ?, ?, ?)
-    ON CONFLICT(id) DO UPDATE SET
-        firstname=excluded.firstname,
-        lastname=excluded.lastname,
-        email=excluded.email,
-        updated_at=excluded.updated_at
-    """, (student_id, firstname, lastname, email, now))
+        # Check if student ID already exists
+        cursor.execute("SELECT * FROM students WHERE id = ?", (student_id,))
+        existing = cursor.fetchone()
 
-    conn.commit()
-    conn.close()
+        if existing:
+            print(f"\n⚠️  A record already exists for Student ID: {student_id}")
+            confirm = input("🔁 Do you want to overwrite it? [y/N]: ").strip().lower()
+            if confirm != 'y':
+                print("🚫 Operation canceled. No changes made.")
+                conn.close()
+                return
+
+        # Insert or update
+        now = datetime.now().isoformat(timespec='seconds')
+        cursor.execute("""
+        INSERT INTO students (id, firstname, lastname,email, updated_at)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET
+            firstname=excluded.firstname,
+            lastname=excluded.lastname,
+            email=excluded.email,
+            updated_at=excluded.updated_at
+        """, (student_id, firstname, lastname, email, now))
+
+        conn.commit()
+        conn.close()
+        return
 
 
 if __name__ == "__main__":
