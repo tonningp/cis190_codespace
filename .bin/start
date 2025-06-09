@@ -1,5 +1,10 @@
 #!/bin/bash
-#
+if [ -z "$TMUX" ]; then
+    exec tmux new-session "$0"
+fi
+
+# Your script body here
+
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 
 display_modules() {
