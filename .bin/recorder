@@ -30,7 +30,7 @@ fi
 cat > ${RCFILE} <<EOF
 source ~/.bashrc
 cmd_hook() {
-  echo "To exit the shell, type 'exit' or press Ctrl+D."
+  echo "To exit this training shell, type 'exit' or press Ctrl+D."
 }
 export PROMPT_COMMAND="cmd_hook"
 export CURRENT_LAB=${BASE_NAME}

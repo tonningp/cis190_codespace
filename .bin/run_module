@@ -1,5 +1,5 @@
 #!/bin/bash
-
+clear
 # Change to the base directory
 cd "$BASE_DIR" || exit 1
 #clear

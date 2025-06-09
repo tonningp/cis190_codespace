@@ -1,1 +1,3 @@
-# README for Module 2 - Week 4
+# Module 2
+
+Refer to `content/` for learning materials and `demos/` for the graded shell script.
