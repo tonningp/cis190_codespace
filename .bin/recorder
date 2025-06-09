@@ -43,7 +43,7 @@ alias ls='ls --color=never'
 alias grep='grep --color=never'
 alias passwd='sim_passwd.sh'
 alias mdview='python -m rich.markdown -w 80 -y'
-alias lab="mdview $MARKDOWN_DIR/$BASE_NAME.md"
+alias lab="clear;mdview $MARKDOWN_DIR/$BASE_NAME.md"
 EOF
 
 export STARTUP_OPTIONS="--rcfile ${RCFILE}"
