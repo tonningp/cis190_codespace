@@ -42,7 +42,7 @@ export PS1="$ "
 alias ls='ls --color=never'
 alias grep='grep --color=never'
 alias passwd='sim_passwd.sh'
-alias mdview='python -m rich.markdown -w 80 -y'
+alias mdview='python3 -m rich.markdown -w 80 -y'
 alias lab="clear;mdview $MARKDOWN_DIR/$BASE_NAME.md"
 EOF
 
