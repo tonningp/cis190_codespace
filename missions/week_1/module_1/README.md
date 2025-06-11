@@ -1,5 +1,3 @@
-Perfect — here's the updated **Week 1 `README.md`** (mission-briefing style) incorporating the **official objectives from Chapter 2** of the 4th edition of *A Practical Guide to Linux Commands, Editors, and Shell Programming* by Sobell.
-
 ---
 
 ````markdown
