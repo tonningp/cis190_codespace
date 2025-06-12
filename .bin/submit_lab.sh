@@ -23,7 +23,7 @@ fi
 OUTFILE="${STUDENT_ID}_${FIRSTNAME}_${LASTNAME}_${module}_$(date +%Y%m%d_%H%M%S).tgz"
 
 # ---- BUNDLE FILES ----
-echo "[*] Collecting files for $STUDENT_ID into $OUTFILE..."
+#echo "[*] Collecting files for $STUDENT_ID into $OUTFILE..."
 
 cp -r ${LOG_BASE}/* "$TMPDIR/" 2>/dev/null
 
@@ -37,7 +37,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # ---- SUBMIT ----
-echo "[*] Submitting archive to $SUBMIT_URL..."
+#echo "[*] Submitting archive to $SUBMIT_URL..."
 RESPONSE=$(curl -s -w "%{http_code}" -o curl_response.txt -X POST "$SUBMIT_URL" \
   -F "student_id=$STUDENT_ID" \
   -F "file=@$OUTFILE")
