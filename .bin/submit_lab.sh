@@ -50,4 +50,5 @@ else
   echo "Response:"
   cat curl_response.txt
   echo "Your submission archive has been saved as $OUTFILE"
+  rm -rf "$TMPDIR"
 fi
