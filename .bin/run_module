@@ -44,5 +44,6 @@ for module in "${MODULES[@]}"; do
     pause
   fi
 done
-
+submit_lab.sh
+read -p "Press Enter to continue to the next module or exit."
 echo "🏁 Mission Complete!"

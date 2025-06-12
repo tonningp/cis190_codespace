@@ -53,6 +53,7 @@ fi
 export DEMO_DIR="$BASE_DIR/demos"
 export MARKDOWN_DIR="$BASE_DIR/content"
 export PROFILE_DIR="$BASE_DIR/.profile"
+export LOG_BASE="${BASE_DIR}/history"
 
 export VPLAYER="asciinema play -i 2.5"
 export CAT_CMD='python3 -m rich.markdown -y -w 80 '

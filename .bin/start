@@ -1,4 +1,5 @@
-#!/bin/bash
+##!/usr/bin/env -S bash -e
+
 if [ -z "$TMUX" ]; then
     exec tmux new-session "$0"
 fi
@@ -45,6 +46,7 @@ fi
 
 cd "$(dirname "$TOP_DIR")/missions"
 module=$(display_modules)
+export module
 while [[ -n "$module" && "$module" != 'Quit' ]]; do
     cd "$module"
     #echo "This script starts the exercises in the current module."

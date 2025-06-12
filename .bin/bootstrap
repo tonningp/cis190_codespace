@@ -7,9 +7,9 @@ PROFILE_DIR="${BIN_PATH}/../.db"
 PROFILE_DB="${PROFILE_DIR}/profile.sqlite3"
 
 echo "✅ Installing necessary packages and setting up environment..."
-echo "Please wait, this may take a few minutes..."
+echo "🕒 Please wait, this may take a few minutes..."
 sudo apt update -y -qq
-sudo apt install -y -qq tmux
+sudo apt install -y -qq tmux dialog
 python3 -m pip install --quiet  --upgrade pip
 if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
   echo "export PATH=\"$BIN_PATH:\$PATH\"" >> "$SHELL_RC"
