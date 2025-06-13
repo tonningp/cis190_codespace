@@ -19,6 +19,8 @@
 .profile/
 .history/
 history/
+debug.txt
+debug.log
 
 # Ignore compiled binaries (just in case)
 *.out
