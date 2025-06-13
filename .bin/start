@@ -1,66 +1,108 @@
-##!/usr/bin/env -S bash -e
-
+#!/usr/bin/env -S bash -e
 if [ -z "$TMUX" ]; then
     exec tmux new-session "$0"
 fi
-
-# Your script body here
-
 export TOP_DIR="$(dirname "$(realpath "$0")")"
+export DEBUG="${TOP_DIR}/debug.txt"
+INTERRUPTED=0
+yesno() {
+    TERM=xterm-256color DIALOGRC="${TOP_DIR}/dialogrc" \
+    dialog --clear \
+           --backtitle "${1:-Confirmation}" \
+           --title "${2:-Confirmation}" \
+           --yesno "${3:-Do you want to resume the labs?}" "${4:-7}" "${5:-50}" \
+           > /dev/tty
 
-display_modules() {
-    # Collect module list (strip ./, keep relative paths)
-    mapfile -t modules < <(find . -mindepth 1 -maxdepth 2 -type d -name "*module*" | sed 's|^\./||' | sort -u)
-
-    modules=("Quit" "${modules[@]}")  # Add "Quit" option at the beginning
-    # Exit if no modules found
-    if [[ ${#modules[@]} -eq 0 ]]; then
-        echo "No modules found."
-        exit 1
-    fi
-
-    # Build options array for dialog (tag=number, item=path)
-    OPTIONS=()
-    for i in "${!modules[@]}"; do
-        OPTIONS+=("$i" "${modules[$i]}")
-    done
-
-    # Show dialog menu
-    selection=$(dialog --clear \
-        --backtitle "Select Module" \
-        --title "Available Modules" \
-        --menu "Choose a module:" 20 70 12 \
-        "${OPTIONS[@]}" \
-        2>&1 >/dev/tty)
-    echo "${modules[$selection]}"
+    response=$?
+    #echo "DEBUG: User response in yesno: $response" >> "$DEBUG"
+    echo $response
 }
 
-target_dir=""
-echo "🚀 Starting the exercises ..."
-if [[ $# -ne 0 ]]; then
-  echo "Usage: $0"
-  target_dir=$1
-
-fi
-
-
-cd "$(dirname "$TOP_DIR")/missions"
-module=$(display_modules)
-export module
-while [[ -n "$module" && "$module" != 'Quit' ]]; do
-    cd "$module"
-    #echo "This script starts the exercises in the current module."
-    source "$TOP_DIR/environment.sh"
-    if [[ ${BASE_DIR} != *module* ]]; then
-      echo "❌ This script must be run in a module directory."
-      echo "Please navigate to a module directory and try again."
-      echo $(ls -1 ${BASE_DIR})
-      exit 1
+export -f yesno
+on_sigint_top() {
+    if [[ $INTERRUPTED -eq 1 ]]; then
+        INTERRUPTED=0  # Reset the interrupted flag
+    else
+        clear  # Clears the dialog UI after it exits
+        response="$(yesno 'Exit?' 'Exit?' 'You pressed Ctrl+C.\nDo you want to exit the lab?')"
+        echo "DEBUG: User response in on_sigint_top: $response" >> "$DEBUG"
+        if [[ $response -eq "0" ]]; then
+            exit 0
+        fi
     fi
-    $module_start
-    cd "$(dirname "$TOP_DIR")/missions"
-    clear && tput sgr0
-    module=$(display_modules)
-done
-clear
-#fi
+	main
+}
+
+run_module_start() {
+    "$module_start"
+}
+
+trap 'on_sigint_top' SIGINT
+main() {
+	# Your script body here
+
+
+	display_modules() {
+
+	    # Collect module list (strip ./, keep relative paths)
+        cd "$(dirname "$TOP_DIR")/missions" || exit 1
+	    mapfile -t modules < <(find . -mindepth 1 -maxdepth 2 -type d -name "*module*" | sed 's|^\./||' | sort -u)
+
+	    modules=("Quit" "${modules[@]}")  # Add "Quit" option at the beginning
+	    # Exit if no modules found
+	    if [[ ${#modules[@]} -eq 0 ]]; then
+		    echo "No modules found."
+            exit 1
+	    fi
+
+	    # Build options array for dialog (tag=number, item=path)
+	    OPTIONS=()
+	    for i in "${!modules[@]}"; do
+		OPTIONS+=("$i" "${modules[$i]}")
+	    done
+	    # Show dialog menu
+        export TERM=xterm-256color
+        selection=$( \
+          DIALOGRC=${TOP_DIR}/dialogrc \
+          dialog --clear \
+          --backtitle "Select a Module" \
+          --title "Available Modules" \
+          --menu "${TERM} Choose a module:" 20 70 12 \
+          "${OPTIONS[@]}" \
+          2>&1 > /dev/tty )
+
+	    echo "${modules[$selection]}"
+	}
+
+	target_dir=""
+	echo "🚀 Starting the exercises ..."
+	if [[ $# -ne 0 ]]; then
+	  echo "Usage: $0"
+	  target_dir=$1
+	fi
+	module=$(display_modules)
+	export module
+    MISSION_DIR="$(dirname "$TOP_DIR")/missions"
+	while [[ -n "$module" && "$module" != 'Quit' ]]; do
+	   # Define signal trap for SIGINT (^C)
+	    cd $MISSION_DIR || exit 1
+        cd "$module" || exit 1
+	    #cd "$module"
+	    source "$TOP_DIR/environment.sh"
+	    if [[ ${BASE_DIR} != *module* ]]; then
+	      echo "❌ This script must be run in a module directory."
+	      echo "Please navigate to a module directory and try again."
+	      echo $(ls -1 ${BASE_DIR})
+	      exit 1
+	    fi
+	    run_module_start 
+        status=$?
+        if [[ $status -eq 130 ]]; then
+            INTERRUPTED=1  # Tell parent loop we got SIGINT
+        fi
+	    clear && tput sgr0
+	    module=$(display_modules)
+	done
+	clear
+}
+main

@@ -1,0 +1,15 @@
+DEBUG: User response in yesno: 
+DEBUG: User response in yesno: 
+DEBUG: User response in on_sigint_top: 
+DEBUG: User response in yesno: 
+DEBUG: User response in yesno: 
+DEBUG: User response in on_sigint_top: 
+DEBUG: User response in yesno: 0
+DEBUG: User response in yesno: 1
+DEBUG: User response in on_sigint_top: 1
+DEBUG: User response in yesno: 1
+DEBUG: User response in yesno: 0
+DEBUG: Module start script exited with status 130
+DEBUG: Module start script exited with status 130
+DEBUG: User response in on_sigint_top: 1
+DEBUG: User response in on_sigint_top: 1
