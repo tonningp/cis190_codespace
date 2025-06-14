@@ -30,6 +30,8 @@ cat > ${RCFILE} <<EOF
 source ~/.bashrc
 cmd_hook() {
   echo
+  echo
+  echo -e "\e[30;47mIf you need the lab instructions again, enter lab.\e[0m"
   echo -e "\e[30;47mTo exit this training shell, type 'exit' or press Ctrl+D.\e[0m"
 }
 export PROMPT_COMMAND="cmd_hook"

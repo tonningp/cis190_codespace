@@ -1,0 +1,47 @@
+use_shadow = OFF
+use_colors = ON
+
+screen_color = (BLACK,BLACK,OFF)
+shadow_color = (BLACK,BLACK,ON)
+
+dialog_color = (WHITE,BLACK,OFF)
+title_color = (YELLOW,BLACK,ON)
+border_color = (WHITE,BLACK,ON)
+
+button_active_color = (BLACK,YELLOW,ON)
+button_inactive_color = (BLACK,BLACK,OFF)
+button_key_active_color = (WHITE,YELLOW,ON)
+button_key_inactive_color = (YELLOW,BLACK,OFF)
+button_label_active_color = (WHITE,YELLOW,ON)
+button_label_inactive_color = (WHITE,BLACK,OFF)
+
+inputbox_color = (WHITE,BLACK,OFF)
+inputbox_border_color = (WHITE,BLACK,ON)
+
+menubox_color = (WHITE,BLACK,OFF)
+menubox_border_color = (WHITE,BLACK,ON)
+item_color = (WHITE,BLACK,OFF)
+item_selected_color = (BLACK,YELLOW,ON)
+
+tag_color = (WHITE,BLACK,OFF)
+tag_selected_color = (BLACK,YELLOW,ON)
+tag_key_color = (YELLOW,BLACK,OFF)
+tag_key_selected_color = (BLACK,YELLOW,ON)
+
+check_color = (WHITE,BLACK,OFF)
+check_selected_color = (BLACK,YELLOW,ON)
+
+uarrow_color = (GREEN,BLACK,ON)
+darrow_color = (GREEN,BLACK,ON)
+
+itemhelp_color = (BLACK,BLACK,OFF)
+form_active_text_color = (WHITE,YELLOW,ON)
+form_text_color = (WHITE,BLACK,OFF)
+form_item_readonly_color = (BLACK,BLACK,OFF)
+
+gauge_color = (YELLOW,BLACK,ON)
+
+border2_color = (WHITE,BLACK,ON)
+inputbox_border2_color = (WHITE,BLACK,ON)
+searchbox_border2_color = (WHITE,BLACK,ON)
+menubox_border2_color = (WHITE,BLACK,ON)
