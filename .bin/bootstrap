@@ -13,7 +13,7 @@ sudo apt install -y -qq tmux dialog
 python3 -m pip install --quiet  --upgrade pip
 if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
 cat <<'EOS' >> "$SHELL_RC"
-export PATH="${BIN_PATH}:${PATH}" 
+export PATH=${BIN_PATH}:${PATH} 
 python -m rich.markdown -w 80 cis190_codespace/README.md
 echo "Remember to run 'source $SHELL_RC' to apply changes."
 echo "To start the lab manager, run 'start' in your terminal."
