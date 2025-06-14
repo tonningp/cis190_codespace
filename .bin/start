@@ -94,7 +94,7 @@ main() {
           TERM=xterm-256color DIALOGRC=${TOP_DIR}/dialogrc \
           dialog --clear \
           --backtitle "Student: ${FIRSTNAME} ${LASTNAME} - Select the week/module" \
-          --title "(${TODAY}) - Hello ${FIRSTNAME} this is WEEK #${WEEK_NUMBER}" \
+          --title "(${TODAY}) - Hello ${FIRSTNAME} this is WEEK # ${WEEK_NUMBER}" \
           --menu "Choose a week/module (Use arrow keys or # and press Enter):" 25 70 12 \
           "${OPTIONS[@]}" \
           2>&1 > /dev/tty )
