@@ -22,7 +22,7 @@ This repository **only contains course materials**. To work on the labs and assi
    git clone https://github.com/tonningp/cis190_codespace.git
 ````
 
-4. You can now explore the course content in the `cis190_codespace/` folder within your /workspaces/codespace-blank environment.
+
 ## 📘 Course Topics
 This course follows *Sobell's A Practical Guide to Linux Commands, Editors, and Shell Programming (4th Edition)*. Topics include:
 
