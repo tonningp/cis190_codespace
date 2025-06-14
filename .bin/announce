@@ -1,0 +1,5 @@
+#!/bin/bash
+
+python3 -m rich.markdown -w 80 cis190_codespace/README.md
+echo "Remember to run 'source' $SHELL_RC to apply changes."
+echo "To start the lab manager, run 'start' in your terminal."
