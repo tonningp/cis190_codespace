@@ -1,0 +1,87 @@
+#!/bin/bash
+echo "Starting module runner script..."
+echo $TOP_DIR
+
+main() {
+	submit_results() {
+		 clear  # Clears the screen before 
+		 dialog --backtitle "Submit work?" \
+			   --title "Submit work?" \
+			   --yesno "Do you want to submit the work for this module" 7 50
+
+		 response=$?
+		 clear  # Clears the dialog UI after it exits
+
+		 if [[ $response -eq 0 ]]; then
+			echo "Submitting..."
+			submit_lab.sh
+			echo "Work submitted..."
+			prompt
+		 fi
+	}
+	run_module_on_sigint() {
+
+	    #dialog --backtitle "Exit?" \
+		#   --title "Exit?" \
+		#   --yesno "You pressed Ctrl+C.\nDo you really want to quit this module?" 7 50
+        response="$(yesno 'Exit?' 'Exit?' 'You pressed Ctrl+C.\nDo you want to exit the module?')"
+
+	    if [[ $response -eq "0" ]]; then
+		#echo "$(date '+%Y-%m-%d %H:%M:%S') - User confirmed exit via Ctrl+C" >> "$LOG_FILE"
+   		   echo "Exiting..."
+		   exit 130
+	    else
+		   echo "Resuming module... Press Enter to continue."
+	    fi
+	}
+	export -f run_module_on_sigint
+	clear
+	# Change to the base directory
+	cd "$BASE_DIR" || exit 1
+	#clear
+	# List of base names for the lecture modules
+	# Auto-detect module base names from markdown files or directories in .content
+	export MODULES=(
+	  $(find "$MARKDOWN_DIR" -maxdepth 1 -type f -name "*.md" \
+	    -exec basename {} .md \; | sort)
+	)
+
+	# Loop through modules
+	for module in "${MODULES[@]}"; do
+	  clear
+	  trap 'run_module_on_sigint' SIGINT
+	  md_file="$MARKDOWN_DIR/${module}.md"
+	  cast_file="$DEMO_DIR/${module}.cast"
+	  script_file="$DEMO_DIR/${module}.sh"
+
+	  #echo "processing $md_file"
+	  if [[ -f "$md_file" ]]; then
+	    echo "Reading module: ${module}"
+	    ${CAT_CMD} ${md_file}
+	    pause
+	  fi
+
+	  #echo "processing $cast_file"
+	  if [[ -f "$cast_file" ]]; then
+	    ${VPLAYER} "$cast_file"
+	    pause
+	  fi
+
+	  if [[ -f "$script_file" && -x "$script_file" ]]; then
+	    #echo "Executing demo script in a recorded shell: $script_file"
+	    if [[ ! -s "${script_file}" ]];then
+		recorder
+	    else
+		recorder ${script_file}
+	    fi
+	#    if [[ ${script_file} == *"grade"* ]]; then
+	#        echo "${0}"
+	#        echo "This topic is going to be graded."
+	#    fi
+	    pause
+	  fi
+	done
+	submit_results
+	echo "Mission Complete!"
+}
+main

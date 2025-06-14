@@ -1,87 +1,206 @@
 #!/bin/bash
-echo "Starting module runner script..."
-echo $TOP_DIR
+[[ "$RESET_PROGRESS" == "1" ]] && rm -f "$TRACKER_FILE"
+
+count_completed_modules() {
+    local count=0
+    for mod in "${MODULES[@]}"; do
+        if grep -Fq "^$mod" "$TRACKER_FILE" 2>/dev/null; then
+            ((count++))
+        fi
+    done
+    echo "$count"
+}
+
+show_progress_gauge() {
+    #echo "DEBUG: Showing progress gauge" >> "$DEBUG"
+    local total=${#MODULES[@]}
+    #local completed
+    local completed=$(count_completed_modules)
+    #echo "DEBUG: show_progress_gauge completed=${completed}" >> "$DEBUG"
+    local percent=$(( completed * 100 / total ))
+
+    {
+        echo "XXX"
+        echo "$percent"
+        echo "$completed of $total modules completed"
+        echo "XXX"
+        sleep 1
+    } | dialog --gauge "Lab Progress" 10 50 0
+}
+
+show_progress_summary() {
+    local total=${#MODULES[@]}
+    local completed=$(count_completed_modules)
+    local percent=$(( completed * 100 / total ))
+    local msg="Progress: $completed of $total modules completed.\n\n"
+
+    for mod in "${MODULES[@]}"; do
+        if grep -Fq "^$mod	" "$TRACKER_FILE" 2>/dev/null; then
+            msg+="✅ $mod\n"
+        else
+            msg+="   $mod\n"
+        fi
+    done
+
+    dialog --backtitle "Lab Progress" \
+           --title "Module Completion Summary" \
+           --msgbox "$msg" 20 70
+}
+
+mark_completed() {
+    local module="$1"
+    local start="$2"
+    local end
+    end=$(date +%Y-%m-%dT%H:%M:%S)
+    local duration=$(( $(date -d "$end" +%s) - $(date -d "$start" +%s) ))
+
+    echo -e "${module}\t${start}\t${duration}\t${end}" >> "$TRACKER_FILE"
+}
+
+is_completed() {
+    grep -Fq "^$1	" "$TRACKER_FILE" 2>/dev/null
+}
+
+print_tracker_summary() {
+
+    echo -e "\e[7mModule\t\t\t\t\tStart Time\t\tDuration(s)\tEnd Time\e[0m"
+    echo "--------------------------------------------------------------------------------------------------"
+    column -t -s $'\t' "$TRACKER_FILE"
+}
+
+
+#is_completed() {
+#    grep -Fxq "$1" "$TRACKER_FILE" 2>/dev/null
+#}
+
+choose_topic() {
+    OPTIONS=()
+    for i in "${!MODULES[@]}"; do
+        label="${MODULES[$i]}"
+        if is_completed "$label"; then
+            label="✅ $label"
+        fi
+        OPTIONS+=("$i" "$label")
+    done
+
+    selection=$(dialog --clear \
+        --backtitle "Choose Topic" \
+        --title "Available Topics" \
+        --menu "Select a topic to start or redo:" 20 70 12 \
+        "${OPTIONS[@]}" \
+        3>&1 1>&2 2>&3)
+
+    echo "$selection"
+}
+
 
 main() {
-	submit_results() {
-		 clear  # Clears the screen before 
-		 dialog --backtitle "Submit work?" \
-			   --title "Submit work?" \
-			   --yesno "Do you want to submit the work for this module" 7 50
 
-		 response=$?
-		 clear  # Clears the dialog UI after it exits
+    if [[ -n "$1" ]]; then
+        export MODULES=("$1")
+    else
+        # Default to full list
+        export MODULES=(
+            $(find "$MARKDOWN_DIR" -maxdepth 1 -type f -name "*.md" \
+              -exec basename {} .md \; | sort)
+        )
+    fi
 
-		 if [[ $response -eq 0 ]]; then
-			echo "Submitting..."
-			submit_lab.sh
-			echo "Work submitted..."
-			prompt
-		 fi
-	}
-	run_module_on_sigint() {
+    submit_results() {
+        clear
+        dialog --backtitle "Submit work?" \
+               --title "Submit work?" \
+               --yesno "Do you want to submit the work for this module?" 7 50
 
-	    #dialog --backtitle "Exit?" \
-		#   --title "Exit?" \
-		#   --yesno "You pressed Ctrl+C.\nDo you really want to quit this module?" 7 50
+        response=$?
+        clear
+
+        if [[ $response -eq 0 ]]; then
+            echo "Submitting..."
+            submit_lab.sh
+            echo "Work submitted..."
+            prompt
+        fi
+    }
+
+    run_module_on_sigint() {
         response="$(yesno 'Exit?' 'Exit?' 'You pressed Ctrl+C.\nDo you want to exit the module?')"
+        if [[ $response -eq 0 ]]; then
+            echo "Exiting..."
+            exit 130
+        else
+            # User wants to stay — let them choose a topic
+            current_index=$(choose_topic)
+            clear
+            echo "Press Enter to continue..."
+        fi
+    }
 
-	    if [[ $response -eq "0" ]]; then
-		#echo "$(date '+%Y-%m-%d %H:%M:%S') - User confirmed exit via Ctrl+C" >> "$LOG_FILE"
-   		   echo "Exiting..."
-		   exit 130
-	    else
-		   echo "Resuming module... Press Enter to continue."
-	    fi
-	}
-	export -f run_module_on_sigint
-	clear
-	# Change to the base directory
-	cd "$BASE_DIR" || exit 1
-	#clear
-	# List of base names for the lecture modules
-	# Auto-detect module base names from markdown files or directories in .content
-	export MODULES=(
-	  $(find "$MARKDOWN_DIR" -maxdepth 1 -type f -name "*.md" \
-	    -exec basename {} .md \; | sort)
-	)
+    choose_topic() {
+        OPTIONS=()
+        for i in "${!MODULES[@]}"; do
+            OPTIONS+=("$i" "${MODULES[$i]}")
+        done
 
-	# Loop through modules
-	for module in "${MODULES[@]}"; do
-	  clear
-	  trap 'run_module_on_sigint' SIGINT
-	  md_file="$MARKDOWN_DIR/${module}.md"
-	  cast_file="$DEMO_DIR/${module}.cast"
-	  script_file="$DEMO_DIR/${module}.sh"
+        selection=$(dialog --clear \
+            --backtitle "Choose Topic" \
+            --title "Available Topics" \
+            --menu "Select a topic to revisit:" 20 70 12 \
+            "${OPTIONS[@]}" \
+            3>&1 1>&2 2>&3)
 
-	  #echo "processing $md_file"
-	  if [[ -f "$md_file" ]]; then
-	    echo "Reading module: ${module}"
-	    ${CAT_CMD} ${md_file}
-	    pause
-	  fi
+        echo "$selection"
+    }
 
-	  #echo "processing $cast_file"
-	  if [[ -f "$cast_file" ]]; then
-	    ${VPLAYER} "$cast_file"
-	    pause
-	  fi
+    export -f run_module_on_sigint
 
-	  if [[ -f "$script_file" && -x "$script_file" ]]; then
-	    #echo "Executing demo script in a recorded shell: $script_file"
-	    if [[ ! -s "${script_file}" ]];then
-		recorder
-	    else
-		recorder ${script_file}
-	    fi
-	#    if [[ ${script_file} == *"grade"* ]]; then
-	#        echo "${0}"
-	#        echo "This topic is going to be graded."
-	#    fi
-	    pause
-	  fi
-	done
-	submit_results
-	echo "Mission Complete!"
+    clear
+    cd "$BASE_DIR" || exit 1
+
+    export MODULES=(
+        $(find "$MARKDOWN_DIR" -maxdepth 1 -type f -name "*.md" \
+            -exec basename {} .md \; | sort)
+    )
+
+    current_index=0
+    while [[ $current_index -lt ${#MODULES[@]} ]]; do
+        trap 'run_module_on_sigint' SIGINT
+
+        module="${MODULES[$current_index]}"
+        clear
+
+        md_file="$MARKDOWN_DIR/${module}.md"
+        cast_file="$DEMO_DIR/${module}.cast"
+        script_file="$DEMO_DIR/${module}.sh"
+        start_time=$(date +%Y-%m-%dT%H:%M:%S)
+        if [[ -f "$md_file" ]]; then
+            echo "Reading module: ${module}"
+            ${CAT_CMD} "$md_file"
+            pause
+        fi
+
+        if [[ -f "$cast_file" ]]; then
+            ${VPLAYER} "$cast_file"
+            pause
+        fi
+
+        if [[ -f "$script_file" && -x "$script_file" ]]; then
+            if [[ ! -s "$script_file" ]]; then
+                recorder
+            else
+                recorder "$script_file"
+            fi
+            pause
+        fi
+        mark_completed "${MODULES[$current_index]}" "$start_time"
+        ((current_index++))
+    done
+
+    submit_results
+    print_tracker_summary | less -R
+    echo "Mission Complete!"
+    show_progress_summary 
+    sleep 1
+    pause
 }
-main
+main "$@"
