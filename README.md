@@ -12,29 +12,18 @@ This repository **only contains course materials**. To work on the labs and assi
 1. **Log into GitHub** with your student account.
 
 2. **Open your Codespaces workspace**:
-   - Either use the GitHub Classroom link provided by your instructor, or
-   - Use your existing personal GitHub repository set up for this course.
+    - Go to your GitHub profile.
+    - Click on the **Codespaces** tab.
+    - If you don't have a Codespace yet, create one by clicking **Blank** template.
 
-3. In your **Codespaces terminal**, run the following command to clone the course content:
+
+4. In your **Codespaces terminal**, run the following command to clone the course content:
 
    ```bash
-   git clone https://github.com/<ORG_OR_USER>/<course-content-repo>.git course-materials
+   git clone https://github.com/tonningp/cis190_codespace.git
 ````
 
-Replace `<ORG_OR_USER>/<course-content-repo>` with the actual GitHub URL provided by your instructor.
-
-4. You can now explore the course content in the `course-materials/` folder within your Codespaces environment.
-
-### 📁 Typical Layout in Your Codespaces
-
-```
-/workspaces/your-student-repo/
-├── course-materials/         ← this repo (content only)
-│   ├── demos/
-│   ├── projects/
-│   └── quizzes/
-├── your-own-code/            ← where you write your scripts and projects
-```
+5. You can now explore the course content in the `cis190_codespace/` folder within your /workspaces/codespace-blank environment.
 
 ## 📘 Course Topics
 
@@ -46,8 +35,4 @@ This course follows *Sobell's A Practical Guide to Linux Commands, Editors, and 
 * Process and job control
 * Text processing and filters
 * Network utilities and system info
-
-## 🙋 Need Help?
-
-Reach out via your course’s GitHub Discussions board or email your instructor.
 
