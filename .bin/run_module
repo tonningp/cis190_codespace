@@ -154,6 +154,43 @@ main() {
         echo "$selection"
     }
 
+    function show_slide() {
+        clear
+        echo "Reading Slide $((INDEX+1)) of $TOTAL Topic: $1"
+        echo "------------------------------------------------------------"
+        if [[ -f "${SLIDES[$INDEX]}" ]]; then
+            ${CAT_CMD} "${SLIDES[$INDEX]}"
+        fi
+        cast_file="$DEMO_DIR/${module}.cast"
+        script_file="$DEMO_DIR/${module}.sh"
+        start_time=$(date +%Y-%m-%dT%H:%M:%S)
+#        if [[ -f "$md_file" ]]; then
+#            echo "Reading module: ${module}"
+#            ${CAT_CMD} "$md_file"
+#            pause
+#        fi
+#
+#        if [[ -f "$cast_file" ]]; then
+#            ${VPLAYER} "$cast_file"
+#            pause
+#        fi
+#
+#        if [[ -f "$script_file" && -x "$script_file" ]]; then
+#            if [[ ! -s "$script_file" ]]; then
+#                recorder
+#            else
+#                recorder "$script_file"
+#            fi
+#            pause
+#        fi
+#        mark_completed "${MODULES[$current_index]}" "$start_time"
+        #pause
+
+        #cat "${SLIDES[$INDEX]}"
+        echo
+    }
+
+
     export -f run_module_on_sigint
 
     clear
@@ -164,28 +201,20 @@ main() {
             -exec basename {} .md \; | sort)
     )
 
-    current_index=0
-    while [[ $current_index -lt ${#MODULES[@]} ]]; do
-        trap 'run_module_on_sigint' SIGINT
 
-        module="${MODULES[$current_index]}"
-        clear
+    SLIDES=("$MARKDOWN_DIR"/*.md)
+    TOTAL=${#SLIDES[@]}
+    INDEX=0
 
-        md_file="$MARKDOWN_DIR/${module}.md"
-        cast_file="$DEMO_DIR/${module}.cast"
-        script_file="$DEMO_DIR/${module}.sh"
+    trap 'run_module_on_sigint' SIGINT
+    while true; do
         start_time=$(date +%Y-%m-%dT%H:%M:%S)
-        if [[ -f "$md_file" ]]; then
-            echo "Reading module: ${module}"
-            ${CAT_CMD} "$md_file"
-            pause
-        fi
-
-        if [[ -f "$cast_file" ]]; then
-            ${VPLAYER} "$cast_file"
-            pause
-        fi
-
+        TOPIC=$(basename "${SLIDES[$INDEX]}" .md)
+        show_slide "$TOPIC"
+        read -n 1 -s \
+           -p "Enter choice: [n] Next  [p] Prev  [q] Quit (Back to Menu): " key
+        cast_file="$DEMO_DIR/${TOPIC}.cast"
+        script_file="$DEMO_DIR/${TOPIC}.sh"
         if [[ -f "$script_file" && -x "$script_file" ]]; then
             if [[ ! -s "$script_file" ]]; then
                 recorder
@@ -194,15 +223,65 @@ main() {
             fi
             pause
         fi
-        mark_completed "${MODULES[$current_index]}" "$start_time"
-        ((current_index++))
+        mark_completed "$TOPIC" "$start_time"
+        case "$key" in
+            n)
+                if (( INDEX < TOTAL - 1 )); then
+                    ((INDEX++))
+                fi
+                ;;
+            p)
+                if (( INDEX > 0 )); then
+                    ((INDEX--))
+                fi
+                ;;
+            q)
+                clear
+                echo "Exiting Slide Viewer."
+                break
+                ;;
+        esac
     done
 
+
+
+
+#    current_index=0
+#    while [[ $current_index -lt ${#MODULES[@]} ]]; do
+#        trap 'run_module_on_sigint' SIGINT
+#
+#        module="${MODULES[$current_index]}"
+#        clear
+#
+#        md_file="$MARKDOWN_DIR/${module}.md"
+#        cast_file="$DEMO_DIR/${module}.cast"
+#        script_file="$DEMO_DIR/${module}.sh"
+#        start_time=$(date +%Y-%m-%dT%H:%M:%S)
+#        if [[ -f "$md_file" ]]; then
+#            echo "Reading module: ${module}"
+#            ${CAT_CMD} "$md_file"
+#            pause
+#        fi
+#
+#        if [[ -f "$cast_file" ]]; then
+#            ${VPLAYER} "$cast_file"
+#            pause
+#        fi
+#
+#        if [[ -f "$script_file" && -x "$script_file" ]]; then
+#            if [[ ! -s "$script_file" ]]; then
+#                recorder
+#            else
+#                recorder "$script_file"
+#            fi
+#            pause
+#        fi
+#        mark_completed "${MODULES[$current_index]}" "$start_time"
+#        ((current_index++))
+#    done
+
     submit_results
-#    print_tracker_summary | less -R
     echo "Mission Complete!"
-#    show_progress_summary 
-#    sleep 1
     pause
 }
 main "$@"
