@@ -2,7 +2,6 @@
 
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 export PROFILE_DB="${TOP_DIR}/../.db/profile.sqlite3"
-export TRACKER_FILE="${HOME}/.lab_tracker"
 export DEBUG="${TOP_DIR}/debug.txt"
 # Reference start date (week 1)
 # ---- EXTRACT STUDENT ID ----

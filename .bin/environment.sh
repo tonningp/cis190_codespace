@@ -1,4 +1,7 @@
 #!/bin/bash
+#for debugging
+RESET_PROGRESS="1"
+
 export content_base="missions"
 export module_start="run_module"
 
@@ -54,6 +57,8 @@ export DEMO_DIR="$BASE_DIR/demos"
 export MARKDOWN_DIR="$BASE_DIR/content"
 export PROFILE_DIR="$BASE_DIR/.profile"
 export LOG_BASE="${BASE_DIR}/history"
+export TRACKER_FILE="${LOG_BASE}/progress_tracker.log"
+[[ "$RESET_PROGRESS" == "1" ]] && rm -f "$TRACKER_FILE"
 
 export VPLAYER="asciinema play -i 2.5"
 export CAT_CMD='python3 -m rich.markdown -y -w 80 '
