@@ -121,7 +121,7 @@ main() {
             echo "Submitting..."
             submit_lab.sh
             echo "Work submitted..."
-            prompt
+            pause
         fi
     }
 
@@ -199,10 +199,10 @@ main() {
     done
 
     submit_results
-    print_tracker_summary | less -R
+#    print_tracker_summary | less -R
     echo "Mission Complete!"
-    show_progress_summary 
-    sleep 1
+#    show_progress_summary 
+#    sleep 1
     pause
 }
 main "$@"

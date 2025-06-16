@@ -27,7 +27,7 @@ if [[ -f $RCFILE ]];then
     rm $RCFILE
 fi
 cat > ${RCFILE} <<EOF
-source ~/.bashrc
+source ${TOP_DIR}/bashrc
 cmd_hook() {
   echo
   echo

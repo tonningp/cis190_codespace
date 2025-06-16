@@ -1,0 +1,52 @@
+rubric:
+  module: week_1.module_2.intro
+  outcomes:
+    - id: "terminal-login"
+      description: "Student demonstrated ability to access and interact with a Linux shell."
+      checks:
+        - type: "history_contains"
+          match: "login:"
+        - type: "log_contains"
+          match: "student"
+      points: 2
+
+    - id: "whoami-check"
+      description: "Student used 'whoami' to verify current login session."
+      checks:
+        - type: "history_contains"
+          match: "whoami"
+        - type: "log_contains"
+          match: "student"
+      points: 2
+
+    - id: "shell-verification"
+      description: "Student verified the shell in use."
+      checks:
+        - type: "history_contains"
+          match: "echo \\$SHELL"
+        - type: "log_contains"
+          match: "/bin/bash"
+      points: 2
+
+    - id: "directory-exploration"
+      description: "Student listed files in the home directory."
+      checks:
+        - type: "history_contains"
+          match: "ls"
+      points: 1
+
+    - id: "timestamp-validity"
+      description: "Submission includes timestamp metadata."
+      checks:
+        - type: "file_exists"
+          filename: "submitted_at.txt"
+      points: 1
+
+    - id: "session-recording"
+      description: "Student session log is present and non-empty."
+      checks:
+        - type: "file_nonempty"
+          filename: "01.00.week_1.module_2.intro.grade_20250616_052010.log"
+      points: 2
+
+  total_points: 10

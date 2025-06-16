@@ -1,0 +1,70 @@
+module: week_1.module_1.summary
+title: Summary Check – Module 1 – Login, Shell, and Navigation
+description: |
+  This rubric evaluates student mastery of Linux login procedures,
+  shell environments, and basic navigation commands within the context
+  of drone technician readiness. The associated logs demonstrate
+  practical understanding of authentication, session management, and
+  command-line environment familiarity.
+criteria:
+  - id: login_and_shell
+    description: Simulate a Linux console login with training credentials.
+    learning_outcome: |
+      Student demonstrates understanding of console authentication mechanisms
+      and the importance of secure access protocols in unmanned system maintenance environments.
+    required_log: 02.01.week_1.module_1.login_and_shell.grade.log
+    expected_commands:
+      - "controller login:"
+      - "Username: student"
+      - "password: linux123"
+    points: 2
+    notes: |
+      The login simulation builds foundational understanding of user-based security controls
+      relevant to restricted maintenance terminals for drone systems.
+
+  - id: shell_prompt_check
+    description: Access the shell and observe the shell environment.
+    learning_outcome: |
+      Student can identify their active shell session and recognize
+      key shell environment variables used in drone diagnostic scripts and system checks.
+    required_log: 02.02.week_1.module_1.shell_prompt_check.grade.log
+    expected_commands:
+      - "whoami"
+      - "echo $SHELL"
+    points: 2
+    notes: |
+      Ensures awareness of system identity and shell interpreter — critical
+      when using maintenance scripts and configuration tools.
+
+  - id: shell_navigation
+    description: Demonstrate command-line navigation skills.
+    learning_outcome: |
+      Student can reliably navigate the Linux file system using relative and absolute paths.
+      This is essential for accessing and maintaining drone firmware, configuration files, and logs.
+    required_log: 02.03.week_1.module_1.shell_navigation.grade.log
+    expected_commands:
+      - "pwd"
+      - "ls"
+      - "cd /"
+      - "cd ~"
+    points: 3
+    notes: |
+      Demonstrates ability to orient within the file system,
+      enabling structured access to drone-related system directories.
+
+  - id: shell_history_and_exit
+    description: Understand how to manage command history and exit sessions properly.
+    learning_outcome: |
+      Student understands shell session lifecycle, can review past commands,
+      and can cleanly terminate sessions — an important aspect of maintaining
+      secure and auditable technician workstations.
+    required_log: 02.04.week_1.module_1.shell_history_and_exit.grade.log
+    expected_commands:
+      - "history"
+      - "exit"
+    points: 3
+    notes: |
+      Validates familiarity with session tracking and proper logout hygiene, particularly
+      important on shared maintenance terminals or portable diagnostics systems.
+
+total_points: 10

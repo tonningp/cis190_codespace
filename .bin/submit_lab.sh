@@ -19,13 +19,14 @@ else
   echo "[!] Profile database not found at $PROFILE_DB"
   exit 1
 fi
-
-OUTFILE="${STUDENT_ID}_${FIRSTNAME}_${LASTNAME}_${module}_$(date +%Y%m%d_%H%M%S).tgz"
+base_module_name=$(echo $module | sed 's/[0-9]*.\.[0-9]*\.//g')
+OUTFILE="${STUDENT_ID}_${FIRSTNAME}_${LASTNAME}_${base_module_name}_$(date +%Y%m%d_%H%M%S).tgz"
 
 # ---- BUNDLE FILES ----
 #echo "[*] Collecting files for $STUDENT_ID into $OUTFILE..."
 
 cp -r ${LOG_BASE}/* "$TMPDIR/" 2>/dev/null
+cp -r ${MARKDOWN_DIR}/* "$TMPDIR/" 2>/dev/null
 
 hostname > "$TMPDIR/hostname.txt"
 date > "$TMPDIR/submitted_at.txt"
