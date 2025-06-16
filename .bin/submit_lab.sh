@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+if [[ -z $1 ]]; then
+  echo "Usage: $0 <module_name>"
+  exit 1
+fi
+module="$1"
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 source "$TOP_DIR/environment.sh"
 # ---- CONFIG ----
@@ -19,8 +24,7 @@ else
   echo "[!] Profile database not found at $PROFILE_DB"
   exit 1
 fi
-base_module_name=$(echo $module | sed 's/[0-9]*.\.[0-9]*\.//g')
-OUTFILE="${STUDENT_ID}_${FIRSTNAME}_${LASTNAME}_${base_module_name}_$(date +%Y%m%d_%H%M%S).tgz"
+OUTFILE="${STUDENT_ID}_${FIRSTNAME}_${LASTNAME}_${module}_$(date +%Y%m%d_%H%M%S).tgz"
 
 # ---- BUNDLE FILES ----
 #echo "[*] Collecting files for $STUDENT_ID into $OUTFILE..."

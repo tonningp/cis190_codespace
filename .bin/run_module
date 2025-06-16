@@ -124,7 +124,7 @@ main() {
 
         if [[ $response -eq 0 ]]; then
             echo "Submitting..."
-            submit_lab.sh
+            submit_lab.sh $1
             echo "Work submitted..."
             pause
         fi
@@ -166,32 +166,6 @@ main() {
         if [[ -f "${SLIDES[$INDEX]}" ]]; then
             ${CAT_CMD} "${SLIDES[$INDEX]}"
         fi
-        cast_file="$DEMO_DIR/${module}.cast"
-        script_file="$DEMO_DIR/${module}.sh"
-        start_time=$(date +%Y-%m-%dT%H:%M:%S)
-#        if [[ -f "$md_file" ]]; then
-#            echo "Reading module: ${module}"
-#            ${CAT_CMD} "$md_file"
-#            pause
-#        fi
-#
-#        if [[ -f "$cast_file" ]]; then
-#            ${VPLAYER} "$cast_file"
-#            pause
-#        fi
-#
-#        if [[ -f "$script_file" && -x "$script_file" ]]; then
-#            if [[ ! -s "$script_file" ]]; then
-#                recorder
-#            else
-#                recorder "$script_file"
-#            fi
-#            pause
-#        fi
-#        mark_completed "${MODULES[$current_index]}" "$start_time"
-        #pause
-
-        #cat "${SLIDES[$INDEX]}"
         echo
     }
 
@@ -273,44 +247,8 @@ main() {
         esac
     done
 
-
-
-
-#    current_index=0
-#    while [[ $current_index -lt ${#MODULES[@]} ]]; do
-#        trap 'run_module_on_sigint' SIGINT
-#
-#        module="${MODULES[$current_index]}"
-#        clear
-#
-#        md_file="$MARKDOWN_DIR/${module}.md"
-#        cast_file="$DEMO_DIR/${module}.cast"
-#        script_file="$DEMO_DIR/${module}.sh"
-#        start_time=$(date +%Y-%m-%dT%H:%M:%S)
-#        if [[ -f "$md_file" ]]; then
-#            echo "Reading module: ${module}"
-#            ${CAT_CMD} "$md_file"
-#            pause
-#        fi
-#
-#        if [[ -f "$cast_file" ]]; then
-#            ${VPLAYER} "$cast_file"
-#            pause
-#        fi
-#
-#        if [[ -f "$script_file" && -x "$script_file" ]]; then
-#            if [[ ! -s "$script_file" ]]; then
-#                recorder
-#            else
-#                recorder "$script_file"
-#            fi
-#            pause
-#        fi
-#        mark_completed "${MODULES[$current_index]}" "$start_time"
-#        ((current_index++))
-#    done
-
-    submit_results
+    module=$(echo $(dirname "$MARKDOWN_DIR") | tr '/' '_')
+    submit_results $module
     echo "Mission Complete!"
     pause
 }
