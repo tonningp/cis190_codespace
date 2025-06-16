@@ -1,6 +1,6 @@
 #!/bin/bash
 #for debugging
-RESET_PROGRESS="1"
+#RESET_PROGRESS="1"
 
 export content_base="missions"
 export module_start="run_module"
