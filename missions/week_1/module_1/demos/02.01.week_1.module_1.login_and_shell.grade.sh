@@ -8,6 +8,7 @@ VALID_USERNAME="student"
 VALID_PASSWORD="linux123"
 
 while true; do
+    echo 
     echo -n "Username: "
     read username
 
