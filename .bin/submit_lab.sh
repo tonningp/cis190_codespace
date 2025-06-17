@@ -3,11 +3,11 @@ if [[ -z $1 ]]; then
   echo "Usage: $0 <module_name>"
   exit 1
 fi
+SUBMIT_URL="https://cis.vvc.edu/submit_assignment/submit-file"
 module="$1"
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 source "$TOP_DIR/environment.sh"
 # ---- CONFIG ----
-SUBMIT_URL="https://cis.vvc.edu/submit_assignment/submit-file"
 TMPDIR="/tmp/lab_submit_$RANDOM"
 mkdir -p "$TMPDIR"
 
@@ -28,12 +28,12 @@ OUTFILE="${STUDENT_ID}_${FIRSTNAME}_${LASTNAME}_${module}_$(date +%Y%m%d_%H%M%S)
 
 # ---- BUNDLE FILES ----
 #echo "[*] Collecting files for $STUDENT_ID into $OUTFILE..."
-
-cp -r ${LOG_BASE}/* "$TMPDIR/" 2>/dev/null
-cp -r ${MARKDOWN_DIR}/* "$TMPDIR/" 2>/dev/null
+cp -r "${BASE_DIR}/home" "$TMPDIR/home" 2>/dev/null
+cp -r ${LOG_BASE} "$TMPDIR/logs" 2>/dev/null
+rm -r ${LOG_BASE}/* 2>/dev/null
+cp -r ${MARKDOWN_DIR} "$TMPDIR/content" 2>/dev/null
 
 hostname > "$TMPDIR/hostname.txt"
-date > "$TMPDIR/submitted_at.txt"
 
 tar czf "$OUTFILE" -C "$TMPDIR" .
 if [[ $? -ne 0 ]]; then

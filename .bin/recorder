@@ -49,6 +49,7 @@ alias passwd='sim_passwd.sh'
 alias mdview='python3 -m rich.markdown -w 80 -y'
 alias start='echo "Cannot run start command in this training shell."'
 alias lab="clear;echo \"Reading: ${BASE_NAME}\" && mdview $MARKDOWN_DIR/$BASE_NAME.md"
+cd ${BASE_DIR}/home
 EOF
 
 export STARTUP_OPTIONS="--rcfile ${RCFILE}"
