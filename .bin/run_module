@@ -250,7 +250,10 @@ main() {
         esac
     done
 
-    module=$(echo $(dirname "$MARKDOWN_DIR") | tr '/' '_')
+    fullpath=$(echo $(dirname "$MARKDOWN_DIR"))
+    IFS='/' read -ra parts <<< "$fullpath"
+    len=${#parts[@]}
+    module=$(echo "${parts[len-2]}/${parts[len-1]}"| tr '/' '_')
     submit_results $module
     echo "Mission Complete!"
     pause
