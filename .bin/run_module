@@ -60,7 +60,7 @@ mark_completed() {
     end=$(date +%Y-%m-%dT%H:%M:%S)
     local duration=$(( $(date -d "$end" +%s) - $(date -d "$start" +%s) ))
 
-    echo -e "${module}\t${op}\t${start}\t${duration}\t${end}" >> "$TRACKER_FILE"
+    echo "${module}\t${op}\t${start}\t${duration}\t${end}" >> $TRACKER_FILE
 }
 
 is_completed() {
