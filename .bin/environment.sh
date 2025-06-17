@@ -57,6 +57,9 @@ export DEMO_DIR="$BASE_DIR/demos"
 export MARKDOWN_DIR="$BASE_DIR/content"
 export PROFILE_DIR="$BASE_DIR/.profile"
 export LOG_BASE="${BASE_DIR}/history"
+if [[ ! -d "$LOG_BASE" ]]; then
+    mkdir -p "$LOG_BASE"
+fi
 export TRACKER_FILE="${LOG_BASE}/progress_tracker.log"
 #[[ "$RESET_PROGRESS" == "1" ]] && rm -f "$TRACKER_FILE"
 
