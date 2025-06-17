@@ -145,14 +145,16 @@ main() {
 
     choose_topic() {
         OPTIONS=()
-        for i in "${!MODULES[@]}"; do
-            OPTIONS+=("$i" "${MODULES[$i]}")
+        for i in "${!SLIDES[@]}"; do
+            OPTIONS+=("$i" "$(basename ${SLIDES[$i]} | sed 's/\.md$//')")
         done
 
-        selection=$(dialog --clear \
+        selection=$(
+            TERM=xterm-256color DIALOGRC=${TOP_DIR}/dialogrc \
+            dialog --clear \
             --backtitle "Choose Topic" \
             --title "Available Topics" \
-            --menu "Select a topic to revisit:" 20 70 12 \
+            --menu "Select a topic to visit:" 20 70 12 \
             "${OPTIONS[@]}" \
             3>&1 1>&2 2>&3)
 
@@ -199,12 +201,19 @@ main() {
         start_time=$(date +%Y-%m-%dT%H:%M:%S)
         TOPIC=$(basename "${SLIDES[$INDEX]}" .md)
         show_slide "$TOPIC"
-        read -rsn1 -p $'\nEnter choice: [\e[1;33mn\e[0m] Next  [\e[1;33mp\e[0m] Prev  [\e[1;33mq\e[0m] Quit (Back to Menu): ' key
+        read -rsn1 -p $'\nEnter choice: [\e[1;33mg\e[0m] Goto [\e[1;33mn\e[0m] Next  [\e[1;33mp\e[0m] Prev  [\e[1;33mq\e[0m] Quit (Back to Menu): ' key
         if [[ $key == $'\e' ]]; then
             read -rsn2 rest  # read next two bytes
             key+=$rest
         fi
-
+        if [[ $key == 'g' ]]; then
+            echo "Choose a topic to go to:"
+            I=$(choose_topic)
+            if [[ ! -z "$I" ]]; then
+                INDEX=$I
+            fi
+            continue
+        fi
         cast_file="$CONTENT_DIR/${TOPIC}.cast"
         script_file="$DEMO_DIR/${TOPIC}.sh"
         quiz_file="$CONTENT_DIR/${TOPIC}.quiz.yaml"

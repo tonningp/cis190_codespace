@@ -124,12 +124,4 @@ By the end of this mission, you should:
 
 > This is where your toolkit starts to grow. Come ready.
 
-```
-
 ---
-
-Let me know if you'd like:
-- This written into a `week1/README.md` auto-gen script
-- A set of 8 templates scaffolded ahead of time for all weeks
-- A sample `navigation_log.txt` for students to model their submission after
-```
