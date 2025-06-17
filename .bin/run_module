@@ -60,7 +60,7 @@ mark_completed() {
     end=$(date +%Y-%m-%dT%H:%M:%S)
     local duration=$(( $(date -d "$end" +%s) - $(date -d "$start" +%s) ))
 
-    echo "${module}\t${op}\t${start}\t${duration}\t${end}" >> $TRACKER_FILE
+    echo -e "${module}\t${op}\t${start}\t${duration}\t${end}" >> $TRACKER_FILE
 }
 
 is_completed() {
@@ -209,6 +209,8 @@ main() {
         script_file="$DEMO_DIR/${TOPIC}.sh"
         quiz_file="$CONTENT_DIR/${TOPIC}.quiz.yaml"
         mark_completed "$TOPIC" "$start_time" "read"
+        echo "$TOPIC $start_time read marked completed in $TRACKER_FILE"
+        pause
         # check if there is an exercise for this topic
         if [[ ($key == $'\e[C' || $key == 'n') && -f "$script_file" && -x "$script_file" ]]; then
             start_time=$(date +%Y-%m-%dT%H:%M:%S)
