@@ -230,6 +230,9 @@ main() {
         fi
         case "$key" in
             $'\e[C' | n) # right arrow or 'n' for next
+                if (( INDEX == TOTAL - 1));then
+                    break;
+                fi
                 if (( INDEX < TOTAL - 1 )); then
                     ((INDEX++))
                 fi
