@@ -21,6 +21,27 @@
 history/
 debug.txt
 debug.log
+venv
+# Ignore Python-specific files
+*.pyc
+*.pyo
+__pycache__/
+# Ignore virtual environments
+venv/
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+# Ignore IDE/editor specific files
+.idea/
+.vscode/
+# Ignore Python package distribution files
+*.egg
+*.egg-info/
+dist/
+build/
+# Ignore Python cache directories
+.cache/
+# Ignore coverage reports
+.coverage
 
 # Ignore compiled binaries (just in case)
 *.out
