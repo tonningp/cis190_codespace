@@ -1,4 +1,5 @@
 #!/bin/bash
+START_DATE="2025-06-23"
 
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 export PROFILE_DB="${TOP_DIR}/../.db/profile.sqlite3"
@@ -19,7 +20,6 @@ else
   echo "[!] Profile database not found at $PROFILE_DB"
   exit 1
 fi
-START_DATE="2025-06-13"
 if [ -z "$TMUX" ]; then
     exec tmux new-session "$0"
 fi
@@ -73,11 +73,35 @@ main() {
 
 
 	display_modules() {
+        BOLD_YELLOW_ON_BLACK='\e[1;33;40m'
+        RESET='\e[0m'
 
 	    # Collect module list (strip ./, keep relative paths)
         cd "$(dirname "$TOP_DIR")/missions" || exit 1
-	    mapfile -t modules < <(find . -mindepth 1 -maxdepth 2 -type d -name "*module*" | sed 's|^\./||' | sort -u)
+	    #mapfile -t module_dirs < <(find . -mindepth 1 -maxdepth 2 -type d -name "*module*" | sed 's|^\./||' | sort -u)
+	    mapfile -t module_dirs < <(
+                              for f in week*; do
+                                  for m in "$f"/*; do
+                                    [ -d "$m" ] && echo "$f/$(basename "$m")"
+                                  done
+                             done | sed 's|^\./||' | sort -u)
+	    mapfile -t modules < <(
+                                 for d in week*/module*; do
+                                     post=""
+                                     if echo $d | grep -q "week_${WEEK_NUMBER}" ; then
+                                         post=" <--"
+                                     fi
+                                     week=$(basename "$(dirname "$d")" | sed 's/_/ /g')
+                                     module=$(basename "$d" | sed 's/_/ /g')
+                                     echo "${week^} - ${module^}${post}"
+                                  done | sed 's|^\./||' | sort -u)
 
+                              #for f in week*; do
+                              #    for m in "$f"/*; do
+                              #        [ -d "$m" ] && echo "$f - $(basename "$m" | sed 's/_/ /g')"
+                              #    done
+
+	    module_dirs=("Quit" "${module_dirs[@]}")  # Add "Quit" option at the beginning
 	    modules=("Quit" "${modules[@]}")  # Add "Quit" option at the beginning
 	    # Exit if no modules found
 	    if [[ ${#modules[@]} -eq 0 ]]; then
@@ -100,7 +124,7 @@ main() {
           "${OPTIONS[@]}" \
           2>&1 > /dev/tty )
 
-	    echo "${modules[$selection]}"
+	    echo "${module_dirs[$selection]}"
 	}
 
 	target_dir=""
