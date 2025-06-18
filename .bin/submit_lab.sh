@@ -3,7 +3,6 @@ if [[ -z $1 ]]; then
   echo "Usage: $0 <module_name>"
   exit 1
 fi
-SUBMIT_URL="https://cis.vvc.edu/submit_assignment/submit-file"
 module="$1"
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 source "$TOP_DIR/environment.sh"

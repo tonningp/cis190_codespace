@@ -16,6 +16,7 @@ python3 -m pip install --quiet  --upgrade pip
 (cd $PYTHON_DIR&&python3 -m venv venv&&source venv/bin/activate&&pip install --quiet --upgrade pip&&pip install --quiet -r requirements.txt)
 if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
 echo "export PATH=\"$BIN_PATH:\$PATH\"" >> "$SHELL_RC"
+echo "export SUBMIT_URL="https://cis.vvc.edu/submit_assignment/submit-file" >> "$SHELL_RC"  
 echo "announce" >> "$SHELL_RC"
 cat <<'EOS' >> $SHELL_RC
 EOS
