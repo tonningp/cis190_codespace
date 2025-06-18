@@ -1,5 +1,5 @@
 {
-  "score": 5,
+  "score": 4,
   "total": 5,
   "answers": [
     [
@@ -7,9 +7,7 @@
     ],
     false,
     "ls",
-    [
-      1
-    ],
+    [],
     true
   ]
 }

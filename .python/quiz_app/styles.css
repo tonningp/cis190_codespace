@@ -1,13 +1,29 @@
 /* styles.css */
 
 /* General layout */
+
 Screen {
     layout: vertical;
+    align: center middle;
     padding: 1 2;
 }
 
+#quiz-container {
+    max-width: 80;
+    width: 100%;
+    margin: 1 2;
+}
+
+#progress {
+    text-align: center;
+    padding: 1;
+}
+
+
 /* Quiz title styling */
 #title {
+    text-align: center;
+    padding: 1 0;
     content-align: center middle;
     color: green;
     text-style: bold;
