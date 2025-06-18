@@ -15,6 +15,13 @@ Screen {
     margin: 1 2;
 }
 
+#quiz-summary {
+    height: 1fr;               /* fill remaining space */
+    overflow-y: auto;          /* enable vertical scroll */
+    scrollbar-gutter: stable;  /* keep scroll space consistent */
+}
+
+
 #progress {
     text-align: center;
     padding: 1;

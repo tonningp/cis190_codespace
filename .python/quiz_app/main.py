@@ -23,7 +23,10 @@ def log_debug(message: str):
 
 class QuizApp(App):
     CSS_PATH = "styles.css"
-    BINDINGS = [("q", "quit", "Quit the quiz")]
+    BINDINGS = [("q", "quit", "Quit the quiz"),
+                 ("j", "scroll_down", "Scroll down"),
+                ("k", "scroll_up", "Scroll up"),
+                ]
 
     def __init__(self, quiz_file):
         super().__init__()
@@ -98,6 +101,12 @@ class QuizApp(App):
         answered = self.user_answers[self.current] is not None
         check = " ✔" if answered else ""
         progress_bar.update(f"[{bar}] {percent}% — Q{self.current + 1} of {len(self.questions)}{check}")
+    
+    def action_scroll_down(self):
+        self.query_one("#quiz-summary", ScrollView).scroll_down()
+
+    def action_scroll_up(self):
+        self.query_one("#quiz-summary", ScrollView).scroll_up()
 
     async def on_button_pressed(self, event):
         label = str(event.button.label).lower()
@@ -156,8 +165,10 @@ class QuizApp(App):
 
         score = 0
         #scroll_view = self.query_one("#scroll-container",ScrollView)
-        scroll_view = ScrollView(id="scroll-container")
-        container.mount(scroll_view)
+        scroll_view = ScrollView(id="quiz-summary")
+        v = Vertical()
+        container.mount(v)
+        v.mount(scroll_view)
         scroll_view.mount(Static("Quiz complete!", id="result"))
 
         for i, (q, ans) in enumerate(zip(self.questions, self.user_answers)):
