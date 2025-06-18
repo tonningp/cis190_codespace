@@ -13,7 +13,7 @@ echo "🕒 Please wait, this may take a few minutes..."
 sudo apt update -y -qq
 sudo apt install -y -qq tmux dialog
 python3 -m pip install --quiet  --upgrade pip
-(cd $PYTHON_DIR&&python3 -m venv venv&&source venv/bin/activate&&pip install textual pyyaml requests BeautifulSoup4)
+(cd $PYTHON_DIR&&python3 -m venv venv&&source venv/bin/activate&&pip install --quiet --upgrade pip&&pip install --quiet -r requirements.txt)
 if [[ ":$PATH:" != *":$BIN_PATH:"* ]]; then
 echo "export PATH=\"$BIN_PATH:\$PATH\"" >> "$SHELL_RC"
 echo "announce" >> "$SHELL_RC"
@@ -32,9 +32,10 @@ function update() {
   (cd ${WORKSPACE_DIR} && git pull -q && echo "Updated!")
 }
 export -f update
-function mission() {
+function missions() {
   (cd ${WORKSPACE_DIR}/missions && ls -1)
 }
+export -f missions
 alias play='asciinema play'
 alias record='asciinema rec'
 EOF
