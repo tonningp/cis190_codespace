@@ -1,0 +1,13 @@
+quiz_title: "Module 1: Linux Basics"
+questions:
+  - type: "multiple_choice"
+    prompt: "Which of these are valid Linux shells?"
+    options:
+      - "bash"
+      - "zsh"
+      - "fish"
+      - "powershell"
+    correct_answers: [0, 1, 2]
+  - type: "true_false"
+    prompt: "The `cd` command is used to list files in a directory."
+    correct_answer: false

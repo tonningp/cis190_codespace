@@ -9,7 +9,7 @@ VALID_PASSWORD="linux123"
 
 while true; do
     echo 
-    echo -n "Username: "
+    echo -n "hostname login: "
     read username
 
     echo -n "Password: "
