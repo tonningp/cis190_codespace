@@ -6,4 +6,4 @@ class Question:
     type: str
     prompt: str
     options: List[str] = None
-    correct_answers: Union[List[int], bool] = None
+    correct_answer: Union[List[int], bool] = None

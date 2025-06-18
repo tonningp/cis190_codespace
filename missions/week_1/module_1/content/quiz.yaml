@@ -1,0 +1,33 @@
+quiz_type: yaml_quiz
+quiz_title: "Week 1 Module 1 Quiz – Introduction to Linux and the Shell"
+
+questions:
+  - type: multiple_choice
+    prompt: "Which of the following best describes the role of an operating system?"
+    options:
+      - "Manage hardware and software resources"
+      - "Write application code"
+      - "Compile source code into machine code"
+      - "Design user interfaces for apps"
+    correct_answer: [0]
+
+  - type: true_false
+    prompt: "The Linux shell is a graphical interface used to interact with the operating system."
+    correct_answer: false
+
+  - type: short_answer
+    prompt: "What command is used to list files in a directory in Linux?"
+    correct_answer: "^ls$"
+
+  - type: multiple_choice
+    prompt: "Which of the following best describes the Linux kernel?"
+    options:
+      - "A hardware controller that executes BIOS instructions"
+      - "A core part of the OS that manages CPU, memory, and devices"
+      - "A user-friendly shell for command input"
+      - "An application used to browse the internet"
+    correct_answer: [1]
+
+  - type: true_false
+    prompt: "Commands typed into the shell are interpreted and then passed to the kernel for execution."
+    correct_answer: true

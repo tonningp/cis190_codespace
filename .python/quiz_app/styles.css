@@ -1,0 +1,53 @@
+/* styles.css */
+
+/* General layout */
+Screen {
+    layout: vertical;
+    padding: 1 2;
+}
+
+/* Quiz title styling */
+#title {
+    content-align: center middle;
+    color: green;
+    text-style: bold;
+    height: 3;
+    border: round white;
+    margin: 1 0;
+}
+
+/* Question prompt */
+Static {
+    padding: 1;
+    text-style: bold;
+    color: yellow;
+    background: #1e1e1e;
+}
+
+/* Option buttons */
+Button {
+    margin: 1 0;
+    border: round;
+    background: #2c2c2c;
+    color: white;
+}
+
+Button:hover {
+    background: #444444;
+    text-style: bold;
+    color: cyan;
+}
+
+/* Result screen */
+#result {
+    content-align: center middle;
+    text-style: bold;
+    color: magenta;
+}
+
+Button.selected {
+    background: darkgreen;
+    color: white;
+    text-style: bold;
+}
+
