@@ -1,10 +1,10 @@
+
 import os
 import sys
 import json
 import re
 from textual.app import App, ComposeResult
 from textual.widgets import Static, Button, Input, Footer
-from textual.scroll_view import ScrollView
 from textual.containers import Vertical, Horizontal
 from parser import load_questions
 import requests
@@ -28,28 +28,21 @@ class QuizApp(App):
     def __init__(self, quiz_file):
         super().__init__()
         self.quiz_file = quiz_file
-        self.quiz_title = ""
-        self.questions = []
+        self.quiz_title, self.questions = self.load_quiz(self.quiz_file)
         self.current = 0
-        self.user_answers = []
+        self.user_answers = [None] * len(self.questions)
         self.selected_options = set()
 
     def compose(self) -> ComposeResult:
-        log_debug("✅ compose() was called")
-        yield Static("Loading quiz...", id="title")
+        yield Static(self.quiz_title, id="title")
         yield Vertical(id="quiz-container")
-#        yield ScrollView(id="scroll-container")
         yield Static("", id="progress")
+        #log_debug(f"✅ compose() was called {self.quiz_title}")
+
 
     def on_mount(self) -> None:
-        log_debug("✅ on_mount() was called")
-        self.quiz_title, self.questions = self.load_quiz(self.quiz_file)
-        self.user_answers = [None] * len(self.questions)
-
-        title_widget = self.query_one("#title", Static)
-        title_widget.update(self.quiz_title)
-
         self.update_question_ui()
+        #log_debug(f"✅ on_mount() was called {self.quiz_title}")
 
     def update_question_ui(self):
         container = self.query_one("#quiz-container", Vertical)
@@ -102,7 +95,7 @@ class QuizApp(App):
     async def on_button_pressed(self, event):
         label = str(event.button.label).lower()
 
-        if str(event.button.label).lower() == "exit quiz":
+        if str(event.button.label) == "Exit Quiz":
             await self.action_quit()
             return
 
@@ -155,10 +148,7 @@ class QuizApp(App):
         container.remove_children()
 
         score = 0
-        #scroll_view = self.query_one("#scroll-container",ScrollView)
-        scroll_view = ScrollView(id="scroll-container")
-        container.mount(scroll_view)
-        scroll_view.mount(Static("Quiz complete!", id="result"))
+        container.mount(Static("Quiz complete!", id="result"))
 
         for i, (q, ans) in enumerate(zip(self.questions, self.user_answers)):
             correct = q.correct_answer
@@ -202,17 +192,16 @@ class QuizApp(App):
             except Exception as e:
                 feedback = f"Q{i+1}: Error computing result: {e}"
 
-            scroll_view.mount(Static(feedback))
+            container.mount(Static(feedback))
 
-        scroll_view.mount(Static(f"Score: {score}/{len(self.questions)}"))
-        container.mount(Button("Exit Quiz"))
-
+        container.mount(Static(f"Score: {score}/{len(self.questions)}"))
         with open("quiz_results.json", "w") as f:
             json.dump({
                 "score": score,
                 "total": len(self.questions),
                 "answers": self.user_answers,
             }, f, indent=2)
+        container.mount(Button("Exit Quiz"))
 
     def load_quiz(self, path_or_url):
         if path_or_url.startswith("http://") or path_or_url.startswith("https://"):
