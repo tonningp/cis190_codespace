@@ -4,9 +4,12 @@ import sys
 import json
 import re
 from textual.app import App, ComposeResult
-from textual.widgets import Static, Button, Input
-from textual.containers import Vertical
+from textual.widgets import Static, Button, Input, Footer
+from textual.containers import Vertical, Horizontal
 from parser import load_questions
+import requests
+import io
+import yaml
 from models import Question
 
 expected_path = "/workspaces/codespaces-blank/cis190_codespace/.python"
@@ -19,8 +22,10 @@ class QuizApp(App):
     BINDINGS = [("q", "quit", "Quit the quiz")]
 
     def __init__(self, quiz_file):
+        self.quiz_title = ""
+        self.questions = []
         super().__init__()
-        self.quiz_title, self.questions = load_questions(quiz_file)
+        self.quiz_title, self.questions = self.load_quiz(quiz_file)
         self.current = 0
         self.user_answers = [None] * len(self.questions)
         self.selected_options = set()
@@ -28,27 +33,18 @@ class QuizApp(App):
     def compose(self) -> ComposeResult:
         yield Static(self.quiz_title, id="title")
         yield Vertical(id="quiz-container")
+        yield Static("", id="progress")  # Bottom progress bar
 
     def on_mount(self) -> None:
         self.update_question_ui()
 
     def update_question_ui(self):
         container = self.query_one("#quiz-container", Vertical)
+        progress_bar = self.query_one("#progress", Static)
         container.remove_children()
         self.selected_options = set()
 
         q: Question = self.questions[self.current]
-
-        # Visual progress bar and checkmark if answered
-        progress_fraction = (self.current + 1) / len(self.questions)
-        progress_bar_len = 20
-        filled_len = int(progress_bar_len * progress_fraction)
-        bar = "█" * filled_len + "-" * (progress_bar_len - filled_len)
-        percent = int(progress_fraction * 100)
-        answered = self.user_answers[self.current] is not None
-        check = " ✔" if answered else ""
-        container.mount(Static(f"Progress: Q{self.current + 1} of {len(self.questions)}{check}"))
-        container.mount(Static(f"[{bar}] {percent}%"))
         container.mount(Static(q.prompt))
 
         if q.type == "multiple_choice":
@@ -59,8 +55,6 @@ class QuizApp(App):
                 if f"option-{i}" in self.selected_options:
                     btn.add_class("selected")
                 container.mount(btn)
-            container.mount(Button("Previous"))
-            container.mount(Button("Next"))
 
         elif q.type == "true_false":
             current_val = self.user_answers[self.current]
@@ -72,15 +66,25 @@ class QuizApp(App):
                 btn_false.add_class("selected")
             container.mount(btn_true)
             container.mount(btn_false)
-            container.mount(Button("Previous"))
-            container.mount(Button("Next"))
 
         elif q.type == "short_answer":
             previous = self.user_answers[self.current] or ""
             input_box = Input(value=previous, placeholder="Type your answer here...", id="short-input")
             container.mount(input_box)
-            container.mount(Button("Previous"))
-            container.mount(Button("Next"))
+
+        nav_row = Horizontal()
+        container.mount(nav_row)
+        nav_row.mount(Button("Previous", classes="nav-btn"))
+        nav_row.mount(Button("Next", classes="nav-btn"))
+
+        progress_fraction = (self.current + 1) / len(self.questions)
+        progress_bar_len = 20
+        filled_len = int(progress_bar_len * progress_fraction)
+        bar = "█" * filled_len + "-" * (progress_bar_len - filled_len)
+        percent = int(progress_fraction * 100)
+        answered = self.user_answers[self.current] is not None
+        check = " ✔" if answered else ""
+        progress_bar.update(f"[{bar}] {percent}% — Q{self.current + 1} of {len(self.questions)}{check}")
 
     async def on_button_pressed(self, event):
         label = str(event.button.label).lower()
@@ -94,7 +98,6 @@ class QuizApp(App):
 
         q: Question = self.questions[self.current]
 
-        # MULTIPLE CHOICE
         if q.type == "multiple_choice" and event.button.id and event.button.id.startswith("option-"):
             if event.button.id in self.selected_options:
                 self.selected_options.remove(event.button.id)
@@ -104,7 +107,6 @@ class QuizApp(App):
                 event.button.add_class("selected")
             return
 
-        # TRUE/FALSE
         if q.type == "true_false":
             if label == "true":
                 self.user_answers[self.current] = True
@@ -115,7 +117,6 @@ class QuizApp(App):
                 self.update_question_ui()
                 return
 
-        # SHORT ANSWER
         if q.type == "short_answer":
             input_widget = self.query_one("#short-input", Input)
             self.user_answers[self.current] = input_widget.value.strip()
@@ -188,16 +189,28 @@ class QuizApp(App):
             container.mount(Static(feedback))
 
         container.mount(Static(f"Score: {score}/{len(self.questions)}"))
-
         with open("quiz_results.json", "w") as f:
             json.dump({
                 "score": score,
                 "total": len(self.questions),
                 "answers": self.user_answers,
             }, f, indent=2)
-
         container.mount(Button("Exit Quiz"))
 
+
+    def load_quiz(self, path_or_url):
+        if path_or_url.startswith("http://") or path_or_url.startswith("https://"):
+            try:
+                response = requests.get(path_or_url)
+                response.raise_for_status()
+                data = yaml.safe_load(io.StringIO(response.text))
+            except Exception as e:
+                print(f"Error loading quiz from URL: {e}")
+                sys.exit(1)
+        else:
+            data = load_questions(path_or_url)
+            return data
+        return data.get("title", ""), data.get("questions", [])
 if __name__ == "__main__":
     quiz_file = sys.argv[1] if len(sys.argv) > 1 else "questions/sample_quiz.yaml"
     app = QuizApp(quiz_file)
