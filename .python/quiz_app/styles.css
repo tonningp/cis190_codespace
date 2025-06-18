@@ -9,6 +9,7 @@ Screen {
 }
 
 #quiz-container {
+    align: center middle;
     max-width: 80;
     width: 100%;
     margin: 1 2;
@@ -22,12 +23,15 @@ Screen {
 
 /* Quiz title styling */
 #title {
+    max-width: 80;
     text-align: center;
     padding: 1 0;
-    content-align: center middle;
-    color: green;
+    /*align: center middle;*/
+    /*color: yellow;*/
+    color: ansi_bright_green;
+    background: #1e1e1e;
     text-style: bold;
-    height: 3;
+    height: 5;
     border: round white;
     margin: 1 0;
 }

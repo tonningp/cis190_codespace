@@ -17,15 +17,18 @@ if not os.path.abspath(os.getcwd()).startswith(expected_path):
     print(f"Error: This application must be run from within '{expected_path}'")
     sys.exit(1)
 
+def log_debug(message: str):
+    with open("debug.log", "a") as f:
+        f.write(message + "\n")
+
 class QuizApp(App):
     CSS_PATH = "styles.css"
     BINDINGS = [("q", "quit", "Quit the quiz")]
 
     def __init__(self, quiz_file):
-        self.quiz_title = ""
-        self.questions = []
         super().__init__()
-        self.quiz_title, self.questions = self.load_quiz(quiz_file)
+        self.quiz_file = quiz_file
+        self.quiz_title, self.questions = self.load_quiz(self.quiz_file)
         self.current = 0
         self.user_answers = [None] * len(self.questions)
         self.selected_options = set()
@@ -33,10 +36,13 @@ class QuizApp(App):
     def compose(self) -> ComposeResult:
         yield Static(self.quiz_title, id="title")
         yield Vertical(id="quiz-container")
-        yield Static("", id="progress")  # Bottom progress bar
+        yield Static("", id="progress")
+        #log_debug(f"✅ compose() was called {self.quiz_title}")
+
 
     def on_mount(self) -> None:
         self.update_question_ui()
+        #log_debug(f"✅ on_mount() was called {self.quiz_title}")
 
     def update_question_ui(self):
         container = self.query_one("#quiz-container", Vertical)
@@ -197,7 +203,6 @@ class QuizApp(App):
             }, f, indent=2)
         container.mount(Button("Exit Quiz"))
 
-
     def load_quiz(self, path_or_url):
         if path_or_url.startswith("http://") or path_or_url.startswith("https://"):
             try:
@@ -209,8 +214,8 @@ class QuizApp(App):
                 sys.exit(1)
         else:
             data = load_questions(path_or_url)
-            return data
-        return data.get("title", ""), data.get("questions", [])
+        return data
+
 if __name__ == "__main__":
     quiz_file = sys.argv[1] if len(sys.argv) > 1 else "questions/sample_quiz.yaml"
     app = QuizApp(quiz_file)

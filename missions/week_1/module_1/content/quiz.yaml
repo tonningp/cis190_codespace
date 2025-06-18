@@ -1,5 +1,5 @@
 quiz_type: yaml_quiz
-quiz_title: "Week 1 Module 1 Quiz – Introduction to Linux and the Shell"
+title: "Week 1 Module 1 Quiz – Introduction to Linux and the Shell"
 
 questions:
   - type: multiple_choice

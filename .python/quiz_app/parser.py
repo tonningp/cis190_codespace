@@ -7,4 +7,4 @@ def load_questions(file_path: str):
     questions = []
     for q in data["questions"]:
         questions.append(Question(**q))
-    return data["quiz_title"], questions
+    return data["title"], questions
