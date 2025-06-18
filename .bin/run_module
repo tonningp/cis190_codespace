@@ -261,14 +261,13 @@ main() {
     # check if there is a quiz for this module
     quiz_file="$CONTENT_DIR/quiz.yaml"
     if [[ -f "$quiz_file" ]]; then
+        clear
         start_time=$(date +%Y-%m-%dT%H:%M:%S)
         if ! quiz "$quiz_file"; then
             echo "Quiz failed. Please try again."
-            pause
         else
             mark_completed "$module" "$start_time" "quiz"
             echo "Quiz completed successfully!"
-            pause
         fi
     fi
     fullpath=$(echo $(dirname "$MARKDOWN_DIR"))

@@ -4,8 +4,7 @@ import json
 import re
 from textual.app import App, ComposeResult
 from textual.widgets import Static, Button, Input, Footer
-from textual.scroll_view import ScrollView
-from textual.containers import Vertical, Horizontal
+from textual.containers import Vertical, Horizontal, VerticalScroll
 from parser import load_questions
 import requests
 import io
@@ -38,14 +37,11 @@ class QuizApp(App):
         self.selected_options = set()
 
     def compose(self) -> ComposeResult:
-        log_debug("✅ compose() was called")
         yield Static("Loading quiz...", id="title")
         yield Vertical(id="quiz-container")
-#        yield ScrollView(id="scroll-container")
         yield Static("", id="progress")
 
     def on_mount(self) -> None:
-        log_debug("✅ on_mount() was called")
         self.quiz_title, self.questions = self.load_quiz(self.quiz_file)
         self.user_answers = [None] * len(self.questions)
 
@@ -103,10 +99,16 @@ class QuizApp(App):
         progress_bar.update(f"[{bar}] {percent}% — Q{self.current + 1} of {len(self.questions)}{check}")
     
     def action_scroll_down(self):
-        self.query_one("#quiz-summary", ScrollView).scroll_down()
+        scroll = self.query_one("#quiz-summary", expect_type=VerticalScroll)
+        scroll.scroll_to(y=scroll.scroll_offset.y + 5)
+        #log_debug("Scrolled down")
 
     def action_scroll_up(self):
-        self.query_one("#quiz-summary", ScrollView).scroll_up()
+        scroll = self.query_one("#quiz-summary", expect_type=VerticalScroll)
+        scroll.scroll_to(y=scroll.scroll_offset.y - 5)
+        #log_debug("Scrolled up")
+
+
 
     async def on_button_pressed(self, event):
         label = str(event.button.label).lower()
@@ -165,11 +167,12 @@ class QuizApp(App):
 
         score = 0
         #scroll_view = self.query_one("#scroll-container",ScrollView)
-        scroll_view = ScrollView(id="quiz-summary")
-        v = Vertical()
-        container.mount(v)
-        v.mount(scroll_view)
-        scroll_view.mount(Static("Quiz complete!", id="result"))
+        scroll_view = VerticalScroll(id="quiz-summary")
+        await container.mount(scroll_view)
+        #v = Vertical()
+        #container.mount(v)
+        #v.mount(scroll_view)
+        await scroll_view.mount(Static("Quiz complete!", id="result"))
 
         for i, (q, ans) in enumerate(zip(self.questions, self.user_answers)):
             correct = q.correct_answer
@@ -213,9 +216,9 @@ class QuizApp(App):
             except Exception as e:
                 feedback = f"Q{i+1}: Error computing result: {e}"
 
-            scroll_view.mount(Static(feedback))
+            await scroll_view.mount(Static(feedback))
 
-        scroll_view.mount(Static(f"Score: {score}/{len(self.questions)}"))
+        await scroll_view.mount(Static(f"Score: {score}/{len(self.questions)}"))
         container.mount(Button("Exit Quiz"))
 
         with open("quiz_results.json", "w") as f:
