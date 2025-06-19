@@ -21,6 +21,7 @@ else
   exit 1
 fi
 if [ -z "$TMUX" ]; then
+    export TERM=tmux-256color
     exec tmux new-session "$0"
 fi
 
@@ -33,7 +34,7 @@ export WEEK_NUMBER=$(( (DAYS_ELAPSED / 7) + 1 ))
 
 INTERRUPTED=0
 yesno() {
-    TERM=xterm-256color DIALOGRC="${TOP_DIR}/dialogrc" \
+    TERM=tmux-256color DIALOGRC="${TOP_DIR}/dialogrc" \
     dialog --clear \
            --backtitle "${1:-Confirmation}" \
            --title "${2:-Confirmation}" \
@@ -116,7 +117,7 @@ main() {
 	    done
 	    # Show dialog menu
         selection=$( \
-          TERM=xterm-256color DIALOGRC=${TOP_DIR}/dialogrc \
+          TERM=tmux-256color DIALOGRC=${TOP_DIR}/dialogrc \
           dialog --clear \
           --backtitle "Student: ${FIRSTNAME} ${LASTNAME} - Select the week/module" \
           --title "(${TODAY}) - Hello ${FIRSTNAME} this is WEEK # ${WEEK_NUMBER}" \

@@ -1,11 +1,15 @@
 {
-  "score": 0,
+  "score": 5,
   "total": 5,
   "answers": [
-    [],
-    null,
-    "",
-    [],
-    null
+    [
+      0
+    ],
+    false,
+    "ls",
+    [
+      1
+    ],
+    true
   ]
 }
