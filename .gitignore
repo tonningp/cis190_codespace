@@ -22,6 +22,7 @@ history/
 debug.txt
 debug.log
 venv
+quiz_results.json
 # Ignore Python-specific files
 *.pyc
 *.pyo
