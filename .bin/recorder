@@ -19,6 +19,10 @@ BASE_NAME="$(basename "$TARGET_SCRIPT" .sh)"
 LOG_FILE="${LOG_BASE}/${BASE_NAME}_${TIMESTAMP}.log"
 HIST_FILE="${LOG_BASE}/${BASE_NAME}_${TIMESTAMP}.history.txt"
 
+if [[ ! -d "${BASE_DIR}/home" ]]; then
+  mkdir -p ${BASE_DIR}/home
+fi
+
 if [[ ! -d "${BASE_DIR}/.profile" ]]; then
     mkdir -p "${BASE_DIR}/.profile"
 fi
