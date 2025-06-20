@@ -1,11 +1,22 @@
 #!/bin/bash
+echo ${BASE_DIR}/demos/environ.sh
+source ${BASE_DIR}/demos/environ.sh
+clear
+cat <<EOF
+********************************************************************************
+This is the training shell for the Linux course lab manager.
 
-echo "Demonstrate how to list reasons for the popularity of the Linux operating system."
+In this shell, you will practice linux commands.
 
-echo "1. Open-source nature allows customization and flexibility."
-echo "2. Community support and a vast repository of software."
-echo "3. High security and stability for servers and desktops."
-echo "4. Cost-effective as it is free to use and distribute."
-echo "5. Scalability from embedded systems to supercomputers."
+All work that is required is recorded in this shell.  
+
+For this first exercise:
+1. type $(yellow 'pwd') followed by the Enter key, to see your current working 
+   directory.
+2. Type $(yellow 'exit') followed by the Enter key.
+
+Note, you can also press the Ctrl-D keys to exit this shell.  Hold Ctrl down and 
+press D.
+EOF
 
 exec bash --rcfile $RCFILE

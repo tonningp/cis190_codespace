@@ -64,12 +64,12 @@ if [[ ! -f "$TARGET_SCRIPT" || ! -x "$TARGET_SCRIPT" ]]; then
 if [[ ! -d "${BASE_DIR}/home" ]]; then
     mkdir -p "${BASE_DIR}/home"
 fi
-	script -q -c  "cd ${BASE_DIR}/home && exec bash ${STARTUP_OPTIONS}" "$LOG_FILE"
+	script -q -c  "cd ${BASE_DIR}/home && echo && exec bash ${STARTUP_OPTIONS}" "$LOG_FILE"
 else
 # Start a new shell with the target script
 # Notify user
 # Set up history logging
-  script -q -c "cd ${BASE_DIR} && exec bash ${STARTUP_OPTIONS} $TARGET_SCRIPT" "$LOG_FILE"
+  script -q -c "cd ${BASE_DIR}/home && echo && exec bash ${STARTUP_OPTIONS} $TARGET_SCRIPT" "$LOG_FILE"
 fi
 
 echo "✅ Topic Session complete."
