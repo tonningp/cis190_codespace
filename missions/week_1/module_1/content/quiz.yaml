@@ -1,33 +1,63 @@
 quiz_type: yaml_quiz
-title: "Week 1 Module 1 Quiz – Introduction to Linux and the Shell"
+title: "Linux Systems Quiz – Introduction"
 
 questions:
   - type: multiple_choice
-    prompt: "Which of the following best describes the role of an operating system?"
+    prompt: "Which individual is credited with the initial development of the Linux kernel?"
     options:
-      - "Manage hardware and software resources"
-      - "Write application code"
-      - "Compile source code into machine code"
-      - "Design user interfaces for apps"
-    correct_answer: [0]
-
-  - type: true_false
-    prompt: "The Linux shell is a graphical interface used to interact with the operating system."
-    correct_answer: false
-
-  - type: short_answer
-    prompt: "What command is used to list files in a directory in Linux?"
-    correct_answer: "^ls$"
-
-  - type: multiple_choice
-    prompt: "Which of the following best describes the Linux kernel?"
-    options:
-      - "A hardware controller that executes BIOS instructions"
-      - "A core part of the OS that manages CPU, memory, and devices"
-      - "A user-friendly shell for command input"
-      - "An application used to browse the internet"
+      - "Richard Stallman"
+      - "Linus Torvalds"
+      - "Ken Thompson"
+      - "Andrew Tanenbaum"
     correct_answer: [1]
 
   - type: true_false
-    prompt: "Commands typed into the shell are interpreted and then passed to the kernel for execution."
+    prompt: "The GNU General Public License allows users to copy, modify, and redistribute software freely."
     correct_answer: true
+
+  - type: short_answer
+    prompt: "What programming language is primarily used to write the Linux operating system?"
+    correct_answer: "^C$"
+
+  - type: multiple_choice
+    prompt: "What is a major advantage of using virtual machines over single physical machines?"
+    options:
+      - "Increased power consumption"
+      - "Increased hardware costs"
+      - "Isolation and security benefits"
+      - "Limited operating system support"
+    correct_answer: [2]
+
+  - type: true_false
+    prompt: "Linux was developed as a proprietary operating system by a single company."
+    correct_answer: false
+
+  - type: short_answer
+    prompt: "What does the acronym 'GNU' stand for in the context of the GNU Project?"
+    correct_answer: "^Gnu's Not UNIX$"
+
+  - type: multiple_choice
+    prompt: "Which of the following is a characteristic of free software as defined by the Free Software Foundation?"
+    options:
+      - "High purchase cost"
+      - "Restricted source code access"
+      - "Freedom to redistribute and modify"
+      - "Limited functionality"
+    correct_answer: [2]
+
+  - type: true_false
+    prompt: "Linux supports multitasking, allowing users to run multiple processes at the same time."
+    correct_answer: true
+
+  - type: short_answer
+    prompt: "Name one reason why Linux is popular in the academic field."
+    correct_answer: "^(open source|cost-effective|teaching tool|supports a wide range of hardware)$"
+
+  - type: multiple_choice
+    prompt: "Which organization is known for its role in the development of free software, including components of Linux?"
+    options:
+      - "Microsoft"
+      - "Apple Inc."
+      - "Free Software Foundation"
+      - "IBM"
+    correct_answer: [2]

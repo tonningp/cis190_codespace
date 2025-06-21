@@ -1,5 +1,4 @@
 #!/bin/bash
-echo ${BASE_DIR}/demos/environ.sh
 source ${BASE_DIR}/demos/environ.sh
 clear
 cat <<EOF

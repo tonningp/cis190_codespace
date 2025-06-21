@@ -33,10 +33,12 @@ fi
 cat > ${RCFILE} <<EOF
 source ${TOP_DIR}/bashrc
 cmd_hook() {
+  if [[ -n "$AFTER_COMMANDS" ]]; then
+       eval "$AFTER_COMMANDS"
+  fi
   echo
   echo
   echo -e "\e[30;47mTRAINING SHELL\e[0m"
-  echo -e "\e[30;47mIf you need the lab instructions again, type lab and press Enter.\e[0m"
   echo -e "\e[30;47mWhen you have finished your tasks, type exit and press Enter or press Ctrl+D.\e[0m"
   echo
 }

@@ -1,11 +1,24 @@
 {
-  "score": 0,
-  "total": 5,
+  "score": 10,
+  "total": 10,
   "answers": [
-    [],
-    null,
-    "",
-    [],
-    null
+    [
+      1
+    ],
+    true,
+    "C",
+    [
+      2
+    ],
+    false,
+    "GNU's not UNIX",
+    [
+      2
+    ],
+    true,
+    "open source",
+    [
+      2
+    ]
   ]
 }

@@ -130,6 +130,27 @@ main() {
         fi
     }
 
+    take_quiz() {
+        clear
+        TERM=tmux-256color DIALOGRC="${TOP_DIR}/dialogrc" \
+        dialog --backtitle "Quiz?" \
+               --title "Quiz" \
+               --yesno "Do you want to take the quiz for this module?" 7 50
+
+        response=$?
+        clear
+        quiz_file="$1"
+        if [[ $response -eq 0 ]]; then
+            start_time=$(date +%Y-%m-%dT%H:%M:%S)
+            if ! quiz "$quiz_file"; then
+                echo "Quiz failed! Contact instructor module={$module}."
+            else
+                mark_completed "$module" "$start_time" "quiz"
+                echo "Quiz completed successfully!"
+            fi
+        fi
+    }
+
     run_module_on_sigint() {
         response="$(yesno 'Exit?' 'Exit?' 'You pressed Ctrl+C.\nDo you want to exit the module?')"
         if [[ $response -eq 0 ]]; then
@@ -261,14 +282,7 @@ main() {
     # check if there is a quiz for this module
     quiz_file="$CONTENT_DIR/quiz.yaml"
     if [[ -f "$quiz_file" ]]; then
-        clear
-        start_time=$(date +%Y-%m-%dT%H:%M:%S)
-        if ! quiz "$quiz_file"; then
-            echo "Quiz failed. Please try again."
-        else
-            mark_completed "$module" "$start_time" "quiz"
-            echo "Quiz completed successfully!"
-        fi
+        take_quiz "$quiz_file"
     fi
     fullpath=$(echo $(dirname "$MARKDOWN_DIR"))
     IFS='/' read -ra parts <<< "$fullpath"

@@ -8,6 +8,24 @@ Screen {
     padding: 1 2;
 }
 
+.center {
+    align: center middle;
+}
+
+.choice-grid {
+    	grid-size: 2;
+        grid-columns: 1fr;
+        grid-rows: 5;
+        padding: 1;
+        width: 100%;
+        height: auto;
+        margin: 1;
+	overflow: auto;
+	min-height: 5;
+	max-height: 12;
+        content-align: center middle;
+}
+
 #quiz-container {
     align: center middle;
     max-width: 80;
@@ -55,6 +73,7 @@ Static {
 Button {
     margin: 1 0;
     border: round;
+    height: auto;
     background: #2c2c2c;
     color: white;
 }
@@ -83,4 +102,12 @@ Button.selected {
     color: magenta;
 }
 
+#help-content {
+    height: 100%;
+    width: 100%;
+    padding: 1 2;
+    background: $surface;
+    color: $text;
+    border: heavy $primary;
+}
 

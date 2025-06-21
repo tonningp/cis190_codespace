@@ -1,14 +1,17 @@
 #!/bin/bash
+source ${BASE_DIR}/demos/environ.sh
+clear
 
-echo "Demonstrate how to check the Linux distribution and kernel version."
-echo "You can use the following commands to gather this information:"
-echo
-echo "Check the Linux distribution:"
-echo "cat /etc/os-release"
-echo
-echo "Check the kernel version:"
-echo "uname -r"
-echo
-echo "Try running these commands to understand the adaptability and portability of Linux across various hardware architectures."
+cat <<EOF
+********************************************************************************
+To check the Linux distribution:
+$(cyan "cat /etc/os-release")
+
+Exercise:
+1. Type $(cyan 'cat /etc/os-release') followed by the Enter key to see the Linux
+   distribution information.
+
+NOTE: We will discuss what that file contains later
+EOF
 
 exec bash --rcfile $RCFILE

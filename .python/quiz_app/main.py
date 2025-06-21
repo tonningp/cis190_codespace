@@ -4,12 +4,13 @@ import json
 import re
 from textual.app import App, ComposeResult
 from textual.widgets import Static, Button, Input, Footer
-from textual.containers import Vertical, Horizontal, VerticalScroll
+from textual.containers import Vertical, Horizontal, VerticalScroll, Grid
 from parser import load_questions
 import requests
 import io
 import yaml
 from models import Question
+from modals.helpscreen import HelpScreen
 
 expected_path = "/workspaces/codespaces-blank/cis190_codespace/.python"
 if not os.path.abspath(os.getcwd()).startswith(expected_path):
@@ -25,6 +26,7 @@ class QuizApp(App):
     BINDINGS = [("q", "quit", "Quit the quiz"),
                  ("j", "scroll_down", "Scroll down"),
                 ("k", "scroll_up", "Scroll up"),
+                ("shift+f1", "show_help", "Show Help"),
                 ]
 
     def __init__(self, quiz_file):
@@ -37,6 +39,7 @@ class QuizApp(App):
         self.selected_options = set()
 
     def compose(self) -> ComposeResult:
+        yield Static("Press Shift+F1 for Help, Expand terminal to full screen.  Use tab key to move between choices, press Enter to select the choice, you can also click on the choice with the mouse.", classes="center")
         yield Static("Loading quiz...", id="title")
         yield Vertical(id="quiz-container")
         yield Static("", id="progress")
@@ -62,13 +65,18 @@ class QuizApp(App):
         if q.type == "multiple_choice":
             previous = self.user_answers[self.current] or []
             self.selected_options = {f"option-{i}" for i in previous}
+             # Create grid container
+            grid = Grid(classes="choice-grid")
+            container.mount(grid)
             for i, option in enumerate(q.options):
                 btn = Button(option, id=f"option-{i}")
                 if f"option-{i}" in self.selected_options:
                     btn.add_class("selected")
-                container.mount(btn)
+                grid.mount(btn)
 
         elif q.type == "true_false":
+            grid = Grid(classes="choice-grid")
+            container.mount(grid)
             current_val = self.user_answers[self.current]
             btn_true = Button("True")
             btn_false = Button("False")
@@ -76,8 +84,8 @@ class QuizApp(App):
                 btn_true.add_class("selected")
             elif current_val is False:
                 btn_false.add_class("selected")
-            container.mount(btn_true)
-            container.mount(btn_false)
+            grid.mount(btn_true)
+            grid.mount(btn_false)
 
         elif q.type == "short_answer":
             previous = self.user_answers[self.current] or ""
@@ -107,6 +115,9 @@ class QuizApp(App):
         scroll = self.query_one("#quiz-summary", expect_type=VerticalScroll)
         scroll.scroll_to(y=scroll.scroll_offset.y - 5)
         #log_debug("Scrolled up")
+
+    def action_show_help(self):
+        self.push_screen(HelpScreen())
 
 
 
@@ -172,7 +183,7 @@ class QuizApp(App):
         #v = Vertical()
         #container.mount(v)
         #v.mount(scroll_view)
-        await scroll_view.mount(Static("Quiz complete!", id="result"))
+        await scroll_view.mount(Static("Quiz complete, scroll down to review and see final score! Scroll by using arrow keys or with the mouse scroll.", id="result"))
 
         for i, (q, ans) in enumerate(zip(self.questions, self.user_answers)):
             correct = q.correct_answer
