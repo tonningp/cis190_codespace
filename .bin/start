@@ -1,5 +1,6 @@
 #!/bin/bash
 START_DATE="2025-06-23"
+export TZ="America/Los_Angeles"
 
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 export PROFILE_DB="${TOP_DIR}/../.db/profile.sqlite3"
@@ -12,6 +13,7 @@ if [[ -f "$PROFILE_DB" ]]; then
   export STUDENT_ID=$(sqlite3 "$PROFILE_DB" "SELECT id FROM students LIMIT 1;")
   export FIRSTNAME=$(sqlite3 "$PROFILE_DB" "SELECT firstname FROM students LIMIT 1;")
   export LASTNAME=$(sqlite3 "$PROFILE_DB" "SELECT lastname FROM students LIMIT 1;")
+  export COURSE_NAME="CIS190 - Introduction to Linux"
   if [[ -z "$STUDENT_ID" ]]; then
     echo "[!] student_id not found in $PROFILE_DB"
     exit 1
@@ -79,7 +81,6 @@ main() {
 
 	    # Collect module list (strip ./, keep relative paths)
         cd "$(dirname "$TOP_DIR")/missions" || exit 1
-	    #mapfile -t module_dirs < <(find . -mindepth 1 -maxdepth 2 -type d -name "*module*" | sed 's|^\./||' | sort -u)
 	    mapfile -t module_dirs < <(
                               for f in week*; do
                                   for m in "$f"/*; do
@@ -88,17 +89,17 @@ main() {
                              done | sed 's|^\./||' | sort -u)
 	    mapfile -t modules < <(
                                  for d in week*/module*; do
-                                     post=""
-                                     if echo $d | grep -q "week_${WEEK_NUMBER}" ; then
-                                         post=" <-"
-                                         if [[ -f $d/home/.completed ]]; then
-                                             post="$post $(cat $d/home/.completed)"
-                                         else
-                                             post="$post not completed"
-                                         fi
+                                     if [[ -f $d/home/.completed ]]; then
+                                         post=" \Z2[completed - $(cat $d/home/.completed)]\Zn" # green text
+                                     else
+                                         post=" \Z3[not completed]\Zn" # yellow text
                                      fi
-                                     week=$(basename "$(dirname "$d")" | sed 's/_/ /g')
+                                     if echo $d | grep -q "week_${WEEK_NUMBER}" ; then
+                                         post=" \Zb\Z5<\Zn${post}"
+                                     fi
+                                     week="$(basename "$(dirname "$d")" | sed 's/_/ /g')"
                                      module=$(basename "$d" | sed 's/_/ /g')
+                                     # make week and module names capitalized
                                      echo "${week^} - ${module^}${post}"
                                   done | sed 's|^\./||' | sort -u)
 
@@ -124,9 +125,10 @@ main() {
         selection=$( \
           TERM=tmux-256color DIALOGRC=${TOP_DIR}/dialogrc \
           dialog --clear \
-          --backtitle "Student: ${FIRSTNAME} ${LASTNAME} - Select the week/module" \
-          --title "(${TODAY}) - Hello ${FIRSTNAME} this is WEEK # ${WEEK_NUMBER}" \
-          --menu "Choose a week/module (Use arrow keys or # and press Enter):" 25 70 12 \
+          --colors \
+          --backtitle "\Z6Student:\Zn \Zb${FIRSTNAME} ${LASTNAME}\Zn - \Z6Course:\Zn \Zb${COURSE_NAME}\Zn" \
+          --title " (${TODAY}) - \Zb\Z7Hello ${FIRSTNAME}\Zn this is WEEK # ${WEEK_NUMBER} " \
+          --menu "\ZbChoose a Week and Module\Zn\nUse arrow keys to select then press Enter.\nSelecting with the mouse also works:" 25 70 12 \
           "${OPTIONS[@]}" \
           2>&1 > /dev/tty )
 
