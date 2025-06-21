@@ -1,6 +1,6 @@
 #!/bin/bash
 START_DATE="2025-06-23"
-#START_DATE="2025-06-10"
+#START_DATE="2025-05-08"
 export TZ="America/Los_Angeles"
 
 export TOP_DIR="$(dirname "$(realpath "$0")")"
@@ -111,6 +111,7 @@ main() {
 
 	    module_dirs=("Quit" "${module_dirs[@]}")  # Add "Quit" option at the beginning
 	    modules=("Quit" "${modules[@]}")  # Add "Quit" option at the beginning
+        default_item=$(( (WEEK_NUMBER - 1) * 2 + 1 ))
 	    # Exit if no modules found
 	    if [[ ${#modules[@]} -eq 0 ]]; then
 		    echo "No modules found."
@@ -126,6 +127,7 @@ main() {
         selection=$( \
           DIALOGRC=${TOP_DIR}/dialogrc \
           dialog --clear \
+          --default-item "$default_item" \
           --colors \
           --backtitle "\Z6Student:\Zn \Zb${FIRSTNAME} ${LASTNAME}\Zn - \Z6Course:\Zn \Zb${COURSE_NAME}\Zn" \
           --title " (${TODAY}) - \Zb\Z7Hello ${FIRSTNAME}\Zn this is \Zb\Z7WEEK # ${WEEK_NUMBER}\Zn " \
