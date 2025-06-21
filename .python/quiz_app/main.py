@@ -96,7 +96,7 @@ class QuizApp(App):
             input_box = Input(value=previous, placeholder="Type your answer here...", id="short-input")
             container.mount(input_box)
 
-        nav_row = Horizontal()
+        nav_row = Grid(classes="nav-row")
         container.mount(nav_row)
         nav_row.mount(Button("Previous", classes="nav-btn"))
         nav_row.mount(Button("Next", classes="nav-btn"))

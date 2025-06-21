@@ -3,7 +3,7 @@ title: "Week 2 Module 1 Quiz – Basic Linux Skills for Drone Technicians"
 
 questions:
   - type: multiple_choice
-    prompt: "What is one advantage of using a textual interface over a graphical one in Linux?"
+    prompt: "What is one advantage of using a command line interface over a graphical one in Linux?"
     options:
       - "It requires more system resources."
       - "It is less powerful and flexible than graphical tools."

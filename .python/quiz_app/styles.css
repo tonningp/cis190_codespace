@@ -14,21 +14,22 @@ Screen {
 
 .choice-grid {
     	grid-size: 2;
-        grid-columns: 1fr;
+        grid-columns: 1fr 1fr;
         grid-rows: 5;
+        grid-gutter: 1 1;
         padding: 1;
         width: 100%;
         height: auto;
         margin: 1;
-	overflow: auto;
-	min-height: 5;
-	max-height: 12;
+        overflow: auto;
+        min-height: 5;
+        max-height: 12;
         content-align: center middle;
 }
 
 #quiz-container {
     align: center middle;
-    max-width: 80;
+    max-width: 100%;
     width: 100%;
     margin: 1 2;
 }
@@ -48,7 +49,7 @@ Screen {
 
 /* Quiz title styling */
 #title {
-    max-width: 80;
+    max-width: 100%;
     text-align: center;
     padding: 1 0;
     /*align: center middle;*/
@@ -65,12 +66,16 @@ Screen {
 Static {
     padding: 1;
     text-style: bold;
-    color: yellow;
+    color: white;
     background: #1e1e1e;
 }
 
 /* Option buttons */
 Button {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    content-align: center middle;
     margin: 1 0;
     border: round;
     height: auto;
@@ -92,6 +97,18 @@ Button.selected {
 
 .nav-btn {
     margin: 0 1;
+    align: center middle;
+    width: 15;
+}
+
+.nav-row {
+    grid-size: 2;
+    grid-columns: 1fr 1fr;
+    grid-gutter: 1 1;
+    layout: horizontal;
+    align-horizontal: center;
+    width: 100%;
+    padding: 1 0;
 }
 
 
