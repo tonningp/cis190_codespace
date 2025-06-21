@@ -30,7 +30,7 @@ function quiz() {
 }
 export -f quiz
 function update() {
-  (cd ${WORKSPACE_DIR} && git pull -q && echo "Updated!")
+  (cd ${WORKSPACE_DIR} &&git stash -q &&git pull -q && echo "Updated!")
 }
 export -f update
 function missions() {

@@ -4,6 +4,7 @@
 (cd /workspaces/codespaces-blank/cis190_codespace && git pull -q || exit 1)
 #python3 -m rich.markdown -w 80 cis190_codespace/README.md
 #echo "Remember to run 'source' $(echo ~/.bashrc) to apply changes."
+update > /dev/null
 echo 
 echo "To start the lab manager, run 'start' in your terminal."
 echo
