@@ -92,7 +92,7 @@ main() {
                                      if [[ -f $d/home/.completed ]]; then
                                          post=" \Z2[completed - $(cat $d/home/.completed)]\Zn" # green text
                                      else
-                                         post=" \Z3[not completed]\Zn" # yellow text
+                                         post=" \Z3[*]\Zn" # yellow text
                                      fi
                                      if echo $d | grep -q "week_${WEEK_NUMBER}" ; then
                                          post=" \Zb\Z5<\Zn${post}"
@@ -128,7 +128,7 @@ main() {
           --colors \
           --backtitle "\Z6Student:\Zn \Zb${FIRSTNAME} ${LASTNAME}\Zn - \Z6Course:\Zn \Zb${COURSE_NAME}\Zn" \
           --title " (${TODAY}) - \Zb\Z7Hello ${FIRSTNAME}\Zn this is WEEK # ${WEEK_NUMBER} " \
-          --menu "\ZbChoose a Week and Module\Zn\nUse arrow keys to select then press Enter.\nSelecting with the mouse also works:" 25 70 12 \
+          --menu "\n\ZbChoose a Week and Module\Zn\nUse arrow keys to select then press Enter.\nSelecting with the mouse also works.\n" 25 70 12 \
           "${OPTIONS[@]}" \
           2>&1 > /dev/tty )
 
