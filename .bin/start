@@ -91,7 +91,7 @@ main() {
 	    mapfile -t modules < <(
                                  for d in week*/module*; do
                                      if [[ -f $d/home/.completed ]]; then
-                                         post=" \Z2[completed - $(cat $d/home/.completed)]\Zn" # green text
+                                         post=" \Z2Completed\Zn - \Zb\Z7$(cat $d/home/.completed)\Zn" # green text
                                      else
                                          post=" \Z3*\Zn" # yellow text
                                      fi
