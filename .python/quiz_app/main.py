@@ -12,6 +12,10 @@ import yaml
 from models import Question
 from modals.helpscreen import HelpScreen
 
+MODULE_PATH = os.getenv('BASE_DIR')
+if MODULE_PATH is None:
+    print("Error: BASE_DIR environment variable is not set.")
+    sys.exit(1)
 expected_path = "/workspaces/codespaces-blank/cis190_codespace/.python"
 if not os.path.abspath(os.getcwd()).startswith(expected_path):
     print(f"Error: This application must be run from within '{expected_path}'")
@@ -232,7 +236,7 @@ class QuizApp(App):
         await scroll_view.mount(Static(f"Score: {score}/{len(self.questions)}"))
         container.mount(Button("Exit Quiz"))
 
-        with open("quiz_results.json", "w") as f:
+        with open(f"{MODULE_PATH}/history/quiz_results.json", "w") as f:
             json.dump({
                 "score": score,
                 "total": len(self.questions),

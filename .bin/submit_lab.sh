@@ -27,6 +27,7 @@ OUTFILE="${STUDENT_ID}_${FIRSTNAME}_${LASTNAME}_${module}_$(date +%Y%m%d_%H%M%S)
 
 # ---- BUNDLE FILES ----
 #echo "[*] Collecting files for $STUDENT_ID into $OUTFILE..."
+date > "${BASE_DIR}/home/.completed"
 cp -r "${BASE_DIR}/home" "$TMPDIR/home" 2>/dev/null
 cp -r ${LOG_BASE} "$TMPDIR/logs" 2>/dev/null
 rm -r ${LOG_BASE}/* 2>/dev/null

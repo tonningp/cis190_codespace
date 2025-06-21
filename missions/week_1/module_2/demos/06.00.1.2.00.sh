@@ -1,11 +1,14 @@
 #!/bin/bash
+source $BASE_DIR/demos/environ.sh
+clear
+cat <<EOS
+ Demonstrating how to use root privileges with su and sudo.
 
-echo "Demonstrating how to use root privileges with su and sudo."
+ Using 'sudo' to execute a command with your password:
+ \$ $(cyan 'sudo whoami')
 
-echo "Using 'su' to execute a command with root privileges:"
-echo "\$ su -c 'ls -l /lost+found'"
-
-echo "Using 'sudo' to execute a command with your password:"
-echo "\$ sudo ls -l /lost+found"
+ Run whoami without sudo to see the current user:
+\$ $(cyan whoami)
+EOS
 
 exec bash --rcfile $RCFILE

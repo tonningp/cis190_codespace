@@ -1,0 +1,56 @@
+quiz_type: yaml_quiz
+title: "Week 2 Module 1 Quiz – Basic Linux Skills for Drone Technicians"
+
+questions:
+  - type: multiple_choice
+    prompt: "What is one advantage of using a textual interface over a graphical one in Linux?"
+    options:
+      - "It requires more system resources."
+      - "It is less powerful and flexible than graphical tools."
+      - "It allows for easier scripting and automation."
+      - "It is not suitable for server environments."
+    correct_answer: [2]
+
+  - type: true_false
+    prompt: "The password you type is displayed on the screen when logging in on a Linux system."
+    correct_answer: false
+
+  - type: short_answer
+    prompt: "What command is used to change your password in Linux?"
+    correct_answer: "^passwd$"
+
+  - type: multiple_choice
+    prompt: "Which of the following keys is used to abort a running program in a Linux terminal?"
+    options:
+      - "CONTROL-U"
+      - "CONTROL-C"
+      - "CONTROL-W"
+      - "CONTROL-Z"
+    correct_answer: [1]
+
+  - type: short_answer
+    prompt: "What command can be used to display the system manual for a specific utility in Linux?"
+    correct_answer: "^man$"
+
+  - type: multiple_choice
+    prompt: "Which utility is more powerful for file permission management: chmod or its GUI counterpart?"
+    options:
+      - "chmod"
+      - "GUI counterpart"
+      - "Both are equally powerful"
+      - "Neither is powerful"
+    correct_answer: [0]
+
+  - type: true_false
+    prompt: "The 'sudo' command requires the root password to gain root privileges."
+    correct_answer: false
+
+  - type: multiple_choice
+    prompt: "In which section of the manual would you find user commands?"
+    options:
+      - "Section 1"
+      - "Section 2"
+      - "Section 3"
+      - "Section 5"
+    correct_answer: [0]
+

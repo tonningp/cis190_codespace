@@ -90,7 +90,12 @@ main() {
                                  for d in week*/module*; do
                                      post=""
                                      if echo $d | grep -q "week_${WEEK_NUMBER}" ; then
-                                         post=" <--"
+                                         post=" <-"
+                                         if [[ -f $d/home/.completed ]]; then
+                                             post="$post $(cat $d/home/.completed)"
+                                         else
+                                             post="$post not completed"
+                                         fi
                                      fi
                                      week=$(basename "$(dirname "$d")" | sed 's/_/ /g')
                                      module=$(basename "$d" | sed 's/_/ /g')

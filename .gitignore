@@ -23,6 +23,7 @@ debug.txt
 debug.log
 venv
 quiz_results.json
+.completed
 # Ignore Python-specific files
 *.pyc
 *.pyo
