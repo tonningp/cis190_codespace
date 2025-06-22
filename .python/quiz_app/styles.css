@@ -4,11 +4,12 @@
 
 Screen {
     layout: vertical;
-    align: center middle;
+    align-horizontal: center;  /* ✅ Only center horizontally */
+    padding: 1 1;
 }
 
 .center {
-    align: center middle;
+    align-horizontal: center;  /* ✅ Only center horizontally */
 }
 
 .choice-grid {
@@ -28,6 +29,7 @@ Screen {
     align: center middle;
     max-width: 100%;
     width: 100%;
+    margin-top: 2;  /* 👈 Add this line */
 }
 
 #quiz-summary {
