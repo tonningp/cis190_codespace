@@ -5,7 +5,6 @@
 Screen {
     layout: vertical;
     align: center middle;
-    padding: 1 2;
 }
 
 .center {
@@ -15,12 +14,10 @@ Screen {
 .choice-grid {
     	grid-size: 2;
         grid-columns: 1fr 1fr;
-        grid-rows: 5;
+        grid-rows: auto;
         grid-gutter: 1 1;
-        padding: 1;
         width: 100%;
         height: auto;
-        margin: 1;
         overflow: auto;
         min-height: 5;
         max-height: 12;
@@ -31,7 +28,6 @@ Screen {
     align: center middle;
     max-width: 100%;
     width: 100%;
-    margin: 1 2;
 }
 
 #quiz-summary {
@@ -41,7 +37,7 @@ Screen {
 }
 
 
-#progress {
+.progress-bar {
     text-align: center;
     padding: 1;
 }
@@ -51,15 +47,12 @@ Screen {
 #title {
     max-width: 100%;
     text-align: center;
-    padding: 1 0;
-    /*align: center middle;*/
-    /*color: yellow;*/
+    align: center middle;
     color: ansi_bright_green;
     background: #1e1e1e;
     text-style: bold;
-    height: 5;
+    height: auto;
     border: round white;
-    margin: 1 0;
 }
 
 /* Question prompt */
@@ -76,11 +69,11 @@ Button {
     min-width: 0;
     max-width: 100%;
     content-align: center middle;
-    margin: 1 0;
     border: round;
     height: auto;
     background: #2c2c2c;
     color: white;
+    margin: 0;
 }
 
 Button:hover {
@@ -96,19 +89,21 @@ Button.selected {
 }
 
 .nav-btn {
-    margin: 0 1;
     align: center middle;
     width: 15;
 }
 
 .nav-row {
+
+    layout: grid;
+    grid-gutter: 1 0;
+    height: auto;
+    width: 100%;
+    padding: 1 1;
     grid-size: 2;
     grid-columns: 1fr 1fr;
-    grid-gutter: 1 1;
-    layout: horizontal;
     align-horizontal: center;
     width: 100%;
-    padding: 1 0;
 }
 
 

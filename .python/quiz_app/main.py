@@ -46,7 +46,6 @@ class QuizApp(App):
         yield Static("Press Shift+F1 for Help, Expand terminal to full screen.  Use tab key to move between choices, press Enter to select the choice, you can also click on the choice with the mouse.", classes="center")
         yield Static("Loading quiz...", id="title")
         yield Vertical(id="quiz-container")
-        yield Static("", id="progress")
 
     def on_mount(self) -> None:
         self.quiz_title, self.questions = self.load_quiz(self.quiz_file)
@@ -58,8 +57,7 @@ class QuizApp(App):
         self.update_question_ui()
 
     def update_question_ui(self):
-        container = self.query_one("#quiz-container", Vertical)
-        progress_bar = self.query_one("#progress", Static)
+        container = self.query_one("#quiz-container",Vertical)
         container.remove_children()
         self.selected_options = set()
 
@@ -101,6 +99,7 @@ class QuizApp(App):
         nav_row.mount(Button("Previous", classes="nav-btn"))
         nav_row.mount(Button("Next", classes="nav-btn"))
 
+        progress_bar =  Static("", classes="progress-bar")
         progress_fraction = (self.current + 1) / len(self.questions)
         progress_bar_len = 20
         filled_len = int(progress_bar_len * progress_fraction)
@@ -109,6 +108,7 @@ class QuizApp(App):
         answered = self.user_answers[self.current] is not None
         check = " ✔" if answered else ""
         progress_bar.update(f"[{bar}] {percent}% — Q{self.current + 1} of {len(self.questions)}{check}")
+        container.mount(progress_bar)
     
     def action_scroll_down(self):
         scroll = self.query_one("#quiz-summary", expect_type=VerticalScroll)
