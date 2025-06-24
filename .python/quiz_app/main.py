@@ -188,7 +188,7 @@ class QuizApp(App):
         #container.mount(v)
         #v.mount(scroll_view)
         await scroll_view.mount(Static("Quiz complete, scroll down to review and see final score! Scroll by using arrow keys or with the mouse scroll.", id="result"))
-
+        quiz_feedback=[]
         for i, (q, ans) in enumerate(zip(self.questions, self.user_answers)):
             correct = q.correct_answer
             try:
@@ -228,6 +228,7 @@ class QuizApp(App):
                         f"Expected: {correct}\n"
                         f"Result: {result_symbol}"
                     )
+                quiz_feedback.append(feedback)
             except Exception as e:
                 feedback = f"Q{i+1}: Error computing result: {e}"
 
@@ -241,6 +242,7 @@ class QuizApp(App):
                 "score": score,
                 "total": len(self.questions),
                 "answers": self.user_answers,
+                "feedback": quiz_feedback,
             }, f, indent=2)
 
     def load_quiz(self, path_or_url):
