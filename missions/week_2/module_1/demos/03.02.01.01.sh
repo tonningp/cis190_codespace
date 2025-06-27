@@ -39,7 +39,8 @@ EOF
 
 # Training items: expected commands
 declare -g -a prompts=(
-  "Use the $(cyan 'cat') command to view the contents of a file named $(cyan 'file.txt')"
+  "Use the $(cyan 'cat') command to view the contents of a file named $(white:w
+  'file.txt')"
   "Use the $(cyan 'cat') command to display two files: $(cyan 'file1.txt') and $(cyan 'file2.txt')"
   "Use the $(cyan 'cat') command with an option to number all lines of $(cyan 'file.txt')"
   "Use the $(cyan 'cat') command to redirect the contents of $(cyan 'file1.txt') into $(cyan 'combined.txt')"

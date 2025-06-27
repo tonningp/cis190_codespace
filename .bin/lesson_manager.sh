@@ -34,13 +34,12 @@ source "$TOP_DIR/environment.sh"
 function display_lesson()  {
     #cat <<EOF | fold -s -w 80
     clear
-    echo "# $(emoji sunglasses) Student Name: ${FIRSTNAME} ${LASTNAME} (${STUDENT_ID})" | render_markdown
-    echo "### Title: \`${lesson_title}\`" | render_markdown
-    echo "---" | render_markdown
-    cat <<EOF | fold -s -w 80 | render_markdown
+    cat <<EOS | fold -s -w 80 | render_markdown
+# $(emoji sunglasses) Student Name: ${FIRSTNAME} ${LASTNAME} (${STUDENT_ID})
+### Title: \`${lesson_title}\` (Lesson Id: ${BASE_NAME})
+---
 $(echo "$1";echo;echo "---")
-EOF
-echo "### \`$(emoji shell)  (Lesson Id: ${BASE_NAME})\`" | render_markdown
+EOS
 }
 
 function wait_for_correct_input() {
@@ -54,10 +53,12 @@ function wait_for_correct_input() {
 
 
   while true; do
-    echo "### $(emoji finger_pointing_right) ***${prompt}***" | render_markdown
-    echo "---" | render_markdown
-    echo "  \`Enter 'instruct' to see the lesson again, 'next' to skip  or 'exit' to quit.\`" | render_markdown
-    echo "---" | render_markdown
+    cat <<EOF | fold -s -w 80 | render_markdown
+### $(emoji finger_pointing_right) ***${prompt}***
+---
+\`Enter 'instruct' to see the lesson again, 'next' to skip  or 'exit' to quit.\`
+---
+EOF
     read -e -p "$ " user_input
     if [[ $? -ne 0 ]]; then
         return 2 # Return code 2 indicates ctrl+d or ctrl+c was pressed
