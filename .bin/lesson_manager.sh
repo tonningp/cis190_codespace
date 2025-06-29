@@ -5,10 +5,10 @@ export LC_ALL="en_US.UTF-8"
 export LOG_FILE="${LOG_BASE}/${BASE_NAME}_exercises.log"
 source "$TOP_DIR/colors.sh"
 source "$TOP_DIR/emojis.sh"
-HISTFILE="${LOG_BASE}/${BASE_NAME}_exercise.history.txt"
-HISTSIZE=1000
-HISTFILESIZE=2000
-HISTTIMEFORM="%F %T"
+export HISTFILE="${LOG_BASE}/${BASE_NAME}_exercise.history.txt"
+export HISTSIZE=1000
+export HISTFILESIZE=2000
+HISTTIMEFORMAT="%F %T"
 export lesson_manager="$TOP_DIR/lesson_manager.sh"
 
 render_markdown() {
@@ -36,11 +36,15 @@ $(emoji checkmark) Correct!
     $(emoji arrow_right) Your input: $user_input
 \`\`\`
 ---
-> Your input evaluates to:
-
+$(if [[ -n "$evaled" ]]; then
+cat <<EOS 
+> $(emoji lightbulb) Your input evaluates to:
 \`\`\`text
 $evaled
 \`\`\`
+EOS
+fi
+)
 ---
 EOF
 }
@@ -73,7 +77,7 @@ $(
         echo -e "- $(emoji warning) Evaluation failed:"
         escaped=$(printf '%s\n' "$lesson_manager" | sed 's/\//\\\//g')
         cat "$tmp_err" | sed "s/$escaped://" | sed 's/line [0-9]*://g'
-    else
+    elif [[ -n "$output" ]]; then
         echo "$output"
     fi
     rm -f "$tmp_err"
@@ -146,17 +150,37 @@ EOF
         continue
     fi
     case "$user_input" in
-        bash | sh | zsh | fish)  # Ignore shell commands
-            echo "Ignoring shell command: $user_input"
+        train)
+            bash --rcfile "$RCFILE"  # Start a new bash shell with the specified rcfile
             continue
             ;;
-        \#* | \#\#* | \#\#\#*)  # Ignore comments
-            echo "Ignoring comment: $user_input"
+        files)  # Handle files command
+            if [[ -n "$TREE_VIEW" ]]; then
+                echo -e "$(emoji book) Lesson files:\n$TREE_VIEW"
+            else
+                echo "No files available for this lesson."
+            fi
+            continue
+            ;;
+        bash\ *| sh\ *| zsh\ *| fish\ *)  # Ignore shell commands
+            echo "Ignoring shell command: $user_input"
             continue
             ;;
         clear)  # Handle clear command
             clear
             continue
+            ;;
+        hint)  # Handle hint command
+            if [[ -n "$hint" ]]; then
+                echo -e "$(emoji hint) Hint: $hint"
+            else
+                echo "No hint available for this step."
+            fi
+            continue
+            ;;
+        reset_lesson)  # Handle reset command
+            echo "Resetting lesson..."
+            exec "$0"  # Reload the lesson manager script
             ;;
         \!*)  # Handle history command
             if [[ -n "$user_input" ]]; then
@@ -172,6 +196,10 @@ EOF
         \$\(\))  # Handle command substitution
             user_input=$(eval "${user_input:1:-1}")
             echo "Command substitution result: $user_input"
+            continue
+            ;;
+        \#* | \#\#* | \#\#\#*)  # Ignore comments
+            echo "Ignoring comment: $user_input"
             continue
             ;;
         instruct)
@@ -226,8 +254,8 @@ function do_training() {
     hr >> "$LOG_FILE"
     mark_time "Start of Lesson ${BASE_NAME}"
     display_lesson "$lesson" | tee -a "$LOG_FILE"
-    history -r $HISTFILE  # Read the history file
     for i in "${!PROMPTS[@]}"; do
+        history -r $HISTFILE  # Read the history file
         echo "Start of Step $((i + 1)) of ${#PROMPTS[@]}" >> "$LOG_FILE" 
         echo -e "***$(emoji directhit) Step $((i + 1)) of ${#PROMPTS[@]}***" | render_markdown
         wait_for_correct_input "${PROMPTS[$i]}"\

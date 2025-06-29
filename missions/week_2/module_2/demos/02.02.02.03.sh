@@ -5,72 +5,73 @@ source "$TOP_DIR/colors.sh"
 source "$TOP_DIR/emojis.sh"
 source "$TOP_DIR/utils.sh"
 
-export lesson_title="Best Practices for File Naming"
+export lesson_title="Best Practices for File Naming in Surveillance Drone Management"
 export lesson="$(cat<<EOF
 
-**Learn best practices for creating filenames that are clear, consistent, and compatible across systems.**
+**Enhance your file management skills for surveillance drone systems by applying best naming conventions for configurations and log files.**
 
-> $(emoji file_folder) Adopting naming best practices ensures your files are easy to find and manage, minimizing errors when sharing and moving files between environments.
+> $(emoji drone) Appropriate naming practices ensure efficient management and retrieval of critical drone configuration and log files.
 
 ***This lesson focuses on:***
 
-1. Use Descriptive Names:
-   - Prompt: Rename 'log1.txt' to a more descriptive name indicating its content and date.
-   - Skill: Create filenames that clearly describe the file content.
+1. Using Descriptive Names:
+   - Prompt: Rename 'conf1.cfg' to reflect its drone ID and configuration type.
+   - Skill: Ensure filenames convey precise information about the file content.
 
-2. Avoid Special Characters:
-   - Prompt: Rename '2023*Report.txt' to avoid special characters.
-   - Skill: Eliminate special characters to prevent issues with file operations.
+2. Avoiding Special Characters:
+   - Prompt: Rename 'drone#log_01.txt' to remove special characters.
+   - Skill: Eliminate characters that might cause shell or software issues.
 
-3. Use Lowercase and Consistent Separator:
-   - Prompt: Rename 'My File.Docx' using lowercase and underscores.
-   - Skill: Ensure consistency and readability with lowercase and separators.
+3. Using Lowercase and Consistent Separators:
+   - Prompt: Rename 'Config%FILE.yaml' using all lowercase and underscores.
+   - Skill: Maintain consistency for easier access and reduced errors.
 
-4. Keep Filenames Short but Descriptive:
-   - Prompt: Shorten and make descriptive the filename '20231019_project_final_version_completed_notes.txt'.
-   - Skill: Balance brevity and descriptiveness in filenames.
+4. Keeping Filenames Short but Descriptive:
+   - Prompt: Shorten and clarify the filename 'surveillance_mission_20231020_complete_log.txt'.
+   - Skill: Achieve brevity while maintaining important details.
 
-5. Utilize Leading Zeros for Numerical Sorting:
-   - Prompt: Rename files in a series: 'file1.txt', 'file2.txt', ... to include leading zeros for sorting.
-   - Skill: Implement leading zeros to maintain natural order in file lists.
+5. Utilizing Leading Zeros for Numerical Sorting:
+   - Prompt: Rename 'image1.jpg' and 'image10.jpg' from drone cameras for natural order.
+   - Skill: Apply leading zeros to maintain sequence integrity.
 
 EOF
 )"
 
 # Prepare a working environment
-WORK_DIR="filename_practice"
+WORK_DIR="mission_01"
+rm -rf "$WORK_DIR"
 mkdir -p "$WORK_DIR"
 
 # Create files to practice on
-touch "$WORK_DIR/log1.txt"
-touch "$WORK_DIR/2023*Report.txt"
-touch "$WORK_DIR/My File.Docx"
-touch "$WORK_DIR/20231019_project_final_version_completed_notes.txt"
-touch "$WORK_DIR/file1.txt" "$WORK_DIR/file2.txt" "$WORK_DIR/file10.txt"
+touch "$WORK_DIR/conf1.cfg"
+touch "$WORK_DIR/drone#log_01.txt"
+touch "$WORK_DIR/Config FILE.yaml"
+touch "$WORK_DIR/surveillance_mission_20231020_complete_log.txt"
+touch "$WORK_DIR/image1.jpg" "$WORK_DIR/image10.jpg"
 
 # Training items
 declare -g -a prompts=(
-  "Rename '${WORK_DIR}/log1.txt' to a more descriptive name indicating its content and date."
-  "Rename '${WORK_DIR}/2023*Report.txt' to remove special characters."
-  "Rename '${WORK_DIR}/My File.Docx' to use lowercase and underscores only."
-  "Rename '${WORK_DIR}/20231019_project_final_version_completed_notes.txt' to a shorter and more descriptive form."
-  "Rename '${WORK_DIR}/file1.txt', '${WORK_DIR}/file2.txt', etc., to use leading zeros for natural sorting."
+  "Rename '${WORK_DIR}/conf1.cfg' to clearly indicate its associated drone and configuration type, e.g., 'drone01_general.cfg'."
+  "Rename '${WORK_DIR}/drone#log_01.txt' to remove special characters."
+  "Rename '${WORK_DIR}/Config%FILE.yaml' to use all lowercase letters and underscores."
+  "Shorten and clarify '${WORK_DIR}/surveillance_mission_20231020_complete_log.txt' to a briefer form without losing important details."
+  "Rename '${WORK_DIR}/image1.jpg' and '${WORK_DIR}/image10.jpg' to include leading zeros for proper sorting order."
 )
 
 declare -g -a hints=(
-  "Use \`mv log1.txt 20231019_session_logs.txt\` to include date and content."
-  "Special characters can be removed with \`mv\`, like \`mv 2023*Report.txt 2023_report.txt\`."
-  "Consistent separators are key: \`mv\` to convert spaces, e.g., \`mv 'My File.Docx' my_file.docx\`."
-  "Balance length and meaning, e.g., \`mv 20231019_project_final_version_completed_notes.txt project_notes.txt\`."
-  "Standardize numeric filenames: \`mv file1.txt file01.txt\`, \`mv file10.txt file10.txt\` for natural order."
+  "Rename to enhance specificity, e.g., \`mv conf1.cfg drone01_general.cfg\`."
+  "Avoid issues by using \`mv drone#log_01.txt drone_log_01.txt\`."
+  "Use consistent naming conventions: \`mv 'Config%FILE.yaml' config_file.yaml\`."
+  "Balance brevity and detail, e.g., \`mv surveillance_mission_20231020_complete_log.txt mission_20231020_log.txt\`."
+  "Standardize numeric filenames: \`mv image1.jpg image01.jpg\` for better organization."
 )
 
 declare -g -a patterns=(
-  "mv ${WORK_DIR}/log1.txt ${WORK_DIR}/20231019_session_logs.txt"
-  "mv ${WORK_DIR}/2023*Report.txt ${WORK_DIR}/2023_report.txt"
-  "mv '${WORK_DIR}/My File.Docx' ${WORK_DIR}/my_file.docx"
-  "mv ${WORK_DIR}/20231019_project_final_version_completed_notes.txt ${WORK_DIR}/project_notes.txt"
-  "rename 's/file([0-9]+)/sprintf(\"file%02d\", \$1)/e' ${WORK_DIR}/file*.txt"
+  "mv ${WORK_DIR}/conf1.cfg ${WORK_DIR}/drone01_general.cfg"
+  "mv ${WORK_DIR}/drone#log_01.txt ${WORK_DIR}/drone_log_01.txt"
+  "mv '${WORK_DIR}/Config%FILE.yaml' ${WORK_DIR}/config_file.yaml"
+  "mv ${WORK_DIR}/surveillance_mission_20231020_complete_log.txt ${WORK_DIR}/mission_20231020_log.txt"
+  "mv ${WORK_DIR}/image1.jpg ${WORK_DIR}/image01.jpg"
 )
 
 declare -g -a evals=(

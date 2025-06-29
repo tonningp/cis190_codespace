@@ -19,6 +19,7 @@
 .profile/
 .history/
 history/
+home/
 debug.txt
 debug.log
 venv
