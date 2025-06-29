@@ -1,2 +1,0 @@
-This is file2.txt
-Line D

@@ -1,0 +1,68 @@
+quiz_type: yaml_quiz
+title: "Week 2 Module 1 Quiz – Basic Linux Skills for Drone Technicians"
+
+questions:
+  - type: multiple_choice
+    prompt: "Which of the following commands can be used to view the last 10 lines of a file?"
+    options:
+      - "head"
+      - "tail"
+      - "sort"
+      - "uniq"
+    correct_answer: [1]
+
+  - type: short_answer
+    prompt: "What command would you use to count unique lines in a sorted file?"
+    correct_answer: "^uniq -c$"
+
+  - type: multiple_choice
+    prompt: "Which command is most appropriate to sort a file alphabetically?"
+    options:
+      - "gzip"
+      - "sort"
+      - "bzip2"
+      - "diff"
+    correct_answer: [1]
+
+  - type: true_false
+    prompt: "The command 'gzip' is used to delete files in Linux."
+    correct_answer: false
+
+  - type: short_answer
+    prompt: "What option would you use with `diff` to produce a side-by-side comparison of files?"
+    correct_answer: "^-y$"
+
+  - type: multiple_choice
+    prompt: "Which command would you use to locate the executable path for the 'python3' command?"
+    options:
+      - "diff"
+      - "sort"
+      - "which"
+      - "uniq"
+    correct_answer: [2]
+
+  - type: true_false
+    prompt: "The 'bzip2' command can be used to compress files into .bz2 format."
+    correct_answer: true
+
+  - type: multiple_choice
+    prompt: "If you need to find where the 'ls' command binary and its documentation are located, which command would you use?"
+    options:
+      - "which ls"
+      - "head ls"
+      - "whereis ls"
+      - "tail ls"
+    correct_answer: [2]
+
+  - type: short_answer
+    prompt: "What command option would you use to sort numbers in descending order?"
+    correct_answer: "^-r$"
+
+  - type: multiple_choice
+    prompt: "Which of the following commands is used to recursively compare directories and their contents?"
+    options:
+      - "gzip"
+      - "which"
+      - "bzip2"
+      - "diff"
+    correct_answer: [3]

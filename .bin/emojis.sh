@@ -45,12 +45,14 @@ function emoji() {
         book) echo -e "\U0001F4D6" ;;                  # 📖 open book
         lightbulb) echo -e "\U0001F4A1" ;;             # 💡 light bulb
         celebration) echo -e "\U0001F389" ;;           # 🎉 party popper
+        drone) echo -e "\U0001F681" ;;                 # 🚁 helicopter
+        hint) echo -e "\U0001F4A1" ;;                  # 💡 light bulb (used for hints)
 
         # Arrows - Directions
-        right_arrow) echo -e "\U000027A1" ;;           # ➡️ right arrow
-        left_arrow) echo -e "\U00002B05" ;;            # ⬅️ left arrow
-        up_arrow) echo -e "\U00002B06" ;;              # ⬆️ up arrow
-        down_arrow) echo -e "\U00002B07" ;;            # ⬇️ down arrow
+        arrow_right|right_arrow) echo -e "\U000027A1" ;;           # ➡️ right arrow
+        arrow_left|left_arrow) echo -e "\U00002B05" ;;            # ⬅️ left arrow
+        arrow_up | up_arrow) echo -e "\U00002B06" ;;              # ⬆️ up arrow
+        arrow_down | down_arrow) echo -e "\U00002B07" ;;            # ⬇️ down arrow
 
         # Diagonal Arrows
         up_right_arrow) echo -e "\U00002197" ;;        # ↗️ up-right arrow
@@ -85,6 +87,44 @@ function emoji() {
         signal) echo -e "\U0001F4F6" ;;                # 📶 signal bars
         wifi) echo -e "\U0001F6DC" ;;                  # 🛜 wireless network
         phone) echo -e "\U0001F4F1" ;;                 # 📱 mobile phone
+
+        # Files & Documents
+        file) echo -e "\U0001F4C4" ;;                  # 📄 page facing up
+        file_folder) echo -e "\U0001F4C1" ;;           # 📁 file folder
+        open_file_folder) echo -e "\U0001F4C2" ;;                # 📂 open file folder
+        document) echo -e "\U0001F4C3" ;;             # 📃 page with curl
+        page) echo -e "\U0001F4C4" ;;                  # 📄 page facing up
+        clipboard) echo -e "\U0001F4CB" ;;            # 📋 clipboard
+        paperclip) echo -e "\U0001F4CE" ;;            # 📎 paperclip
+
+        # Writing & Editing
+        book_open) echo -e "\U0001F4D6" ;;            # 📖 open book
+        book_closed) echo -e "\U0001F4D5" ;;          # 📕 closed book
+        notebook) echo -e "\U0001F4D3" ;;             # 📓 notebook
+        notebook_with_decorative_cover) echo -e "\U0001F4D4" ;; # 📔 notebook with decorative cover
+        notepad) echo -e "\U0001F5D2" ;;              # 🗒️ spiral notepad
+        memo) echo -e "\U0001F4DD" ;;                 # 📝 memo
+        pencil) echo -e "\U0001F4DD" ;;               # 📝 pencil
+        pen) echo -e "\U0001F58A" ;;                  # 🖊️ fountain pen
+        highlighter) echo -e "\U0001F58D" ;;          # 🖍️ highlighter
+        crayon) echo -e "\U0001F58C" ;;               # 🖌️ paintbrush
+        scissors) echo -e "\U00002702" ;;             # ✂️ scissors
+        eraser) echo -e "\U0000270F" ;;               # ✏️ eraser
+
+        # Math & Science
+        abacus) echo -e "\U0001F9EE" ;;                # 🧮 abacus
+        calculator) echo -e "\U0001F9CF" ;;           # 🧮 calculator
+        microscope) echo -e "\U0001F52C" ;;           # 🔬 microscope
+        telescope) echo -e "\U0001F52D" ;;            # 🔭 telescope
+        test_tube) echo -e "\U0001F9EA" ;;            # 🧪 test tube
+        dna) echo -e "\U0001F9EC" ;;                  # 🧬 DNA double helix
+        flask) echo -e "\U0001F9EA" ;;                # 🧪 laboratory flask
+        gear) echo -e "\U00002699" ;;                 # ⚙️ gear
+        atom) echo -e "\U0001F9F0" ;;                 # 🧰 atom symbol
+        compass) echo -e "\U0001F9ED" ;;              # 🧭 compass
+        globe) echo -e "\U0001F30D" ;;                # 🌍 globe showing Europe-Africa
+
+
 
         # Special
         robot) echo -e "\U0001F916" ;;                 # 🤖 robot face

@@ -24,6 +24,18 @@ cyan_start() {
 cyan() {
     echo -e "\033[1;36m$1\033[0m"
 }
+bright_cyan_start() {
+    echo -e "\033[1;96m$1"
+}
+bright_cyan() {
+    echo -e "\033[1;96m$1\033[0m"
+}
+blue_start() {
+    echo -e "\033[1;34m$1"
+}
+blue() {
+    echo -e "\033[1;34m$1\033[0m"
+}
 magenta_start() {
     echo -e "\033[1;35m$1"
 }

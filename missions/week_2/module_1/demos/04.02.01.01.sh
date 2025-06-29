@@ -1,52 +1,87 @@
 #!/bin/bash
-## -*- coding: utf-8 -*-
+# mission_template
+# -*- coding: utf-8 -*-
 source "$TOP_DIR/colors.sh"
+source "$TOP_DIR/emojis.sh"
 source "$TOP_DIR/utils.sh"
 
-export lesson_title="Moving and Renaming with \`mv\`"
+export lesson_title="Moving and Renaming Files with mv"
 export lesson="$(cat<<EOF
 
-**Demonstrate how to use the \`mv\` command to move or rename files and directories.**
+**Learn to use the \`mv\` command to move and rename drone configuration files and logs efficiently.**
 
-This lesson focuses on:
-1. Renaming a file
-2. Moving a file to another directory
-3. Moving and renaming simultaneously
-4. Moving multiple files into a directory
-5. Moving a directory
+> $(emoji arrow_right) The \`mv\` command is vital for organizing files by moving them to new locations or renaming them.
 
-> 📁 Remember that \`mv\` overwrites the destination without warning. Use \`-i\` to be prompted before overwriting.
+***This lesson focuses on:***
+1. Move a Single File:
+   - Prompt: Move the mission1.conf file to the config directory.
+   - Skill: Basic use of \`mv\` to move single files.
+
+2. Rename a File:
+   - Prompt: Rename the telemetry.log file to flight_log.log in the logs directory.
+   - Skill: Renaming files for clarity and organization.
+
+3. Move Multiple Files:
+   - Prompt: Move all .log files from the logs directory to the archive directory.
+   - Skill: Use wildcards to handle multiple files at once.
+
+4. Move a Directory:
+   - Prompt: Move the samples directory to the backup directory.
+   - Skill: Moving entire directories and their contents.
+
+5. Overwrite Prompt:
+   - Prompt: Attempt to move the mission2.conf file to the backup directory where another file with the same name exists, and confirm overwrite.
+   - Skill: Handling existing files with confirmation prompts.
+
 EOF
 )"
 
 # Prepare a working environment
-mkdir -p move_dir/subdir
-touch oldname.txt file1.txt file2.txt
-cp oldname.txt move_dir/
+ROOT_DIR='drone_data'
+CONFIG_DIR="$ROOT_DIR/config"
+LOG_DIR="$ROOT_DIR/logs"
+BACKUP_DIR="$ROOT_DIR/backup"
+ARCHIVE_DIR="$ROOT_DIR/archive"
+SAMPLES_DIR="$ROOT_DIR/samples"
+mkdir -p "$CONFIG_DIR" "$LOG_DIR" "$BACKUP_DIR" "$ARCHIVE_DIR" "$SAMPLES_DIR"
+
+# Create some sample configuration and log files
+cat > ${CONFIG_DIR}/mission1.conf <<EOT
+MissionID: 001
+Operator: Jane Doe
+MissionType: Reconnaissance
+Altitude: 1500m
+Speed: 300 knots
+EOT
+
+touch ${LOG_DIR}/telemetry.log
+touch ${LOG_DIR}/status.log
+touch ${BACKUP_DIR}/mission2.conf
+touch ${SAMPLES_DIR}/sample1.txt
 
 # Training items
 declare -g -a prompts=(
-  "Rename oldname.txt to newname.txt using the $(cyan 'mv') command"
-  "Move file1.txt into move_dir"
-  "Move and rename file2.txt to move_dir/renamed.txt"
-  "Move both file1.txt and file2.txt into move_dir"
-  "Move the subdir directory into the parent directory"
+  "Move the mission1.conf file to the ${CONFIG_DIR} directory using \`mv\`."
+  "Rename the telemetry.log file to flight_log.log in the ${LOG_DIR} directory."
+  "Move all .log files from the ${LOG_DIR} directory to the ${ARCHIVE_DIR} directory using wildcards."
+  "Move the ${SAMPLES_DIR} directory to the ${BACKUP_DIR} directory."
+  "Attempt to move the mission2.conf file to the ${BACKUP_DIR} where another file with the same name exists, and confirm overwrite."
 )
 
 declare -g -a hints=(
-  "Use \`mv source target\` to rename a file."
-  "Use the format: \`mv file dir/\`."
-  "Specify a new name in the destination path."
-  "List the files then the target directory."
-  "Use \`mv dir1 target_dir/\` to move a directory."
+  "Use \`mv <source> <destination>\` to move a file to a new location."
+  "Specify a new filename in the destination path to rename a file."
+  "Use wildcards \`*.log\` with \`mv\` to select multiple files."
+  "Use \`mv <source_dir> <destination_dir>\` to move directories."
+  "Use \`mv -i <source> <destination>\` to be prompted before overwriting."
 )
 
 declare -g -a patterns=(
-  "mv oldname.txt newname.txt"
-  "mv file1.txt move_dir/"
-  "mv file2.txt move_dir/renamed.txt"
-  "mv file1.txt file2.txt move_dir/"
-  "mv move_dir/subdir ./"
+  "mv mission1.conf ${CONFIG_DIR}/"
+  "mv ${LOG_DIR}/telemetry.log ${LOG_DIR}/flight_log.log"
+  "mv ${LOG_DIR}/*.log ${ARCHIVE_DIR}/"
+  "mv ${SAMPLES_DIR} ${BACKUP_DIR}/"
+  "mv -i ${CONFIG_DIR}/mission2.conf ${BACKUP_DIR}/"
 )
 
 declare -g -a evals=(
@@ -57,5 +92,5 @@ declare -g -a evals=(
   1
 )
 
+export TREE_VIEW="$(tree -C $ROOT_DIR)"
 source "${TOP_DIR}/lesson_manager.sh"
-

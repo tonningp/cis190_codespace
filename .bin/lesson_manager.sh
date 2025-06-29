@@ -5,6 +5,7 @@ export LC_ALL="en_US.UTF-8"
 export LOG_FILE="${LOG_BASE}/${BASE_NAME}_exercises.log"
 source "$TOP_DIR/colors.sh"
 source "$TOP_DIR/emojis.sh"
+export HIST_FILE="${LOG_BASE}/${BASE_NAME}_exercise.history.txt"
 
 render_markdown() {
   python3 -c "
@@ -19,15 +20,15 @@ console.print(md)
 
 }
 
-if [[ -f "$DEMO_DIR/requirements.txt" ]];then 
-    if [[ ! -d "$DEMO_DIR/venv" ]]; then
-        echo "Setting up virtual environment, please wait..."
-        python3 -m venv "$DEMO_DIR/venv"
-        source "$DEMO_DIR/venv/bin/activate"
-        pip -q install --upgrade pip
-        pip -q install -r "$DEMO_DIR/requirements.txt"
+if [[ -f "$TOP_DIR/requirements.txt" ]];then 
+    echo -e "  $(emoji gear) $(bright_cyan 'Setting up lesson environment, please wait...')"
+    if [[ ! -d "$TOP_DIR/venv" ]]; then
+        python3 -m venv "$TOP_DIR/venv"
     fi
-    source "$DEMO_DIR/venv/bin/activate"
+    source "$TOP_DIR/venv/bin/activate"
+    pip -q install --upgrade pip
+    pip -q install -r "$TOP_DIR/requirements.txt"
+    #source "$TOP_DIR/venv/bin/activate"
 fi
 source "$TOP_DIR/environment.sh"
 
@@ -39,6 +40,15 @@ function display_lesson()  {
 ### Title: \`${lesson_title}\` (Lesson Id: ${BASE_NAME})
 ---
 $(echo "$1";echo;echo "---")
+$(if [[ -n "$TREE_VIEW" ]]; then
+cat <<EOT
+> $(emoji book) Lesson files 
+\`\`\`text 
+$TREE_VIEW
+\`\`\`
+EOT
+    fi
+)
 EOS
 }
 
@@ -54,12 +64,12 @@ function wait_for_correct_input() {
 
   while true; do
     cat <<EOF | fold -s -w 80 | render_markdown
-### $(emoji finger_pointing_right) ***${prompt}***
+> $(emoji finger_pointing_right) ***${prompt}***
 ---
 \`Enter 'instruct' to see the lesson again, 'next' to skip  or 'exit' to quit.\`
 ---
 EOF
-    read -e -p "$ " user_input
+    HIST_FILE=$HIST_FILE bash -i -c 'read -e -p "$ " user_input'
     if [[ $? -ne 0 ]]; then
         return 2 # Return code 2 indicates ctrl+d or ctrl+c was pressed
     fi
@@ -103,21 +113,38 @@ EOF
             return 0
         ;;
         *)  # Handle incorrect input
-        echo -e "$(emoji crossmark) Incorrect. Try again."
-          echo -e "    → Your input: $user_input"
-          echo -e "    → expected input: $expected"
-          if [[ -n "$hint" ]]; then
-            echo -e "    → Hint: $hint"
-          fi
-          if [[ $_eval == 1 ]]; then
-                echo "    → Your input evaluates to: "
-                echo "$(eval $user_input)"
-                echo
-          elif [[ $(echo $_eval | cut -d@ -f1) == 2 ]]; then
-            #echo "    → $(eval "$(echo $_eval | cut -d@ -f2)")"
-            echo -e "    → $(echo $_eval | cut -d@ -f2)"
-            echo
-          fi
+            cat <<EOF | fold -s -w 80 | render_markdown
+> $(emoji crossmark) Incorrect. Try again.
+
+- $(emoji right_arrow) Your input: **$user_input**
+- $(emoji right_arrow) Expected input: ***$expected***
+
+$(
+  if [[ -n "$hint" ]]; then
+     echo -e "- $(emoji hint) Hint: **$hint**"
+  fi
+
+  if [[ $_eval == 1 ]]; then
+    tmp_err=$(mktemp)
+    output=$(eval "$user_input" 2>"$tmp_err")
+    status=$?
+
+    if [[ $status -ne 0 ]]; then
+        echo -e "- $(emoji warning) Evaluation failed:"
+        cat "$tmp_err"
+    else
+        echo -e "- Your input evaluates to:"
+        echo "\`\`\`text"
+        echo "$output"
+        echo "\`\`\`"
+    fi
+    rm -f "$tmp_err"
+  elif [[ $(echo $_eval | cut -d@ -f1) == 2 ]]; then
+    echo -e "    → $(echo $_eval | cut -d@ -f2)"
+    echo
+  fi
+)
+EOF
           continue
           ;;
     esac
