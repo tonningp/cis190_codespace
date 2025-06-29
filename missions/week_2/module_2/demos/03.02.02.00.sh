@@ -38,38 +38,42 @@ EOF
 )"
 
 # Prepare a working environment
-BASE_DIR="drone_management"
-LOG_DIR="$BASE_DIR/drone_logs"
-CONFIG_DIR="$BASE_DIR/drone_config"
-PROJECT_DIR="$BASE_DIR/drone_projects"
-IMAGE_DIR="$BASE_DIR/drone_images"
+# need a tail number for the aircraft, follow the FAA guidelines
+# # https://www.faa.gov/aircraft/registration/tail_numbers/
+WORK_DIR="N4242A"
+rm -rf "$WORK_DIR"
+LOG_DIR="$WORK_DIR/logs"
+CONFIG_DIR="$WORK_DIR/configs"
+PROJECT_DIR="$WORK_DIR/projects"
+IMAGE_DIR="$WORK_DIR/images"
 
 # Create directories to practice on
-mkdir -p "$LOG_DIR" "$CONFIG_DIR" "$PROJECT_DIR"
-touch "$LOG_DIR/flight_log_2023_01.txt"
-touch "$CONFIG_DIR/system_config.cfg"
-touch "$PROJECT_DIR/daily_operation.md"
+mkdir -p "$WORK_DIR"
+touch "$WORK_DIR/flight_log_2023_01.txt"
+touch "$WORK_DIR/system_config.cfg"
+touch "$WORK_DIR/daily_operation.md"
+touch "$WORK_DIR/satellite_image_2023_01.jpg"
 
 # Training items
 declare -g -a prompts=(
-  "Use a command to list all top-level directories and files in the root directory (/)."
-  "Organize subdirectories within the '$BASE_DIR': create a 'configs' and 'logs' directory for configuration and log separation."
-  "Identify and list ordinary files within the '$LOG_DIR'."
-  "Recognize directory files by navigating through '$PROJECT_DIR' and '$CONFIG_DIR'."
-  "Expand the directory structure by adding a '$IMAGE_DIR' to store images from the missions."
+"Use the correct command to list the contents in the work directory  \`$WORK_DIR\`."
+  "We need to organize the files in the working directory: create the following directories in \`$WORK_DIR\`: \`configs\` \`logs\` \`projects\` \`images\`."
+  "Identify and list ordinary files within the \`$LOG_DIR\`."
+  "Recognize directory files by navigating through \`$PROJECT_DIR\` and \`$CONFIG_DIR\`."
+  "Expand the directory structure by adding a \`$IMAGE_DIR\` to store images from the missions."
 )
 
 declare -g -a hints=(
-  "Execute \`ls /\` to view the top-level structure usually containing system directories like bin, etc, and var."
-  "Create directories using \`mkdir\`, e.g., \`mkdir $BASE_DIR/configs\` and \`mkdir $BASE_DIR/logs\`."
+  "Use \`ls /\` to view the files and directories in the CWD."
+  "Create directories using \`mkdir\`, for configs, logs, projects and images \`mkdir $WORK_DIR/configs\`. Remember that you can use multiple directory names with mkdir."
   "Use \`ls $LOG_DIR\` to recognize ordinary data files at the folder's ends."
   "Navigate directories using \`cd\`, and list contents with \`ls\` to identify substructures."
   "Use \`mkdir\` to add structure; e.g., \`mkdir $IMAGE_DIR\` for drone mission images."
 )
 
 declare -g -a patterns=(
-  "ls /"
-  "mkdir ${BASE_DIR}/configs && mkdir ${BASE_DIR}/logs"
+  "ls $WORK_DIR"
+  "mkdir ${WORK_DIR}/configs ${WORK_DIR}/logs ${WORK_DIR}/projects ${WORK_DIR}/images"
   "ls $LOG_DIR"
   "cd $PROJECT_DIR && cd $CONFIG_DIR"
   "mkdir $IMAGE_DIR"
@@ -83,5 +87,5 @@ declare -g -a evals=(
   1
 )
 
-export TREE_VIEW="$(tree -C $BASE_DIR)"
+export TREE_VIEW="$(tree -C $WORK_DIR)"
 source "${TOP_DIR}/lesson_manager.sh"

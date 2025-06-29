@@ -51,7 +51,7 @@ touch "$WORK_DIR/image1.jpg" "$WORK_DIR/image10.jpg"
 
 # Training items
 declare -g -a prompts=(
-  "Rename '${WORK_DIR}/conf1.cfg' to clearly indicate its associated drone and configuration type, e.g., 'drone01_general.cfg'."
+  "Rename '${WORK_DIR}/conf1.cfg' to clearly indicate its associated drone and configuration type, e.g., 'drone01_general.cfg'. Pay attention to the directory for both files."
   "Rename '${WORK_DIR}/drone#log_01.txt' to remove special characters."
   "Rename '${WORK_DIR}/Config%FILE.yaml' to use all lowercase letters and underscores."
   "Shorten and clarify '${WORK_DIR}/surveillance_mission_20231020_complete_log.txt' to a briefer form without losing important details."

@@ -38,7 +38,7 @@ EOF
 )"
 
 # Prepare a working environment
-USER_HOME="home/$(whoami)"
+USER_HOME="home/felix"
 WORK_DIR="$USER_HOME/projects"
 PARENT_DIR="$USER_HOME"
 
@@ -49,7 +49,7 @@ mkdir -p "$WORK_DIR/directory_file"
 
 # Training items
 declare -g -a prompts=(
-  "Explore the top-level directories using \`ls /\` and understand their roles in the Linux filesystem."
+  "Explore the the top-level directories in the Linux filesystem using \`ls /\`."
   "Identify the difference between ordinary files and directories in $WORK_DIR using \`ls -l\`."
   "Locate your home directory using \`echo\` and the variable \`\$HOME\` after the command, before you press Enter, describe its purpose using a comment \# ."
   "Display your current working directory using \`pwd\`, then change to the $WORK_DIR using \`cd\`, then display the current working directory again. Use \`&&\` between the commands."
@@ -67,7 +67,7 @@ declare -g -a hints=(
 declare -g -a patterns=(
   "ls /"
   "ls -l $WORK_DIR"
-  "echo \$HOME # This command echos the HOME directory path"
+  "echo $HOME # This command echos the HOME directory path"
   "pwd && cd $WORK_DIR && pwd"
   "cd .. && pwd"
 )
