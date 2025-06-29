@@ -5,7 +5,11 @@ export LC_ALL="en_US.UTF-8"
 export LOG_FILE="${LOG_BASE}/${BASE_NAME}_exercises.log"
 source "$TOP_DIR/colors.sh"
 source "$TOP_DIR/emojis.sh"
-export HIST_FILE="${LOG_BASE}/${BASE_NAME}_exercise.history.txt"
+HISTFILE="${LOG_BASE}/${BASE_NAME}_exercise.history.txt"
+HISTSIZE=1000
+HISTFILESIZE=2000
+HISTTIMEFORM="%F %T"
+export lesson_manager="$TOP_DIR/lesson_manager.sh"
 
 render_markdown() {
   python3 -c "
@@ -19,6 +23,68 @@ console.print(md)
 "
 
 }
+
+render_eval_correct() {
+  # Function to render evaluation output
+  local user_input="$1"
+  local expected="$2"
+  local evaled="$(eval "$user_input")"
+cat <<EOF | fold -s -w 80 | render_markdown
+\`\`\`
+$(emoji checkmark) Correct!
+    $(emoji arrow_right) Expected: $expected
+    $(emoji arrow_right) Your input: $user_input
+\`\`\`
+---
+> Your input evaluates to:
+
+\`\`\`text
+$evaled
+\`\`\`
+---
+EOF
+}
+
+render_incorrect() {
+  # Function to render incorrect input
+  local user_input="$1"
+  local expected="$2"
+  local hint="$3"
+  local right_arrow=$(emoji right_arrow)
+  local crossmark=$(emoji crossmark)
+
+cat <<EOF | fold -s -w 80 | render_markdown
+> $crossmark Incorrect. Try again.
+- $right_arrow Your input: **$user_input**
+- $right_arrow Expected input: ***$expected***
+$(if [[ -n "$hint" ]]; then
+    echo "- $right_arrow Hint: $hint"
+fi
+)
+
+> Your input evaluates to:
+\`\`\`text
+$(
+  if [[ $_eval == 1 ]]; then
+    tmp_err=$(mktemp)
+    output=$(eval "$user_input" 2>"$tmp_err")
+    status=$?
+    if [[ $status -ne 0 ]]; then
+        echo -e "- $(emoji warning) Evaluation failed:"
+        escaped=$(printf '%s\n' "$lesson_manager" | sed 's/\//\\\//g')
+        cat "$tmp_err" | sed "s/$escaped://" | sed 's/line [0-9]*://g'
+    else
+        echo "$output"
+    fi
+    rm -f "$tmp_err"
+  elif [[ $(echo $_eval | cut -d@ -f1) == 2 ]]; then
+    render_eval "$(echo $_eval | cut -d@ -f2)"
+  fi
+)
+\`\`\`
+EOF
+}
+
 
 if [[ -f "$TOP_DIR/requirements.txt" ]];then 
     echo -e "  $(emoji gear) $(bright_cyan 'Setting up lesson environment, please wait...')"
@@ -61,7 +127,6 @@ function wait_for_correct_input() {
 
   local user_input
 
-
   while true; do
     cat <<EOF | fold -s -w 80 | render_markdown
 > $(emoji finger_pointing_right) ***${prompt}***
@@ -69,17 +134,44 @@ function wait_for_correct_input() {
 \`Enter 'instruct' to see the lesson again, 'next' to skip  or 'exit' to quit.\`
 ---
 EOF
-    HIST_FILE=$HIST_FILE bash -i -c 'read -e -p "$ " user_input'
-    if [[ $? -ne 0 ]]; then
+    set -o vi
+    read -e -p "$ " user_input
+    read_return_code=$?
+    history -s "$user_input"         # Add to history list
+    history -w $HISTFILE  # Append to HISTFILE
+    if [[ $read_return_code -ne 0 ]]; then
         return 2 # Return code 2 indicates ctrl+d or ctrl+c was pressed
     fi
+    if [[ -z "$user_input" ]]; then
+        continue
+    fi
     case "$user_input" in
+        bash | sh | zsh | fish)  # Ignore shell commands
+            echo "Ignoring shell command: $user_input"
+            continue
+            ;;
         \#* | \#\#* | \#\#\#*)  # Ignore comments
             echo "Ignoring comment: $user_input"
             continue
             ;;
         clear)  # Handle clear command
             clear
+            continue
+            ;;
+        \!*)  # Handle history command
+            if [[ -n "$user_input" ]]; then
+                history_command=$(echo "$user_input" | cut -c 2-)
+                if [[ -n "$history_command" ]]; then
+                    eval "$history_command"
+                else
+                    echo "No command specified after '!'"
+                fi
+            fi
+            continue
+            ;;
+        \$\(\))  # Handle command substitution
+            user_input=$(eval "${user_input:1:-1}")
+            echo "Command substitution result: $user_input"
             continue
             ;;
         instruct)
@@ -93,18 +185,10 @@ EOF
             return 131
             ;;
         "$expected")  # Handle expected input
-              echo -e "$(emoji checkmark) Correct!"
-              echo "    → Expected: $(echo -e "$expected")"
-              echo "    → Your input: $(echo -e "$user_input")"
               if [[ $_eval == 1 ]]; then
-                echo "    → Your input evaluates to: "
-                echo "$(eval $user_input)"
-                echo
+                render_eval_correct "$user_input" "$expected"
               elif [[ $(echo $_eval | cut -d: -f1) == 2 ]]; then
                 evaled="$(eval $(echo $_eval | cut -d: -f2))"
-                echo "    → Your input evaluates to:"
-                echo "$evaled"
-                echo
               fi
               return 1
             ;;
@@ -113,38 +197,7 @@ EOF
             return 0
         ;;
         *)  # Handle incorrect input
-            cat <<EOF | fold -s -w 80 | render_markdown
-> $(emoji crossmark) Incorrect. Try again.
-
-- $(emoji right_arrow) Your input: **$user_input**
-- $(emoji right_arrow) Expected input: ***$expected***
-
-$(
-  if [[ -n "$hint" ]]; then
-     echo -e "- $(emoji hint) Hint: **$hint**"
-  fi
-
-  if [[ $_eval == 1 ]]; then
-    tmp_err=$(mktemp)
-    output=$(eval "$user_input" 2>"$tmp_err")
-    status=$?
-
-    if [[ $status -ne 0 ]]; then
-        echo -e "- $(emoji warning) Evaluation failed:"
-        cat "$tmp_err"
-    else
-        echo -e "- Your input evaluates to:"
-        echo "\`\`\`text"
-        echo "$output"
-        echo "\`\`\`"
-    fi
-    rm -f "$tmp_err"
-  elif [[ $(echo $_eval | cut -d@ -f1) == 2 ]]; then
-    echo -e "    → $(echo $_eval | cut -d@ -f2)"
-    echo
-  fi
-)
-EOF
+          render_incorrect "$user_input" "$expected" "$hint"
           continue
           ;;
     esac
@@ -173,6 +226,7 @@ function do_training() {
     hr >> "$LOG_FILE"
     mark_time "Start of Lesson ${BASE_NAME}"
     display_lesson "$lesson" | tee -a "$LOG_FILE"
+    history -r $HISTFILE  # Read the history file
     for i in "${!PROMPTS[@]}"; do
         echo "Start of Step $((i + 1)) of ${#PROMPTS[@]}" >> "$LOG_FILE" 
         echo -e "***$(emoji directhit) Step $((i + 1)) of ${#PROMPTS[@]}***" | render_markdown
