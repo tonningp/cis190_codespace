@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # Timestamp for log uniqueness
 TIMESTAMP="$(date +%Y%m%d_%H%M%S)"
 
@@ -10,14 +9,14 @@ TARGET_SCRIPT="$1"
 if [[ ! -d "$LOG_BASE" ]]; then
     mkdir -p "$LOG_BASE"
 fi
-
 # Strip path and extension to build log names
-BASE_NAME="$(basename "$TARGET_SCRIPT" .sh)"
+export BASE_NAME="$(basename "$TARGET_SCRIPT" .sh)"
 : "${BASE_NAME:=bash}"
 
 # File names
-LOG_FILE="${LOG_BASE}/${BASE_NAME}_${TIMESTAMP}.log"
-HIST_FILE="${LOG_BASE}/${BASE_NAME}_${TIMESTAMP}.history.txt"
+export LOG_BASE="${LOG_BASE}"
+export LOG_FILE="${LOG_BASE}/${BASE_NAME}_${TIMESTAMP}.log"
+export HIST_FILE="${LOG_BASE}/${BASE_NAME}_${TIMESTAMP}.history.txt"
 
 if [[ ! -d "${BASE_DIR}/home" ]]; then
   mkdir -p ${BASE_DIR}/home
@@ -42,6 +41,11 @@ cmd_hook() {
   echo -e "\e[30;47mWhen you have finished your tasks, type exit and press Enter or press Ctrl+D.\e[0m"
   echo
 }
+lesson() {
+   clear
+   echo $lesson | python -m rich.markdown -w 80 -y -
+}
+source ${TOP_DIR}/venv/bin/activate
 export PROMPT_COMMAND="cmd_hook"
 export CURRENT_LAB=${BASE_NAME}
 export NO_COLOR=1
@@ -53,7 +57,7 @@ export PS1="$ "
 alias ls='ls --color=never'
 alias grep='grep --color=never'
 alias passwd='sim_passwd.sh'
-alias mdview='python3 -m rich.markdown -w 80 -y'
+alias mdview='python -m rich.markdown -w 80 -y'
 alias start='echo "Cannot run start command in this training shell."'
 alias lab="clear;echo \"Reading: ${BASE_NAME}\" && mdview $MARKDOWN_DIR/$BASE_NAME.md"
 if [[ -d "${BASE_DIR}/home" ]]; then
@@ -62,6 +66,7 @@ else
   mkdir -p ${BASE_DIR}/home
 fi
 cd ${BASE_DIR}/home
+history -r "${HIST_FILE}"
 EOF
 
 export STARTUP_OPTIONS="--rcfile ${RCFILE}"

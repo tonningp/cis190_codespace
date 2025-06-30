@@ -1,0 +1,1 @@
+ printf "🌟 Emoji test: ☑<fe0f> 🚀 ✅ ❌ 📛\n"
