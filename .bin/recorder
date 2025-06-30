@@ -41,6 +41,11 @@ cmd_hook() {
   echo -e "\e[30;47mWhen you have finished your tasks, type exit and press Enter or press Ctrl+D.\e[0m"
   echo
 }
+lesson() {
+   clear
+   echo $lesson | python -m rich.markdown -w 80 -y -
+}
+source ${TOP_DIR}/venv/bin/activate
 export PROMPT_COMMAND="cmd_hook"
 export CURRENT_LAB=${BASE_NAME}
 export NO_COLOR=1
@@ -52,7 +57,7 @@ export PS1="$ "
 alias ls='ls --color=never'
 alias grep='grep --color=never'
 alias passwd='sim_passwd.sh'
-alias mdview='python3 -m rich.markdown -w 80 -y'
+alias mdview='python -m rich.markdown -w 80 -y'
 alias start='echo "Cannot run start command in this training shell."'
 alias lab="clear;echo \"Reading: ${BASE_NAME}\" && mdview $MARKDOWN_DIR/$BASE_NAME.md"
 if [[ -d "${BASE_DIR}/home" ]]; then
@@ -61,6 +66,7 @@ else
   mkdir -p ${BASE_DIR}/home
 fi
 cd ${BASE_DIR}/home
+history -r "${HIST_FILE}"
 EOF
 
 export STARTUP_OPTIONS="--rcfile ${RCFILE}"

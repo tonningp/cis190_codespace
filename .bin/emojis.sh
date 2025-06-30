@@ -17,6 +17,7 @@ function emoji() {
         question) echo -e "\U00002753" ;;              # ❓ question mark
         exclamation) echo -e "\U00002757" ;;           # ❗ exclamation mark
         directhit) echo -e "\U0001F3AF" ;;             # 🎯 direct hit
+        lock) echo -e "\U0001F512" ;;                 # 🔒 lock
 
         # Facial expressions
         smile) echo -e "\U0001F600" ;;                 # 😀 grinning face
@@ -47,6 +48,7 @@ function emoji() {
         celebration) echo -e "\U0001F389" ;;           # 🎉 party popper
         drone) echo -e "\U0001F681" ;;                 # 🚁 helicopter
         hint) echo -e "\U0001F4A1" ;;                  # 💡 light bulb (used for hints)
+        jump) echo -e "\U0001F3C3" ;;                  # 🏃 person running
 
         # Arrows - Directions
         arrow_right|right_arrow) echo -e "\U000027A1" ;;           # ➡️ right arrow

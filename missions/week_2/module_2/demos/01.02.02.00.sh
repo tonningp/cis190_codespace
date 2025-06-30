@@ -49,31 +49,39 @@ mkdir -p "$WORK_DIR/directory_file"
 
 # Training items
 declare -g -a prompts=(
-  "Explore the the top-level directories in the Linux filesystem using \`ls /\`."
+# 0
+  "Explore the the top-level directories in the Linux filesystem by typing \`ls /\`."
+# 1
   "Identify the difference between ordinary files and directories in $WORK_DIR using \`ls -l\`."
-  "Locate your home directory using \`echo\` and the variable \`\$HOME\` after the command, before you press Enter, describe its purpose using a comment \# ."
+# 2
   "Display your current working directory using \`pwd\`, then change to the $WORK_DIR using \`cd\`, then display the current working directory again. Use \`&&\` between the commands."
-  "Move to the parent directory of $WORK_DIR using \`cd ..\` and confirm your location with \`pwd\` use \`&&\` between the commands."
+# 3
+  "Change to the parent directory of $WORK_DIR using \`cd ..\` and confirm your location with \`pwd\` use \`&&\` between the commands."
 )
 
 declare -g -a hints=(
+# 0
   "Use \`ls /\` to list top-level directories such as /bin, /etc, /home, and /usr."
+# 1
   "Use \`ls -l\` to differentiate files from directories based on file type character in the output."
-  "The home directory is typically found in /home/your-username and is represented by \`\$HOME\`."
+# 2
   "Use \`pwd\` to print the current directory path and \`cd <directory>\` to change directories."
+# 3
   "Navigate up one level from your current directory with \`cd ..\` and confirm the new path using \`pwd\`."
 )
 
 declare -g -a patterns=(
+# 0
   "ls /"
+# 1
   "ls -l $WORK_DIR"
-  "echo $HOME # This command echos the HOME directory path"
+# 2
   "pwd && cd $WORK_DIR && pwd"
+# 3
   "cd .. && pwd"
 )
 
 declare -g -a evals=(
-  1
   1
   1
   1

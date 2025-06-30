@@ -15,7 +15,7 @@ export lesson="$(cat<<EOF
 ***This lesson focuses on:***
 
 1. Display Current Directory:
-   - Prompt: Use `pwd` to display your current working directory.
+   - Prompt: Use \`pwd\` to display your current working directory.
    - Skill: Verify your position within the filesystem.
 
 2. Navigate Using Absolute Path:
@@ -23,7 +23,7 @@ export lesson="$(cat<<EOF
    - Skill: Access directories using absolute pathnames.
 
 3. Navigate Using Relative Path:
-   - Prompt: From your current directory, use a relative path to go into 'documents'.
+   - Prompt: From your current directory, use a relative path to go into \`documents\`.
    - Skill: Efficiently shift directories using relative pathnames.
 
 4. Practice Switching Directories:
@@ -31,49 +31,39 @@ export lesson="$(cat<<EOF
    - Skill: Gain versatility in navigation through different pathname types.
 
 5. Create and Verify Directories:
-   - Prompt: Create a new directory using an absolute path. Confirm with 'pwd'.
+   - Prompt: Create a new directory using an absolute path. Confirm with \`pwd\`.
    - Skill: Combine pathname understanding with directory creation.
 
 EOF
 )"
 
 # Prepare a working environment
-BASE_DIR="$HOME/pathname_exercises"
+WORK_DIR="NavigationPractice"
+rm -rf "$WORK_DIR" 2>/dev/null
 DOC_DIR="documents"
-mkdir -p "$BASE_DIR/$DOC_DIR"
+mkdir -p "$WORK_DIR/$DOC_DIR"
 
 # Training items
 declare -g -a prompts=(
   "Use \`pwd\` to display your current working directory."
   "Navigate to your home directory using its absolute path: \`$HOME\`."
-  "From '$BASE_DIR', use a relative path to navigate to '$DOC_DIR'."
-  "Switch back to previous directory \`$BASE_DIR\` using one absolute and one relative path method."
-  "Create a directory within '$BASE_DIR/new_dir' using an absolute path and verify with \`pwd\`."
 )
 
 declare -g -a hints=(
   "Simply use \`pwd\` to show your current directory."
   "Use \`cd $HOME\` to move to the home directory with an absolute path."
-  "If already in '$BASE_DIR', use \`cd $DOC_DIR\` to navigate into documents."
-  "Switching back: use \`cd $BASE_DIR\` (absolute) and \`cd ..\` (relative if you are in '$DOC_DIR')."
-  "Create \`$BASE_DIR/new_dir\` with \`mkdir -p $BASE_DIR/new_dir\`; confirm with \`cd $BASE_DIR/new_dir && pwd\`."
 )
 
 declare -g -a patterns=(
-  "pwd"
-  "cd $HOME"
-  "cd $DOC_DIR"
-  "cd .. && cd $BASE_DIR"
-  "mkdir -p $BASE_DIR/new_dir && cd $BASE_DIR/new_dir && pwd"
+"re:^pwd$"
+"re:^cd +$HOME/?$"
 )
 
 declare -g -a evals=(
   1
   1
-  1
-  1
-  1
 )
 
-export TREE_VIEW="$(tree -C $BASE_DIR)"
+export TREE_VIEW="$(tree -C $WORK_DIR 2>/dev/null)"
 source "${TOP_DIR}/lesson_manager.sh"
+

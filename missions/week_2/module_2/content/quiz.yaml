@@ -1,0 +1,69 @@
+quiz_type: yaml_quiz
+title: "Week 2 Module 2 Quiz – Linux File Systems and Permissions for Drone Operations"
+
+questions:
+  - type: multiple_choice
+    prompt: "Which command displays the current directory you are working in?"
+    options:
+      - "cd"
+      - "pwd"
+      - "ls"
+      - "chmod"
+    correct_answer: [1]
+
+  - type: short_answer
+    prompt: "What option with 'chmod' allows adding read and write permissions for all users?"
+    correct_answer: "-a+rw"
+
+  - type: multiple_choice
+    prompt: "Which type of link can span across filesystems?"
+    options:
+      - "Hard Link"
+      - "Relative Link"
+      - "Symbolic Link"
+      - "Projected Link"
+    correct_answer: [2]
+
+  - type: true_false
+    prompt: "The command 'ln -s' can be used to create a hard link."
+    correct_answer: false
+
+  - type: short_answer
+    prompt: "Which command would you use to make a directory named 'drone_configs'?"
+    correct_answer: "^mkdir drone_configs$"
+
+  - type: multiple_choice
+    prompt: "To grant execute permissions to all users for a directory, which command would you use?"
+    options:
+      - "chmod a+r directory"
+      - "chmod a-w directory"
+      - "chmod a+x directory"
+      - "chmod a+rw directory"
+    correct_answer: [2]
+
+  - type: true_false
+    prompt: "A symbolic link can point to a directory."
+    correct_answer: true
+
+  - type: multiple_choice
+    prompt: "If you need to see the details of the file a symbolic link points to, which command will you use?"
+    options:
+      - "ls -l"
+      - "ls -ld"
+      - "ls -lL"
+      - "ls -lh"
+    correct_answer: [2]
+
+  - type: short_answer
+    prompt: "What command would you use to recursively remove a directory named `configs`?"
+    correct_answer: "^rm -r configs$"
+
+  - type: multiple_choice
+    prompt: "Which command is used to change to the home directory in Linux?"
+    options:
+      - "cd home"
+      - "cd ~"
+      - "cd /"
+      - "cd .."
+    correct_answer: [1]
+

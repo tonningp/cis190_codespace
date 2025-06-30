@@ -11,6 +11,26 @@ export HISTFILESIZE=2000
 HISTTIMEFORMAT="%F %T"
 export lesson_manager="$TOP_DIR/lesson_manager.sh"
 
+is_expected_input() {
+  local input="$1"
+  local expected_set="$2"
+
+  IFS='@@' read -ra EXPECTED_ARRAY <<< "$expected_set"
+  for expected in "${EXPECTED_ARRAY[@]}"; do
+    if [[ "$expected" =~ ^re:(.*) ]]; then
+      pattern="${BASH_REMATCH[1]}"
+      if [[ "$input" =~ $pattern ]]; then
+        return 0
+      fi
+    else
+      if [[ "$input" == "$expected" ]]; then
+        return 0
+      fi
+    fi
+  done
+  return 1
+}
+
 render_markdown() {
   python3 -c "
 from rich.console import Console
@@ -27,6 +47,8 @@ render_eval_correct() {
   local user_input="$1"
   local expected="$2"
   local evaled="$(eval "$user_input")"
+  expected=$(echo "$expected" | sed 's/^re://; s/^\[\(.*\)\]$/\1/; s/^\(.*\)$/\1/')
+  #$(emoji arrow_right) Expected: $expected
   if [[ -n "$evaled" ]]; then
 cat <<EOS | fold -s -w 80 | render_markdown
 > $(emoji lightbulb) Your input evaluates to:
@@ -39,7 +61,6 @@ cat <<EOS | fold -s -w 80 | render_markdown
 ---
 \`\`\`
 $(emoji checkmark) Correct!
-    $(emoji arrow_right) Expected: $expected
     $(emoji arrow_right) Your input: $user_input
 \`\`\`
 ---
@@ -53,6 +74,9 @@ render_incorrect() {
   local right_arrow=$(emoji right_arrow)
   local crossmark=$(emoji crossmark)
 
+  # remove regular expression prefix and symbols if they exist
+  # e.g. re:^[0-9]+$ -> ^[0-9]+$ in expected
+  expected=$(echo "$expected" | sed 's/^re://; s/^\[\(.*\)\]$/\1/; s/^\(.*\)$/\1/')
 cat <<EOF | fold -s -w 80 | render_markdown
 > $crossmark Incorrect. Try again.
 - $right_arrow Your input: **$user_input**
@@ -117,10 +141,10 @@ EOS
 
 function wait_for_correct_input() {
   local return_code=-1
-  local prompt=$1
-  local expected=$2   
-  local hint=$3
-  local _eval=$4
+  local prompt="$1"
+  local expected="$2"
+  local hint="$3"
+  local _eval="$4"
 
   local user_input
 
@@ -128,14 +152,14 @@ function wait_for_correct_input() {
     cat <<EOF | fold -s -w 80 | render_markdown
 > $(emoji finger_pointing_right) ***${prompt}***
 ---
-***Enter \`instruct\` to see the lesson again, \`skip\` to skip, \`skipto <step>\` to jump, or \`exit\` to quit.***
----
 EOF
     set -o vi
     read -e -p "$ " user_input
     read_return_code=$?
-    history -s "$user_input"
-    history -w $HISTFILE
+    if [[ -n "$user_input" ]]; then
+        history -s "$user_input"
+        history -w $HISTFILE
+    fi
     if [[ $read_return_code -ne 0 ]]; then
         return 2
     fi
@@ -143,6 +167,9 @@ EOF
         continue
     fi
     case "$user_input" in
+        exit)
+            return 0
+            ;;
         train)
             bash --rcfile "$RCFILE"
             continue
@@ -171,9 +198,26 @@ EOF
             fi
             continue
             ;;
-        reset_lesson)
+        reset_lesson|reset_to\ *)
             echo "Resetting lesson..."
-            exec "$0"
+            if [[ $user_input == "reset_lesson" ]]; then
+                :
+            else
+                start_index=$(echo "$user_input" | cut -d' ' -f2)
+                #subtract 1 to convert to zero-based index
+                # check if start_index is greater than size of prompts
+                if [[ "$start_index" =~ ^[0-9]+$ ]] && (( start_index > 0 )); then
+                    export start_index=$((start_index - 1))
+                else
+                    export start_index=0
+                fi
+                prompt_length=${#prompts[@]}
+                if [[ $start_index =~ ^[0-9]+$ ]] && (( start_index > (prompt_length-1) )); then
+                    export start_index=$((prompt_length - 1))
+                fi
+
+            fi
+                exec "$0"
             ;;
         \!*)
             history_command=$(echo "$user_input" | cut -c 2-)
@@ -202,31 +246,29 @@ EOF
             echo "Moving to the next step..."
             return 131
             ;;
-        skipto\ *)
+        jump\ *)
             target=$(echo "$user_input" | cut -d' ' -f2)
             if [[ "$target" =~ ^[0-9]+$ ]] && (( target > 0 )) && (( target <= ${#prompts[@]} )); then
-              echo "Skipping to step $target..."
-              return $((100 + target))
+                echo -e "$(emoji jump)Jumping to step $target..."
+                return $((100 + target))
             else
               echo "Invalid step number: $target"
               continue
             fi
             ;;
-        "$expected")
+        *)
+          #echo "DEBUG: User input: $user_input"
+          #echo "DEBUG: Expected input: $expected"
+          #pause
+          if is_expected_input "$user_input" "$expected"; then
               if [[ $_eval == 1 ]]; then
                 render_eval_correct "$user_input" "$expected"
-              elif [[ $(echo $_eval | cut -d: -f1) == 2 ]]; then
-                evaled="$(eval $(echo $_eval | cut -d: -f2))"
               fi
               return 1
-            ;;
-        exit)
-            echo "Exiting..."
-            return 0
-            ;;
-        *)
-          render_incorrect "$user_input" "$expected" "$hint"
-          continue
+          else
+              render_incorrect "$user_input" "$expected" "$hint"
+              continue
+          fi
           ;;
     esac
   done
@@ -243,39 +285,37 @@ function mark_time() {
 }
 
 function do_training() {
-    declare -n PROMPTS=$1
-    declare -n PATTERNS=$2
-    declare -n HINTS=$3
-    declare -n EVALS=$4
-
-    START_INDEX=0
-    #if [[ -z "$SKIP_PROMPTED" ]]; then
-    #    echo -n "$(emoji question) Skip to specific step? (1-${#PROMPTS[@]}) [Enter for none]: "
-    #    read step_number
-    #    if [[ "$step_number" =~ ^[0-9]+$ ]] && (( step_number > 0 )) && (( step_number <= ${#PROMPTS[@]} )); then
-    #        START_INDEX=$((step_number - 1))
-    #    fi
-    #    export SKIP_PROMPTED=1
-    #fi
-
+    local START_INDEX=$1
+    declare -n PROMPTS=$2
+    declare -n PATTERNS=$3
+    declare -n HINTS=$4
+    declare -n EVALS=$5
+    declare -n RESET=$6
+    if [[ -z "$PROMPTS" || -z "$PATTERNS" || -z "$HINTS" || -z "$EVALS" ]]; then
+        echo "Error: One or more required arrays are empty."
+        exit 1
+    fi
+    #START_INDEX=0
     hr >> "$LOG_FILE"
     mark_time "Start of Lesson ${BASE_NAME}"
     display_lesson "$lesson" | tee -a "$LOG_FILE"
 
-    #for (( i=START_INDEX; i<${#PROMPTS[@]}; i++ )); do
     end_index=${#PROMPTS[@]}
     i=$START_INDEX
     while true; do
-        if (( i > end_index )); then
+        if (( i > end_index-1 )); then
             break
         fi
         history -r $HISTFILE
         echo "Start: Step $((i + 1)) of ${#PROMPTS[@]} for topic $BASE_NAME" >> "$LOG_FILE"
         echo -e "***$(emoji directhit) Step $((i + 1)) of ${#PROMPTS[@]}***       \`Topic: ${BASE_NAME}\`" | render_markdown
-        wait_for_correct_input "${PROMPTS[$i]}"\
-                               "${PATTERNS[$i]}"\
-                               "${HINTS[$i]}"\
-                               "${EVALS[$i]}" | tee -a "$LOG_FILE"
+        prompt="${PROMPTS[$i]}"
+        pattern="${PATTERNS[$i]}"
+        hint="${HINTS[$i]}"
+        _eval="${EVALS[$i]}"
+        #echo "DEBUG: pattern: $pattern"
+        #pause
+        wait_for_correct_input "${prompt}" "${pattern}" "${hint}" "${_eval}" | tee -a "$LOG_FILE"
         return_code=${PIPESTATUS[0]}
         if [[ $return_code =~ ^10[0-9]+$ ]]; then
             :
@@ -302,8 +342,22 @@ if [[ -z "$lesson" ]]; then
     echo "Error: lesson is not set."
     exit 1
 fi
+# get index of the lesson --index=<number> in $1
+if [[ -n $start_index && $start_index =~ ^[0-9]+$ ]]; then
+    index="$start_index"
+    if (( index < 0 )); then
+        echo "Error: Index must be a non-negative integer."
+        exit 1
+    fi
+else
+    index=0
+fi
+# check if reset array is set if not set it to empty array
+if [[ -z "$reset" ]]; then
+    reset=()
+fi
 
-do_training prompts patterns hints evals
+do_training index prompts patterns hints evals reset
 
 echo
 echo "$(emoji checkered_flag) Training session complete!"
