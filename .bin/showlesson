@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo "$lesson" | python -m rich.markdown -w 80 -y -
