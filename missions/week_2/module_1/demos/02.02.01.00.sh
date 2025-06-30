@@ -51,4 +51,3 @@ declare -g -a evals=(
 )
 
 source ${TOP_DIR}/lesson_manager.sh
-exec bash --rcfile $RCFILE
