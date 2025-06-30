@@ -18,6 +18,7 @@ function emoji() {
         exclamation) echo -e "\U00002757" ;;           # ❗ exclamation mark
         directhit) echo -e "\U0001F3AF" ;;             # 🎯 direct hit
         lock) echo -e "\U0001F512" ;;                 # 🔒 lock
+        magnifying_glass) echo -e "\U0001F50D" ;;     # 🔍 magnifying glass tilted left
 
         # Facial expressions
         smile) echo -e "\U0001F600" ;;                 # 😀 grinning face
