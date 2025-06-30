@@ -79,8 +79,8 @@ render_incorrect() {
   expected=$(echo "$expected" | sed 's/^re://; s/^\[\(.*\)\]$/\1/; s/^\(.*\)$/\1/')
 cat <<EOF | fold -s -w 80 | render_markdown
 > $crossmark Incorrect. Try again.
-- $right_arrow Your input: **$user_input**
-- $right_arrow Expected input: ***$expected***
+- $right_arrow Your input: $user_input
+- $right_arrow Expected input: $expected
 $(if [[ -n "$hint" ]]; then
     echo "- $right_arrow Hint: $hint"
 fi
