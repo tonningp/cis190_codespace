@@ -32,9 +32,6 @@ export lesson="$(cat<<EOF
 - View the End of Large Logs:
    - Prompt: Display the last 20 lines of the telemetry.log file.
    - Skill: Use \`tail -n\` to specify the number of lines to display from the end.
-- Monitor New Entries:
-   - Prompt: Use \`tail -f\` to monitor new entries being added to status.log in real-time.
-   - Skill: Use the follow mode of \`tail\` to dynamically view updating files.
 
 EOF
 )"
@@ -80,7 +77,6 @@ declare -g -a prompts=(
   "Display the first 3 lines of each .conf file in the ${CONFIG_DIR} directory using \`head\`."
   "Display the last 10 lines of the ${LOG_DIR}/status.log file using \`tail\`."
   "Display the last 20 lines of the ${LOG_DIR}/telemetry.log file using \`tail -n\`."
-  "Use \`tail -f\` to monitor new entries being added to ${LOG_DIR}/status.log in real-time."
 )
 
 declare -g -a hints=(
@@ -89,7 +85,6 @@ declare -g -a hints=(
   "Use \`head -n 3 ${CONFIG_DIR}/*.conf\` to view the beginning of each .conf file."
   "Use \`tail <filename>\` to display the last 10 lines of a file."
   "Use \`tail -n 20 <filename>\` to specify the last 20 lines to display."
-  "Use \`tail -f <filename>\` to continuously follow and display new lines."
 )
 
 declare -g -a patterns=(
@@ -98,11 +93,9 @@ declare -g -a patterns=(
   "head -n 3 ${CONFIG_DIR}/*.conf"
   "tail ${LOG_DIR}/status.log"
   "tail -n 20 ${LOG_DIR}/telemetry.log"
-  "tail -f ${LOG_DIR}/status.log"
 )
 
 declare -g -a evals=(
-  1
   1
   1
   1
