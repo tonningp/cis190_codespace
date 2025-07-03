@@ -82,14 +82,23 @@ main() {
 
 	    # Collect module list (strip ./, keep relative paths)
         cd "$(dirname "$TOP_DIR")/missions" || exit 1
+        # these are the actual directories that contain modules
+        # they are in the format week_1/module_1, week_1/module_2, etc.
+        # they are sorted by week number and module number
 	    mapfile -t module_dirs < <(
                               for f in week*; do
                                   for m in "$f"/*; do
                                     [ -d "$m" ] && echo "$f/$(basename "$m")"
                                   done
                              done | sed 's|^\./||' | sort -u)
+
+          # these are the module names with completion status
+          # and week number
+          # if the module is completed, it will show the completion date
+          # if not, it will show a yellow asterisk
+          # if the module is for the current week, it will be highlighted in bold magenta
 	    mapfile -t modules < <(
-                                 for d in week*/module*; do
+                                 for d in week*/*; do
                                      if [[ -f $d/home/.completed ]]; then
                                          post=" \Z2Completed\Zn - \Zb\Z7$(cat $d/home/.completed)\Zn" # green text
                                      else

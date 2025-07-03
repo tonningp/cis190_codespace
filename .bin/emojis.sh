@@ -136,4 +136,4 @@ function emoji() {
         *) echo -e "\U0001F622 Unknown emoji: $emoji_name" ;; # 😢 crying face
     esac
 }
-
+export -f emoji

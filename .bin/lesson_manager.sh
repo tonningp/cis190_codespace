@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 export LANG="en_US.UTF-8"
 export LANGUAGE="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
@@ -42,6 +42,8 @@ console = Console(force_terminal=True, color_system='truecolor')
 console.print(md)
 "
 }
+# make render_markdown global
+export -f render_markdown
 
 render_eval_correct() {
   local user_input="$1"
@@ -138,6 +140,86 @@ EOT
 )
 EOS
 }
+
+run_shell_exercise () {
+    local index="$1"
+    local prompt="${prompts[$index]}"
+    local expected="${patterns[$index]}"
+    local hint="${hints[$index]}"
+    local session_log="$LOG_BASE/session_$(printf "%02d" "$index").log"
+    local history_log="$LOG_BASE/history_$(printf "%02d" "$index").txt"
+    temp_script=$(mktemp)
+
+    cat > "$temp_script" <<EOF
+#!/bin/bash
+export HISTFILE="$history_log"
+export HISTTIMEFORMAT="%F %T "
+export PS1="[$BASE_NAME] $ "
+touch "$HISTFILE"
+history -r
+
+echo "🧪 Exercise $((index+1)): $prompt"
+if [[ -n "$DISPLAY_FILE_TREE" ]]; then
+cat <<EOT
+> $(emoji folder) Lesson files
+\`\`\`text
+$TREE_VIEW
+\`\`\`
+EOT
+fi
+wait_for_correct_input "${prompt}" "${expected}" "${hint}" 1 | tee -a "$session_log"
+return_code=${PIPESTATUS[0]}
+if [[ $return_code =~ ^10[0-9]+$ ]]; then
+    :
+else
+    echo "🏁 End of Step $((index + 1)) of ${#prompts[@]} with return code $return_code" >> "$session_log"
+    echo "==> Step $((index + 1)) of ${#prompts[@]} completed."
+fi
+if [[ $return_code == 0 || $return_code == 2 ]]; then
+   break
+elif [[ $return_code =~ ^10[0-9]+$ ]]; then
+   new_index=$((return_code - 100))
+   if (( new_index > 0 && new_index <= ${#prompts[@]} )); then
+       index=$((new_index - 1))
+     continue
+   fi
+fi
+#while true; do
+#  read -ep "\$PS1" cmd
+#  history -s "\$cmd"
+#  history -a
+#  case "\$cmd" in
+#    exit|quit)
+#      echo "Exiting the exercise."
+#      exit 1
+#      ;;
+#    skip)
+#      echo "Skipping this exercise."
+#      break
+#      ;;
+#    help|--help|-h)
+#      echo "Available commands:"
+#      echo "  exit, quit - Exit the exercise"
+#      echo "  skip - Skip to the next exercise"
+#      echo "  help, --help, -h - Show this help message"
+#      echo "  <any command> - Execute the command and log it"
+#      ;;
+#    "$expected")
+#      echo "✅ Correct!"
+#      eval "\$cmd"
+#      break
+#      ;;
+#    *)
+#      echo "❌ Try again."
+#      ;;
+#  esac
+#done
+EOF
+      chmod +x "$temp_script"
+      script -q -c "$temp_script" "$session_log"
+      rm -f "$temp_script"
+}
+
 
 function wait_for_correct_input() {
   local return_code=-1
@@ -257,9 +339,6 @@ EOF
             fi
             ;;
         *)
-          #echo "DEBUG: User input: $user_input"
-          #echo "DEBUG: Expected input: $expected"
-          #pause
           if is_expected_input "$user_input" "$expected"; then
               if [[ $_eval == 1 ]]; then
                 render_eval_correct "$user_input" "$expected"
@@ -273,6 +352,7 @@ EOF
     esac
   done
 }
+export -f wait_for_correct_input
 
 function hr() {
     echo "--------------------------------------------------------------------------------"
@@ -357,12 +437,69 @@ if [[ -z "$reset" ]]; then
     reset=()
 fi
 
-do_training index prompts patterns hints evals reset
+if [[ -n "$TRAINING_SHELL" ]]; then
+
+  run_exercises() {
+      for i in "${!prompts[@]}"; do
+        run_shell_exercise "$i"
+      done
+      echo -e "\n🎉 Lesson complete!"
+  }
+
+  grade_shell_exercise() {
+    local index="$1"
+    local history_log="$2"
+    local grading_log="$3"
+    local prompt="${prompts[$index]}"
+    local expected="${patterns[$index]}"
+    local hint="${hints[$index]}"
+    local _eval="${evals[$index]}"
+    echo "$(emoji checkmark) Grading Exercise $((index+1)): $prompt"
+    echo "History log: $history_log"
+    #cat ${history_log} | fold -s -w 80 | render_markdown
+    echo "Will Grade to: $grading_log"
+
+    echo "📊 Grading Lesson: $BASE_NAME"
+    echo "────────────────────────────────────"
+    # Get the last non-empty command in the history file
+    student_cmd=$(grep -v '^#' "$history_log" | tail -n 1 | sed 's/^[[:space:]]*//')
+
+    echo "🧩 Exercise $((i+1)): $prompt"
+    echo "🔸 Expected: '$expected'"
+    echo "🔹 Student:  '$student_cmd'"
+
+    if [[ "$student_cmd" == "$expected" ]]; then
+        echo "✅ Correct!"
+        ((passed++))
+    else
+        echo "❌ Incorrect."
+    fi
+  }
+
+  grade_exercises() {
+    total="${#prompts[@]}"
+    passed=0
+    for i in "${!prompts[@]}"; do
+      session_log="$LOG_BASE/session_$(printf "%02d" "$i").log"
+      history_log="$LOG_BASE/history_$(printf "%02d" "$i").txt"
+      grading_log="$LOG_BASE/grading_$(printf "%02d" "$i").txt"
+      grade_shell_exercise "$i" "$history_log" "$grading_log"
+      passed=$((passed + 1))
+    done
+    echo "$(emoji checkered_flag) Final Score: $passed / $total"
+    echo "$0 Final Score: $passed / $total" >> $grading_log
+  }
+  run_exercises
+  grade_exercises
+
+
+else
+    # This is the old way of running the training session
+    # If TRAINING_SHELL is not set, run the old training session
+    do_training index prompts patterns hints evals reset
+fi
 
 echo
 echo "$(emoji checkered_flag) Training session complete!"
 echo
 
-if [[ -n "$TRAINING_SHELL" ]]; then
-    exec bash --rcfile "$RCFILE"
-fi
