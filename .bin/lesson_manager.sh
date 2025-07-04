@@ -150,6 +150,15 @@ run_shell_exercise () {
     local history_log="$LOG_BASE/history_$(printf "%02d" "$index").txt"
     temp_script=$(mktemp)
 
+    if [[ -n "$DISPLAY_FILE_TREE" ]]; then
+    export temp_file=$(mktemp)
+cat <<EOT >$temp_file
+> $(emoji file_folder) Lesson files
+\`\`\`text
+$(tree -C "$WORK_DIR")
+\`\`\`
+EOT
+    fi
     cat > "$temp_script" <<EOF
 #!/bin/bash
 export HISTFILE="$history_log"
@@ -157,16 +166,8 @@ export HISTTIMEFORMAT="%F %T "
 export PS1="[$BASE_NAME] $ "
 touch "$HISTFILE"
 history -r
-
+cat $temp_file | fold -s -w 80 | render_markdown
 echo "🧪 Exercise $((index+1)): $prompt"
-if [[ -n "$DISPLAY_FILE_TREE" ]]; then
-cat <<EOT
-> $(emoji folder) Lesson files
-\`\`\`text
-$TREE_VIEW
-\`\`\`
-EOT
-fi
 wait_for_correct_input "${prompt}" "${expected}" "${hint}" 1 | tee -a "$session_log"
 return_code=${PIPESTATUS[0]}
 if [[ $return_code =~ ^10[0-9]+$ ]]; then
@@ -218,6 +219,7 @@ EOF
       chmod +x "$temp_script"
       script -q -c "$temp_script" "$session_log"
       rm -f "$temp_script"
+      rm -f "$temp_file"
 }
 
 

@@ -6,10 +6,11 @@ source "$TOP_DIR/colors.sh"
 source "$TOP_DIR/emojis.sh"
 source "$TOP_DIR/utils.sh"
 # Prepare a working environment
-export ROOT_DIR='working'
-export CONFIG_DIR="$ROOT_DIR/configs"
-export LOG_DIR="$ROOT_DIR/logs"
-export DIAGNOSTICS_DIR="$ROOT_DIR/diagnostics"
+export WORK_DIR='working'
+export CONFIG_DIR="$WORK_DIR/configs"
+export LOG_DIR="$WORK_DIR/logs"
+export DIAGNOSTICS_DIR="$WORK_DIR/diagnostics"
+mkdir -p "$WORK_DIR" "$CONFIG_DIR" "$LOG_DIR" "$DIAGNOSTICS_DIR"
 export lesson_title="Absolute and Relative Paths"
 export lesson="$(cat<<EOF
 # Tech Training: Absolute vs. Relative Paths
@@ -26,11 +27,11 @@ declare -g -a prompts=(
 )
 
 declare -g -a hints=(
-  "Use \`ls /full/path/to/logs\`. Try \`pwd\` to find it."
-  "Use \`cp logs/flight_001.log configs/backup_flight_001.log\`."
-  "Use \`cat /full/path/to/configs/drone01.conf\`."
-  "Use \`cd logs\` assuming you're one level up from it."
-  "Use \`touch /full/path/to/diagnostics/checklist.txt\`."
+  "Use ls /full/path/to/logs. Try pwd to find it."
+  "Use cp logs/flight_001.log configs/backup_flight_001.log\."
+  "Use cat /full/path/to/configs/drone01.conf\."
+  "Use cd logs\ assuming you're one level up from it."
+  "Use touch /full/path/to/diagnostics/checklist.txt\."
 )
 
 declare -g -a patterns=(
