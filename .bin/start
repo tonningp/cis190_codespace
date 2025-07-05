@@ -4,6 +4,7 @@ START_DATE="2025-06-23"
 export TZ="America/Los_Angeles"
 
 export TOP_DIR="$(dirname "$(realpath "$0")")"
+cp $TOP_DIR/tmux.conf ~/.tmux.conf
 export PROFILE_DB="${TOP_DIR}/../.db/profile.sqlite3"
 export DEBUG="${TOP_DIR}/debug.txt"
 export MISSION_DIR="$(dirname "$TOP_DIR")/missions"

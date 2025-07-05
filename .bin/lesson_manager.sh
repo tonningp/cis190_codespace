@@ -184,6 +184,21 @@ EOF
 # Write the lesson to a file once, so it's accessible in all scopes
 # Command check function
 check_command() {
+  in_list() {
+      local value="\$1"; shift
+      for item; do [[ "\$value" =~ \$item ]] && return 0; done
+      return 1
+  }
+  local hash_commands=(
+    '^#\ *reset'
+    '^#\ *train'
+    '^#\ *files'
+    '^#\ *hint'
+    '^#\ *instruct'
+    '^#\ *skip'
+    '^#\ *jump'
+    '^man\ .*'
+  )
   local index_file="\$HOME/.lesson_index.txt"
   local prompt_file="\$HOME/.current_prompts.txt"
   grading_log="\$(dirname \$(realpath $0))/../history/grading_${BASE_NAME}.txt"
@@ -200,35 +215,73 @@ check_command() {
   prompt_string=\$(cat \$prompt_file | tr -d '\n')
   # Split into array
   IFS=';' read -ra prompts <<< "\$prompt_string"
-  local expected_command="\${prompts[\$((index+1))]}"
-  expected_command=\$(echo "\$expected_command" | xargs)  # remove leading/trailing whitespace
-  local hint="\${prompts[\$((index+2))]}"
-  last_command=\$(fc -ln -1 | sed 's/^[[:space:]]*//')
-  last_command="\${last_command%/}"  # remove trailing slash if any
-  size_prompts=\${#prompts[@]}
-  if [[ "\$last_command" =~ "\$expected_command" ]]; then
+  # Extract expected command and trim whitespace
+    local expected_command="\${prompts[\$((index+1))]}"
+    expected_command="\$(echo \"\$expected_command\" | xargs)"  # remove leading/trailing whitespace
+    local hint="\${prompts[\$((index+2))]}"
+    last_command="\$(fc -ln -1 | sed 's/^[[:space:]]*//')"
+    if [[ -z "\$last_command" ]]; then
+      echo "No command entered yet. Please enter a command."
+    elif [[ "\$last_command" =~ ^#\ *reset ]]; then
+      echo "Resetting lesson..."
+      echo "-1" > "\$index_file"
+      echo "0" > "\$index_file"
+      echo "Resetting grading log..."
+      echo "" > "\$grading_log"
+      index=\$(< "\$index_file")
+      sed -i '/reset/d' "\$HISTFILE"
+    elif [[ "\$last_command" =~ ^#\ *hint ]]; then
+      if [[ -n "\$hint" ]]; then
+        echo -e "$(emoji hint) Hint: \$hint"
+      else
+        echo "No hint available for this step."
+      fi
+    elif [[ "\$last_command" =~ ^#\ *instruct ]]; then
+        display_lesson "\$(cat \$HOME/.current_lesson.txt)"
+    elif [[ "\$last_command" == "# skip" ]]; then
+        ((index+=3))
+        echo "\$(date +%s):\$(( index / 3)):\$(( size_prompts / 3 )):0" >> "\$grading_log"
+        echo "\$index" > "\$index_file"
+    fi
+    size_prompts="\${#prompts[@]}"
+    if [[ "\$index" -ge "\$size_prompts" ]]; then
+      echo "> 🏁 All commands completed!" | fold -s -w 80 | render_markdown return_code=0
+      exit 0
+    fi
+    if [[ "\$expected_command" =~ ^re:.* ]]; then
+      # If using regex match
+      local regex="\${expected_command#re:}"
+      if [[ "\$last_command" =~ \$regex ]]; then
+        echo
+        echo "✅ That is correct!"
+        ((index+=3))
+        echo "\$(date +%s):\$(( index / 3)):\$(( size_prompts / 3 )):1" >> "\$grading_log"
+        echo "\$index" > "\$index_file"
+      elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
+        echo "❌ Try again. Your last command was: \$last_command  -- Hint: '\$hint'" | fold -s -w 80 | render_markdown
+      fi
+    else
+      # Use literal string comparison
+      if [[ \$last_command != '# reset' && "\$last_command" == "\$expected_command" ]]; then
+        echo
+        echo "✅ That is correct!"
+        ((index+=3))
+        echo "\$(date +%s):\$(( index / 3)):\$(( size_prompts / 3 )):1" >> "\$grading_log"
+        echo "\$index" > "\$index_file"
+      elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
+        echo "❌ Try again. Your last command was: \$last_command  -- Hint: '\$hint'" | fold -s -w 80 | render_markdown
+      fi
+    fi
     echo
-    echo "✅ That is correct!"
-    ((index+=3))
-    echo "$(date +%s):\$(( index / 3)):\$(( size_prompts / 3 )):1" >> "\$grading_log"
-    echo "\$index" > "\$index_file"
-  else
-    echo "❌ Try again. Your command was: \$last_command  -- Hint: '\$hint'" | fold -s -w 80 | render_markdown
-  fi
-  if [[ "\$index" -ge "\$(( \$size_prompts ))" ]]; then
-    echo "> 🏁 All commands completed!" | fold -s -w 80 | render_markdown
-    return_code=0
-    exit 0
-  else
-      echo
-      echo -e "$(emoji finger_pointing_right) \${prompts[\$index]}" | fold -s -w 80 | render_markdown
-      echo
-  fi
+    echo -e "> Task \$((index/3+1)) of \$((size_prompts / 3)) \$(emoji finger_pointing_right) \${prompts[\$index]}" | fold -s -w 80 | render_markdown
+    echo
+
 }
 export -f check_command
 PROMPT_COMMAND=check_command
 
 export TERM=xterm-256color
+export USER=$(whoami)
 export HISTFILE="$history_log"
 export HISTSIZE=1000
 export HISTTIMEFORMAT="%F %T "
@@ -242,14 +295,25 @@ load_lesson() {
   local prompts="\$2"
   echo "\$lesson" > "\$HOME/.current_lesson.txt"
   echo "\$prompts" > "\$HOME/.current_prompts.txt"
+  local prompt_file="\$HOME/.current_prompts.txt"
   echo "-1" > "\$HOME/.lesson_index.txt"
   # Read, remove newlines, trim extra semicolons
-  prompt_string=$(echo \$prompts | tr -d '\n')
+  prompt_string=\$(cat \$prompt_file | tr -d '\n')
   # Split into array
   IFS=';' read -ra prompts <<< "\$prompt_string"
-  echo
-  echo -e "$(emoji finger_pointing_right) \${prompts[0]}" | fold -s -w 80 | render_markdown
-  echo
+  clear
+  size_prompts="\${#prompts[@]}"
+  cat <<EOT | fold -s -w 80 | render_markdown
+  $( echo -e "$(emoji sunglasses) Student Name: ${FIRSTNAME} ${LASTNAME} (${STUDENT_ID})"
+    echo -e "$lesson_title"
+    echo "---"
+    echo -e "$lesson"
+    echo "---"
+    cat "${TOP_DIR}/common_instructions.md"
+    echo "---"
+    echo -e "> Task 1 of \$(( size_prompts / 3 )) $(emoji finger_pointing_right) \${prompts[0]}"
+    )
+EOT
 }
 export -f load_lesson
 load_lesson "$expected" "${prompts[$index]}"
