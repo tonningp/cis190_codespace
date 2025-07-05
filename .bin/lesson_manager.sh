@@ -8,7 +8,7 @@ source "$TOP_DIR/emojis.sh"
 export HISTFILE="${LOG_BASE}/${BASE_NAME}_exercise.history.txt"
 export HISTSIZE=1000
 export HISTFILESIZE=2000
-HISTTIMEFORMAT="%F %T"
+export HISTTIMEFORMAT="%F %T"
 export lesson_manager="$TOP_DIR/lesson_manager.sh"
 
 is_expected_input() {
@@ -30,7 +30,7 @@ is_expected_input() {
   done
   return 1
 }
-
+export -f is_expected_input
 render_markdown() {
   python3 -c "
 from rich.console import Console
@@ -68,6 +68,7 @@ $(emoji checkmark) Correct!
 ---
 EOS
 }
+export -f render_eval_correct
 
 render_incorrect() {
   local user_input="$1"
@@ -110,6 +111,7 @@ $(
 \`\`\`
 EOF
 }
+export -f render_incorrect
 
 if [[ -f "$TOP_DIR/requirements.txt" ]]; then 
     echo -e "  $(emoji gear) $(bright_cyan 'Setting up lesson environment, please wait...')"
@@ -143,12 +145,14 @@ EOS
 
 run_shell_exercise () {
     local index="$1"
+    local session_log="$2"
+    local history_log="$3"
     local prompt="${prompts[$index]}"
+    local type="${types[$index]}"
     local expected="${patterns[$index]}"
     local hint="${hints[$index]}"
-    local session_log="$LOG_BASE/session_$(printf "%02d" "$index").log"
-    local history_log="$LOG_BASE/history_$(printf "%02d" "$index").txt"
-    temp_script=$(mktemp)
+    local eval="${evals[$index]}"
+    export temp_script=$(mktemp)
 
     if [[ -n "$DISPLAY_FILE_TREE" ]]; then
     export temp_file=$(mktemp)
@@ -159,6 +163,7 @@ $(tree -C "$WORK_DIR")
 \`\`\`
 EOT
     fi
+  if [[ "$type" == "command" ]]; then
     cat > "$temp_script" <<EOF
 #!/bin/bash
 export HISTFILE="$history_log"
@@ -167,64 +172,167 @@ export PS1="[$BASE_NAME] $ "
 touch "$HISTFILE"
 history -r
 cat $temp_file | fold -s -w 80 | render_markdown
-echo "🧪 Exercise $((index+1)): $prompt"
-wait_for_correct_input "${prompt}" "${expected}" "${hint}" 1 | tee -a "$session_log"
-return_code=${PIPESTATUS[0]}
-if [[ $return_code =~ ^10[0-9]+$ ]]; then
-    :
-else
-    echo "🏁 End of Step $((index + 1)) of ${#prompts[@]} with return code $return_code" >> "$session_log"
-    echo "==> Step $((index + 1)) of ${#prompts[@]} completed."
-fi
-if [[ $return_code == 0 || $return_code == 2 ]]; then
-   break
-elif [[ $return_code =~ ^10[0-9]+$ ]]; then
-   new_index=$((return_code - 100))
-   if (( new_index > 0 && new_index <= ${#prompts[@]} )); then
-       index=$((new_index - 1))
-     continue
-   fi
-fi
-#while true; do
-#  read -ep "\$PS1" cmd
-#  history -s "\$cmd"
-#  history -a
-#  case "\$cmd" in
-#    exit|quit)
-#      echo "Exiting the exercise."
-#      exit 1
-#      ;;
-#    skip)
-#      echo "Skipping this exercise."
-#      break
-#      ;;
-#    help|--help|-h)
-#      echo "Available commands:"
-#      echo "  exit, quit - Exit the exercise"
-#      echo "  skip - Skip to the next exercise"
-#      echo "  help, --help, -h - Show this help message"
-#      echo "  <any command> - Execute the command and log it"
-#      ;;
-#    "$expected")
-#      echo "✅ Correct!"
-#      eval "\$cmd"
-#      break
-#      ;;
-#    *)
-#      echo "❌ Try again."
-#      ;;
-#  esac
-#done
+wait_for_correct_input "${prompt}" "${expected}" "${hint}" "${eval}" | tee -a "$session_log"
 EOF
       chmod +x "$temp_script"
       script -q -c "$temp_script" "$session_log"
-      rm -f "$temp_script"
-      rm -f "$temp_file"
+  elif [[ "$type" == "shell" ]]; then
+    export temp_rc=$(mktemp)
+    cat > "$temp_rc" <<EOF
+#!/bin/bash -x
+# Lesson plan as a string
+# Write the lesson to a file once, so it's accessible in all scopes
+# Command check function
+check_command() {
+  local index_file="\$HOME/.lesson_index.txt"
+  local prompt_file="\$HOME/.current_prompts.txt"
+  grading_log="\$(dirname \$(realpath $0))/../history/grading_${BASE_NAME}.txt"
+  #local lesson_file="\$HOME/.current_lesson.txt"
+  # Read index value
+  local index
+  index=\$(< "\$index_file")
+  # First time running: initialize to 0
+  if [[ "\$index" == "-1" ]]; then
+    echo "0" > "\$index_file"
+    return
+  fi
+  # Read, remove newlines, trim extra semicolons
+  prompt_string=\$(cat \$prompt_file | tr -d '\n')
+  # Split into array
+  IFS=';' read -ra prompts <<< "\$prompt_string"
+  local expected_command="\${prompts[\$((index+1))]}"
+  expected_command=\$(echo "\$expected_command" | xargs)  # remove leading/trailing whitespace
+  local hint="\${prompts[\$((index+2))]}"
+  last_command=\$(fc -ln -1 | sed 's/^[[:space:]]*//')
+  last_command="\${last_command%/}"  # remove trailing slash if any
+  size_prompts=\${#prompts[@]}
+  if [[ "\$last_command" == "\$expected_command" ]]; then
+    echo
+    echo "✅ Correct command entered!"
+    ((index+=3))
+    echo "$(date +%s):\$(( index / 3)):\$(( size_prompts / 3 )):1" >> "\$grading_log"
+    echo "\$index" > "\$index_file"
+  else
+    echo "❌ Try again. Your command was: \$last_command  -- Hint: '\$hint'"
+  fi
+  if [[ "\$index" -ge "\$(( \$size_prompts ))" ]]; then
+    echo "🏁 All commands completed!"
+    return_code=0
+    exit 0
+  else
+      echo
+      echo -e "$(emoji finger_pointing_right) \${prompts[\$index]}" | fold -s -w 80 | render_markdown
+      echo
+  fi
 }
+export -f check_command
+PROMPT_COMMAND=check_command
 
+export TERM=xterm-256color
+export HISTFILE="$history_log"
+export HISTSIZE=1000
+export HISTTIMEFORMAT="%F %T "
+export PS1="[$BASE_NAME] $ "
+history -r
+EOF
+cat > "$temp_script" <<EOF
+#!/bin/bash
+load_lesson() {
+  local lesson="\$1"
+  local prompts="\$2"
+  echo "\$lesson" > "\$HOME/.current_lesson.txt"
+  echo "\$prompts" > "\$HOME/.current_prompts.txt"
+  echo "-1" > "\$HOME/.lesson_index.txt"
+  # Read, remove newlines, trim extra semicolons
+  prompt_string=$(echo \$prompts | tr -d '\n')
+  # Split into array
+  IFS=';' read -ra prompts <<< "\$prompt_string"
+  echo
+  echo -e "$(emoji finger_pointing_right) \${prompts[0]}" | fold -s -w 80 | render_markdown
+  echo
+}
+export -f load_lesson
+load_lesson "$expected" "${prompts[$index]}"
+exec  bash --rcfile "$temp_rc" -i
+EOF
+      script -q -c "bash -i $temp_script"  "$session_log"
+  fi
+  rm -f "$temp_script"
+  rm -f "$temp_rc"
+  rm -f "$temp_file"
+}
+export -f run_shell_exercise
 
+run_exercises() {
+    local start_index=0
+    if [[ -z "$prompts" ]];then
+        echo "Error: prompts array is not set."
+        exit 1
+    fi
+    local end_index=${#prompts[@]}
+    mark_time "Start of exercise ${BASE_NAME}"
+    local index=$start_index
+    while true; do
+        if (( index > end_index-1 )); then
+            break
+        fi
+        local session_log="$(dirname $(realpath $0))/../history/session_${BASE_NAME}_$(printf "%02d" "$index").log"
+        local history_log="$(dirname $(realpath $0))/../history/history_${BASE_NAME}_$(printf "%02d" "$index").txt"
+        run_shell_exercise "$index" "$session_log" "$history_log"
+        #echo "exit code: $?" 
+        #echo "read_return_code: $read_return_code" 
+        #echo "return_code: $return_code" 
+        if [[ $read_return_code =~ ^10[0-9]+$ ]]; then
+            echo "read_return_code is : $read_return_code"
+        elif [[ $return_code =~ ^10[0-9]+$ ]]; then
+           new_index=$((return_code - 100))
+           if (( new_index > 0 && new_index <= ${#prompts[@]} )); then
+               index=$((new_index - 1))
+             continue
+           fi
+        else
+            echo "End of Step $((index + 1)) of ${#prompts[@]} with return code $read_return_code" >> "$session_log"
+            echo "==> Step $((index + 1)) of ${#prompts[@]} completed."
+        fi
+        ((index++))
+    done
+    mark_time "End of exercise ${BASE_NAME}"
+}
+export -f run_exercises
+
+grade_shell_exercise() {
+    local expected="$1"
+    local history_log="$2"
+    if [[ -f "$history_log" ]]; then
+        student_cmd=$(grep -v '^#' "$history_log" | tail -n 1 | sed 's/^[[:space:]]*//')
+        if [[ "$student_cmd" == "$expected" ]]; then
+            echo "1"
+        else
+            echo "0"
+        fi
+    else
+        echo "0"
+    fi
+  }
+export -f grade_shell_exercise
+
+grade_exercises() {
+    total="${#prompts[@]}"
+    passed=0
+    grading_log="$(dirname $(realpath $0))/../history/grading_${BASE_NAME}.txt"
+    for index in "${!prompts[@]}"; do
+        local history_log="$(dirname $(realpath $0))/../history/history_${BASE_NAME}_$(printf "%02d" "$index").txt"
+        result=$(grade_shell_exercise ${patterns[$index]} "$history_log")
+        echo "$(date +%s):$index:$result" >> $grading_log
+        passed=$((passed + result))
+    done
+    echo "Results for Exercise - ${BASE_NAME}: $passed / $total"
+}
+export -f grade_exercises
+
+export read_return_code=0
+export return_code=-1
 function wait_for_correct_input() {
-  local return_code=-1
   local prompt="$1"
   local expected="$2"
   local hint="$3"
@@ -245,14 +353,16 @@ EOF
         history -w $HISTFILE
     fi
     if [[ $read_return_code -ne 0 ]]; then
-        return 2
+        return_code=2
+        return $return_code
     fi
     if [[ -z "$user_input" ]]; then
         continue
     fi
     case "$user_input" in
         exit)
-            return 0
+            return_code=0
+            return $return_code
             ;;
         train)
             bash --rcfile "$RCFILE"
@@ -317,10 +427,6 @@ EOF
             echo "Command substitution result: $user_input"
             continue
             ;;
-        \#* | \#\#* | \#\#\#*)
-            echo "Ignoring comment: $user_input"
-            continue
-            ;;
         instruct)
             clear
             display_lesson "$lesson"
@@ -328,13 +434,15 @@ EOF
             ;;
         skip)
             echo "Moving to the next step..."
-            return 131
+            return_code=131
+            return $return_code
             ;;
         jump\ *)
             target=$(echo "$user_input" | cut -d' ' -f2)
             if [[ "$target" =~ ^[0-9]+$ ]] && (( target > 0 )) && (( target <= ${#prompts[@]} )); then
                 echo -e "$(emoji jump)Jumping to step $target..."
-                return $((100 + target))
+                return_code=$((100 + target))
+                return $return_code
             else
               echo "Invalid step number: $target"
               continue
@@ -345,7 +453,8 @@ EOF
               if [[ $_eval == 1 ]]; then
                 render_eval_correct "$user_input" "$expected"
               fi
-              return 1
+              return_code=1
+              return $return_code
           else
               render_incorrect "$user_input" "$expected" "$hint"
               continue
@@ -359,12 +468,14 @@ export -f wait_for_correct_input
 function hr() {
     echo "--------------------------------------------------------------------------------"
 }
+export -f hr
 
 function mark_time() {
     local message="$1"
     local timestamp=$(date '+%Y-%m-%d %H:%M:%S')
     echo "$timestamp - $message" >> "$LOG_FILE"
 }
+export -f mark_time
 
 function do_training() {
     local START_INDEX=$1
@@ -441,58 +552,8 @@ fi
 
 if [[ -n "$TRAINING_SHELL" ]]; then
 
-  run_exercises() {
-      for i in "${!prompts[@]}"; do
-        run_shell_exercise "$i"
-      done
-      echo -e "\n🎉 Lesson complete!"
-  }
-
-  grade_shell_exercise() {
-    local index="$1"
-    local history_log="$2"
-    local grading_log="$3"
-    local prompt="${prompts[$index]}"
-    local expected="${patterns[$index]}"
-    local hint="${hints[$index]}"
-    local _eval="${evals[$index]}"
-    echo "$(emoji checkmark) Grading Exercise $((index+1)): $prompt"
-    echo "History log: $history_log"
-    #cat ${history_log} | fold -s -w 80 | render_markdown
-    echo "Will Grade to: $grading_log"
-
-    echo "📊 Grading Lesson: $BASE_NAME"
-    echo "────────────────────────────────────"
-    # Get the last non-empty command in the history file
-    student_cmd=$(grep -v '^#' "$history_log" | tail -n 1 | sed 's/^[[:space:]]*//')
-
-    echo "🧩 Exercise $((i+1)): $prompt"
-    echo "🔸 Expected: '$expected'"
-    echo "🔹 Student:  '$student_cmd'"
-
-    if [[ "$student_cmd" == "$expected" ]]; then
-        echo "✅ Correct!"
-        ((passed++))
-    else
-        echo "❌ Incorrect."
-    fi
-  }
-
-  grade_exercises() {
-    total="${#prompts[@]}"
-    passed=0
-    for i in "${!prompts[@]}"; do
-      session_log="$LOG_BASE/session_$(printf "%02d" "$i").log"
-      history_log="$LOG_BASE/history_$(printf "%02d" "$i").txt"
-      grading_log="$LOG_BASE/grading_$(printf "%02d" "$i").txt"
-      grade_shell_exercise "$i" "$history_log" "$grading_log"
-      passed=$((passed + 1))
-    done
-    echo "$(emoji checkered_flag) Final Score: $passed / $total"
-    echo "$0 Final Score: $passed / $total" >> $grading_log
-  }
   run_exercises
-  grade_exercises
+  #grade_exercises
 
 
 else
