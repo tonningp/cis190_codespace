@@ -145,10 +145,10 @@ EOS
 
 run_shell_exercise () {
     local index="$1"
-    local session_log="$2"
-    local history_log="$3"
+    local type="$2"
+    local session_log="$3"
+    local history_log="$4"
     local prompt="${prompts[$index]}"
-    local type="${types[$index]}"
     local expected="${patterns[$index]}"
     local hint="${hints[$index]}"
     local eval="${evals[$index]}"
@@ -206,17 +206,17 @@ check_command() {
   last_command=\$(fc -ln -1 | sed 's/^[[:space:]]*//')
   last_command="\${last_command%/}"  # remove trailing slash if any
   size_prompts=\${#prompts[@]}
-  if [[ "\$last_command" == "\$expected_command" ]]; then
+  if [[ "\$last_command" =~ "\$expected_command" ]]; then
     echo
-    echo "✅ Correct command entered!"
+    echo "✅ That is correct!"
     ((index+=3))
     echo "$(date +%s):\$(( index / 3)):\$(( size_prompts / 3 )):1" >> "\$grading_log"
     echo "\$index" > "\$index_file"
   else
-    echo "❌ Try again. Your command was: \$last_command  -- Hint: '\$hint'"
+    echo "❌ Try again. Your command was: \$last_command  -- Hint: '\$hint'" | fold -s -w 80 | render_markdown
   fi
   if [[ "\$index" -ge "\$(( \$size_prompts ))" ]]; then
-    echo "🏁 All commands completed!"
+    echo "> 🏁 All commands completed!" | fold -s -w 80 | render_markdown
     return_code=0
     exit 0
   else
@@ -278,7 +278,7 @@ run_exercises() {
         fi
         local session_log="$(dirname $(realpath $0))/../history/session_${BASE_NAME}_$(printf "%02d" "$index").log"
         local history_log="$(dirname $(realpath $0))/../history/history_${BASE_NAME}_$(printf "%02d" "$index").txt"
-        run_shell_exercise "$index" "$session_log" "$history_log"
+        run_shell_exercise "$index" "shell" "$session_log" "$history_log"
         #echo "exit code: $?" 
         #echo "read_return_code: $read_return_code" 
         #echo "return_code: $return_code" 

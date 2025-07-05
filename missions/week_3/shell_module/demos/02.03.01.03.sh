@@ -21,7 +21,6 @@ EOS
 )"
 
 
-
 declare -g -a prompts=(
 # format is the following
 # prompt text;
@@ -32,7 +31,11 @@ Enter the command to display the current working directory.;
 pwd;
 The current working directory should be $(pwd).;
 
-The working/logs directory contains flight logs. Display the contents of the logs directory, with detailed information.;
+Enter the command to long list the contents of the current directory.;
+ls -l;
+You should see the contents of the current directory, it should be the directory _working_.;
+
+The working/logs directory contains flight logs. Display the contents of the logs directory using a relative directory path, list the contents with a long listing.;
 ls -l working/logs;
 Remember a long directory listing shows file permissions, ownership, size, and modification date.;
 
