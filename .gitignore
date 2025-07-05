@@ -7,7 +7,6 @@
 ./archive/
 # Ignore log files
 *.log
-*.tgz
 .db/
 
 # Ignore shell history files
