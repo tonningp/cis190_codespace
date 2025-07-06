@@ -12,7 +12,7 @@ export lesson_title="Working with Absolute and Relative Paths"
 export lesson="$(cat<<EOS
 
 # Lab Exercise: Filesystem, Permissions, Paths
-In this exercise, you will manipulate a drone configuration directory structure 
+In this set of exercises, you will manipulate a drone configuration directory structure 
 using both **absolute** and **relative** paths. 
 
 * The exercises will walk through navigating the directory structure

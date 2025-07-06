@@ -190,6 +190,7 @@ check_command() {
       return 1
   }
   local hash_commands=(
+    '^#\ *answer'
     '^#\ *reset'
     '^#\ *train'
     '^#\ *files'
@@ -232,15 +233,17 @@ check_command() {
       echo "" > "\$grading_log"
       index=\$(< "\$index_file")
       sed -i '/reset/d' "\$HISTFILE"
+    elif [[ "\$last_command" =~ ^#\ *answer ]]; then
+      if [[ -n "\$expected_command" ]]; then
+        echo -e "$(emoji hint) Answer: \$expected_command"
+      fi
     elif [[ "\$last_command" =~ ^#\ *hint ]]; then
       if [[ -n "\$hint" ]]; then
         echo -e "$(emoji hint) Hint: \$hint"
       else
         echo "No hint available for this step."
       fi
-    elif [[ "\$last_command" =~ ^#\ *instruct ]]; then
-        display_lesson "\$(cat \$HOME/.current_lesson.txt)"
-    elif [[ "\$last_command" == "# skip" ]]; then
+    elif [[ "\$last_command" =~ "#\ *skip" ]]; then
         ((index+=3))
         echo "\$(date +%s):\$(( index / 3)):\$(( size_prompts / 3 )):0" >> "\$grading_log"
         echo "\$index" > "\$index_file"
