@@ -205,11 +205,12 @@ check_command() {
   )
   local index_file="\$HOME/.lesson_index.txt"
   local prompt_file="\$HOME/.current_prompts.txt"
+  local step_size=3
+
   grading_log="\$(dirname \$(realpath $0))/../history/grading_${BASE_NAME}.txt"
   #local lesson_file="\$HOME/.current_lesson.txt"
   # Read index value
-  local index
-  index=\$(< "\$index_file")
+  local index=\$(< "\$index_file")
   # First time running: initialize to 0
   if [[ "\$index" == "-1" ]]; then
     echo "0" > "\$index_file"
@@ -219,6 +220,7 @@ check_command() {
   prompt_string=\$(cat \$prompt_file | tr -d '\n')
   # Split into array
   IFS=';' read -ra prompts <<< "\$prompt_string"
+  size_prompts=\${#prompts[@]}
   # Extract expected command and trim whitespace
     local expected_command="\${prompts[\$((index+1))]}"
     expected_command="\$(echo \"\$expected_command\" | xargs)"  # remove leading/trailing whitespace
@@ -251,14 +253,9 @@ check_command() {
         echo "No hint available for this step."
       fi
     elif [[ "\$last_command" =~ "#\ *skip" ]]; then
-        ((index+=3))
-        echo "\$(date +%s):\$(( index / 3)):\$(( size_prompts / 3 )):0" >> "\$grading_log"
+        ((index+=step_size))
+        echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):0" >> "\$grading_log"
         echo "\$index" > "\$index_file"
-    fi
-    size_prompts="\${#prompts[@]}"
-    if [[ "\$index" -ge "\$size_prompts" ]]; then
-      echo "> 🏁 All commands completed!" | fold -s -w 80 | render_markdown return_code=0
-      exit 0
     fi
     if [[ "\$expected_command" =~ ^re:.* ]]; then
       # If using regex match
@@ -266,8 +263,8 @@ check_command() {
       if [[ "\$last_command" =~ \$regex ]]; then
         echo
         echo "✅ That is correct!"
-        ((index+=3))
-        echo "\$(date +%s):\$(( index / 3)):\$(( size_prompts / 3 )):1" >> "\$grading_log"
+        ((index+=step_size))
+        echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):1" >> "\$grading_log"
         echo "\$index" > "\$index_file"
       elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
         echo "❌ Try again. Your last command was: \$last_command  -- Hint: '\$hint'" | fold -s -w 80 | render_markdown
@@ -277,15 +274,19 @@ check_command() {
       if [[ \$last_command != '# reset' && "\$last_command" == "\$expected_command" ]]; then
         echo
         echo "✅ That is correct!"
-        ((index+=3))
-        echo "\$(date +%s):\$(( index / 3)):\$(( size_prompts / 3 )):1" >> "\$grading_log"
+        ((index+=step_size))
+        echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):1" >> "\$grading_log"
         echo "\$index" > "\$index_file"
       elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
         echo "❌ Try again. Your last command was: \$last_command  -- Hint: '\$hint'" | fold -s -w 80 | render_markdown
       fi
     fi
+    if [[ \$(( index/step_size )) -ge \$((size_prompts/step_size)) ]]; then
+      echo "> 🏁 All commands completed!" | fold -s -w 80 | render_markdown return_code=0
+      exit 0
+    fi
     echo
-    echo -e "> Task \$((index/3+1)) of \$((size_prompts / 3)) \$(emoji finger_pointing_right) \${prompts[\$index]}" | fold -s -w 80 | render_markdown
+    echo -e "> Task \$((index/step_size+1)) of \$((size_prompts / step_size)) \$(emoji finger_pointing_right) \${prompts[\$index]}" | fold -s -w 80 | render_markdown
     echo
 
 }
@@ -345,7 +346,7 @@ run_exercises() {
         echo "Error: prompts array is not set."
         exit 1
     fi
-    local end_index=${#prompts[@]}
+    local end_index=$(( ${#prompts[@]} / 3 + 1))
     mark_time "Start of exercise ${BASE_NAME}"
     local index=$start_index
     while true; do
