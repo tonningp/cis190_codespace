@@ -191,6 +191,7 @@ check_command() {
   }
   local hash_commands=(
     '^#\ *answer'
+    '^#\ *help'
     '^#\ *reset'
     '^#\ *train'
     '^#\ *files'
@@ -237,6 +238,12 @@ check_command() {
       if [[ -n "\$expected_command" ]]; then
         echo -e "$(emoji hint) Answer: \$expected_command"
       fi
+    elif [[ "\$last_command" =~ ^#\ *help ]]; then
+        for pattern in "\${hash_commands[@]}"; do
+          cleaned=\$(echo "\$pattern" | sed -E 's/^\^# *|^\^|\\|\\\\|\.\*|\*//g')
+          echo -e "\$(emoji question) #\$cleaned"
+        done
+
     elif [[ "\$last_command" =~ ^#\ *hint ]]; then
       if [[ -n "\$hint" ]]; then
         echo -e "$(emoji hint) Hint: \$hint"
