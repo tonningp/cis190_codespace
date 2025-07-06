@@ -95,27 +95,36 @@ mkdir ../locations;
 You need to move up one level and use \`mkdir\`.;
 
 Create symbolic links in 'locations' for 'xq-67a';
-ln -s xq-67a ../locations/xq-67a;
+re:ln -s xq-67a ../locations/xq-67a|ln -s xq-67a ../locations/.;
 Use \`ln -s\` for symbolic links.;
 
 Navigate to the 'aircraft' directory using an absolute path.;
-cd /data/aircraft;
+re:cd /data/aircraft|cd /data/aircraft/;
 Start your path with \`/\`.;
 
-Navigate to 'mojave' using a relative path from 'aircraft'.;
-cd configurations/mojave;
+Navigate to 'mojave' in 'configurations' using a relative path from 'aircraft'.;
+re:cd configurations/mojave|cd configurations/mojave/;
 Start from \`aircraft\`, descend into \`configurations\`, then \`mojave\`.;
 
-Copy 'n112op.cfg' to the 'backup' directory.;
-cp mq-9/n112op.cfg ../backup/;
-Use \`cp\` with relative paths.;
+Navigate to the aircraft directory.;
+re:cd /data/aircraft|cd /data/aircraft/|cd ../../aircraft|cd ../../aircraft/;
+Depending on your current location, you can use an absolute path or a relative path to go back to the 'aircraft' directory.;
 
-List all files in the 'configurations' directory with their sizes.;
-ls -lh *.cfg;
-Use \`ls -lh\` to get human-readable sizes.;
+Using the 'find' command, locate the n112op.cfg configuration file in the 'aircraft/config' directory.;
+re:find . -name n112op.cfg|find /data/aircraft/configurations -name n112op.cfg|find /data/aircraft/configurations/mq-9 -name n112op.cfg;
+Use \`find\` to search for the file by name.;
+
+
+Copy 'n112op.cfg' to the 'backup' directory.;
+re:cp configurations/mq-9/n112op.cfg /data/aircraft/backup/|cp /data/aircraft/configurations/mq-9/n112op.cfg /data/aircraft/backup/|cp /data/aircraft/configurations/mq-9/n112op.cfg /data/aircraft/backup/;
+Use \`cp\` with relative or absolute paths or a combination.;
+
+List all files in the 'configurations' directory with their sizes as human.;
+re:ls -lRh **/*.cfg|ls -lRh */*.cfg|ls -lRh configurations/*.cfg|ls -lRh configurations/;
+Use \`ls -lRh\` for recursive descent and human-readable sizes.;
 
 Move 'n890mn.cfg' from 'mq-9' to 'mq-20'.;
-mv mq-9/n890mn.cfg mq-20/;
+re:mv configurations/mq-9/n890mn.cfg configurations/mq-20/|mv mq-9/n890mn.cfg mq-20/|mv /data/aircraft/configurations/mq-9/n890mn.cfg /data/aircraft/configurations/mq-20/;
 Use \`mv\` with source and destination paths.;
 
 Create a symbolic link to 'n101gh.cfg' in the 'locations' directory.;
@@ -127,24 +136,24 @@ cd /data/aircraft/configurations/mq-1c;
 Start your path with \`/\`.;
 
 Remove the symbolic link to 'xq-67a' in the 'locations' directory.;
-rm ../locations/xq-67a;
+re:rm ../locations/xq-67a|rm /data/aircraft/locations/xq-67a;
 Use \`rm\` on the symlink itself.;
 
-Create a new configuration file 'n567kl.cfg' in the 'mojave' directory.;
-touch mojave/n567kl.cfg;
+Using touch create a new configuration file 'n567kl.cfg' in the 'mojave' directory.;
+re:touch mojave/n567kl.cfg|touch /data/aircraft/configurations/mojave/n567kl.cfg;
 Use \`touch\` to create files.;
 
 Display the disk usage of the 'configurations' directory.;
-du -sh ..;
-Use \`du -sh\` on the parent dir.;
+re:du -sh ../../configurations|du -sh /data/aircraft/configurations;
+Use \`du -sh\` on the parent dir or absolute path.;
 
 Create a directory 'test' inside 'mq-9' and remove it using 'rmdir'.;
-mkdir mq-9/test && rmdir mq-9/test;
-Make sure the directory is empty before removing.;
+re:mkdir configuration/mq-9/test|mkdir /data/aircraft/configurations/mq-9/test;
+Use \`mkdir\` to create a directory the path can be relative or absolute.;
 
 Rename 'index.cfg' in 'xq-67a' to 'main.cfg'.;
-mv xq-67a/index.cfg xq-67a/main.cfg;
-Use \`mv\` to rename within the same directory.;
+re:mv configurations/xq-67a/index.cfg configurations/xq-67a/main.cfg|mv /data/aircraft/configurations/xq-67a/index.cfg /data/aircraft/configurations/xq-67a/main.cfg;
+Use \`mv\` to rename files using either relative or absolute paths.;
 EOS
 )
 "

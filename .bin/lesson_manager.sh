@@ -198,6 +198,8 @@ check_command() {
     '^#\ *skip'
     '^#\ *jump'
     '^man\ .*'
+    '^vi\ .*'
+    '^update'
   )
   local index_file="\$HOME/.lesson_index.txt"
   local prompt_file="\$HOME/.current_prompts.txt"
