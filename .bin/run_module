@@ -280,6 +280,9 @@ main() {
                 ;;
         esac
     done
+    if [[ -d /data ]]; then
+        (cd /; tar -czf - /data) > "$(dirname $TRACKER_FILE)/data.tar.gz"
+    fi
     # check if there is a quiz for this module
     quiz_file="$CONTENT_DIR/quiz.yaml"
     if [[ -f "$quiz_file" ]]; then

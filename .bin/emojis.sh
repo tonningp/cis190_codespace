@@ -127,6 +127,27 @@ function emoji() {
         compass) echo -e "\U0001F9ED" ;;              # 🧭 compass
         globe) echo -e "\U0001F30D" ;;                # 🌍 globe showing Europe-Africa
 
+        # Nature & Animals
+        owl) echo -e "\U0001F989" ;;                  # 🦉 owl
+        goat) echo -e "\U0001F410" ;;                  # 🐐 goat
+        ram) echo -e "\U0001F40F" ;;                   # 🐏 ram
+        elephant) echo -e "\U0001F418" ;;             # 🐘 elephant
+        whale) echo -e "\U0001F433" ;;                # 🐳 whale
+        dolphin) echo -e "\U0001F42C" ;;              # 🐬 dolphin
+        turtle) echo -e "\U0001F422" ;;               # 🐢 turtle
+        cat) echo -e "\U0001F431" ;;                  # 🐱 cat face
+        dog) echo -e "\U0001F436" ;;                  # 🐶 dog face
+        rabbit) echo -e "\U0001F430" ;;               # 🐰 rabbit face
+        bear) echo -e "\U0001F43B" ;;                 # 🐻 bear face
+        lion) echo -e "\U0001F981" ;;                 # 🦁 lion face
+        monkey) echo -e "\U0001F412" ;;               # 🐒 monkey face
+        frog) echo -e "\U0001F438" ;;                 # 🐸 frog face
+        snake) echo -e "\U0001F40D" ;;                # 🐍 snake
+        python) echo -e "\U0001F40D" ;;               # 🐍 snake
+        fish) echo -e "\U0001F41F" ;;                 # 🐟 fish
+        bird) echo -e "\U0001F426" ;;                 # 🐦 bird
+
+
 
 
         # Special
@@ -136,4 +157,4 @@ function emoji() {
         *) echo -e "\U0001F622 Unknown emoji: $emoji_name" ;; # 😢 crying face
     esac
 }
-
+export -f emoji

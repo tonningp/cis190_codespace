@@ -1,0 +1,88 @@
+quiz_type: yaml_quiz
+title: "Week 3 Module Quiz – The Shell"
+
+questions:
+  - type: multiple_choice
+    prompt: "What is the primary role of a shell in Linux?"
+    options:
+      - "Manage system hardware directly"
+      - "Interpret and execute user commands"
+      - "Create graphical interfaces"
+      - "Compile source code"
+    correct_answer: [1]
+
+  - type: true_false
+    prompt: "The Bash shell maintains a history of previously executed commands."
+    correct_answer: true
+
+  - type: short_answer
+    prompt: "Which command displays the name of the current shell?"
+    correct_answer: "^echo \\$SHELL$"
+
+  - type: multiple_choice
+    prompt: "Which symbols are used for I/O redirection in the shell? Select all that apply."
+    options:
+      - ">"
+      - "<"
+      - ">>"
+      - "|"
+    correct_answer: [0, 1, 2, 3]
+
+  - type: true_false
+    prompt: "The pipe (|) operator sends the output of one command as input to another."
+    correct_answer: true
+
+  - type: short_answer
+    prompt: "What command is used to execute a script file named 'myscript.sh' in the current directory?"
+    correct_answer: "^\\.\\/myscript\\.sh$"
+
+  - type: multiple_choice
+    prompt: "Which commands are typically built into the shell?  Select all that apply."
+    options:
+      - "cd"
+      - "echo"
+      - "ls"
+      - "pwd"
+    correct_answer: [0, 1, 3]
+
+  - type: true_false
+    prompt: "Quoting a string with single quotes ('') allows variable expansion inside the string."
+    correct_answer: false
+
+  - type: short_answer
+    prompt: "What symbol is used to run a command in the background?"
+    correct_answer: "&"
+
+  - type: multiple_choice
+    prompt: "Which of the following are valid ways to refer to shell variables? Select all that apply."
+    options:
+      - "$VAR"
+      - "${VAR}"
+      - "&VAR"
+      - "VAR"
+    correct_answer: [0, 1]
+
+  - type: true_false
+    prompt: "Typing `jobs` will show background jobs associated with the current shell session."
+    correct_answer: true
+
+  - type: short_answer
+    prompt: "Which command brings a background job to the foreground?"
+    correct_answer: "^fg$"
+
+  - type: multiple_choice
+    prompt: "Which commands can be used to terminate processes?  Select all that apply."
+    options:
+      - "kill"
+      - "fg"
+      - "ps"
+      - "killall"
+    correct_answer: [0, 3]
+
+  - type: short_answer
+    prompt: "What command would you use to view the manual page for the Bash shell?"
+    correct_answer: "^man bash$"
+
+  - type: true_false
+    prompt: "Double quotes allow variable expansion but prevent word splitting in the shell."
+    correct_answer: true
