@@ -5,7 +5,7 @@ export TZ="America/Los_Angeles"
 
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 cp $TOP_DIR/tmux.conf ~/.tmux.conf
-if [[ !-d $TOP_DIR/venv ]];then
+if [[ ! -d "$TOP_DIR/venv" ]];then
 (cd $TOP_DIR;python3 -m venv venv&&source venv/bin/activate&&pip install -r requirements.txt)
 fi
 export PROFILE_DB="${TOP_DIR}/../.db/profile.sqlite3"
