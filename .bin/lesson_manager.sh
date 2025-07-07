@@ -184,6 +184,9 @@ EOF
 # Write the lesson to a file once, so it's accessible in all scopes
 # Command check function
 check_command() {
+  _bt() {
+      echo -e '\`'
+  }
   in_list() {
       local value="\$1"; shift
       for item; do [[ "\$value" =~ \$item ]] && return 0; done
@@ -222,77 +225,90 @@ check_command() {
   IFS=';' read -ra prompts <<< "\$prompt_string"
   size_prompts=\${#prompts[@]}
   # Extract expected command and trim whitespace
-    local expected_command="\${prompts[\$((index+1))]}"
-    expected_command="\$(echo \"\$expected_command\" | xargs)"  # remove leading/trailing whitespace
-    local hint="\${prompts[\$((index+2))]}"
-    last_command="\$(fc -ln -1 | sed 's/^[[:space:]]*//')"
-    if [[ -z "\$last_command" ]]; then
-      echo "No command entered yet. Please enter a command."
-    elif [[ "\$last_command" =~ ^#\ *reset ]]; then
-      echo "Resetting lesson..."
-      echo "-1" > "\$index_file"
-      echo "0" > "\$index_file"
-      echo "Resetting grading log..."
-      echo "" > "\$grading_log"
-      index=\$(< "\$index_file")
-      sed -i '/reset/d' "\$HISTFILE"
-    elif [[ "\$last_command" =~ ^#\ *answer ]]; then
-      if [[ -n "\$expected_command" ]]; then
-        echo -e "$(emoji hint) Answer: \$expected_command"
-      fi
-    elif [[ "\$last_command" =~ ^#\ *help ]]; then
-        for pattern in "\${hash_commands[@]}"; do
-          cleaned=\$(echo "\$pattern" | sed -E 's/^\^# *|^\^|\\|\\\\|\.\*|\*//g')
-          echo -e "\$(emoji question) #\$cleaned"
-        done
+  local expected_command="\${prompts[\$((index+1))]}"
+  cat << EOT| fold -s -w 80 | render_markdown
+\$( 
+expected_command="\$(echo \"\$expected_command\" | xargs)"  # remove leading/trailing whitespace
+local hint="\${prompts[\$((index+2))]}"
+last_command="\$(fc -ln -1 | sed 's/^[[:space:]]*//')"
+if [[ "\$last_command" =~ ^#\ *reset ]]; then
+  echo "Resetting lesson..."
+  echo "-1" > "\$index_file"
+  echo "0" > "\$index_file"
+  echo "Resetting grading log..."
+  echo "" > "\$grading_log"
+  index=\$(< "\$index_file")
+  sed -i '/^#\ *reset/d' "\$HISTFILE"
+elif [[ "\$last_command" =~ ^#\ *answer ]]; then
+  if [[ -n "\$expected_command" ]]; then
+    echo -e "$(emoji hint) Answer: \$expected_command"
+  fi
+  sed -i '/^#\ *answer/d' "\$HISTFILE"
+elif [[ "\$last_command" =~ ^#\ *help ]]; then
+    for pattern in "\${hash_commands[@]}"; do
+      cleaned=\$(echo "\$pattern" | sed -E 's/^\^# *|^\^|\\|\\\\|\.\*|\*//g')
+      echo -e "\$(emoji question) #\$cleaned"
+    done
 
-    elif [[ "\$last_command" =~ ^#\ *hint ]]; then
-      if [[ -n "\$hint" ]]; then
-        echo -e "$(emoji hint) Hint: \$hint"
-      else
-        echo "No hint available for this step."
-      fi
-    elif [[ "\$last_command" =~ "#\ *skip" ]]; then
-        ((index+=step_size))
-        echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):0" >> "\$grading_log"
-        echo "\$index" > "\$index_file"
-    fi
-    if [[ "\$expected_command" =~ ^re:.* ]]; then
-      # If using regex match
-      local regex="\${expected_command#re:}"
-      if [[ "\$last_command" =~ \$regex ]]; then
-        echo
-        echo "✅ That is correct!"
-        ((index+=step_size))
-        echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):1" >> "\$grading_log"
-        echo "\$index" > "\$index_file"
-      elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
-        echo "❌ Try again. Your last command was: \$last_command  -- Hint: '\$hint'" | fold -s -w 80 | render_markdown
-      fi
-    else
-      # Use literal string comparison
-      if [[ \$last_command != '# reset' && "\$last_command" == "\$expected_command" ]]; then
-        echo
-        echo "✅ That is correct!"
-        ((index+=step_size))
-        echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):1" >> "\$grading_log"
-        echo "\$index" > "\$index_file"
-      elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
-        echo "❌ Try again. Your last command was: \$last_command  -- Hint: '\$hint'" | fold -s -w 80 | render_markdown
-      fi
-    fi
-    if [[ \$(( index/step_size )) -ge \$((size_prompts/step_size)) ]]; then
-      echo "> 🏁 All commands completed!" | fold -s -w 80 | render_markdown return_code=0
-      exit 0
-    fi
+elif [[ "\$last_command" =~ ^#\ *hint ]]; then
+  echo
+  if [[ -n "\$hint" ]]; then
+    echo -e "$(emoji hint) Hint: \$hint"
+  else
+    echo "No hint available for this step."
+  fi
+  echo
+  sed -i '/^#\ *hint/d' "\$HISTFILE"
+elif [[ "\$last_command" =~ "#\ *skip" ]]; then
+    ((index+=step_size))
+    echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):0" >> "\$grading_log"
+    echo "\$index" > "\$index_file"
+    sed -i '/^#\ *skip/d' "\$HISTFILE"
+fi
+if [[ "\$expected_command" =~ ^re:.* ]]; then
+  # If using regex match
+  local regex="\${expected_command#re:}"
+  if [[ "\$last_command" =~ \$regex ]]; then
     echo
-    echo -e "> Task \$((index/step_size+1)) of \$((size_prompts / step_size)) \$(emoji finger_pointing_right) \${prompts[\$index]}" | fold -s -w 80 | render_markdown
+    echo -e "✅ That is correct!"
     echo
-
+    ((index+=step_size))
+    echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):1" >> "\$grading_log"
+    echo "\$index" > "\$index_file"
+  elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
+    echo
+    echo "❌ Try again. Your last command was: \$last_command  -- Hint: '\$hint'"
+    echo
+  fi
+else
+  # Use literal string comparison
+  if [[ \$last_command != '# reset' && "\$last_command" == "\$expected_command" ]]; then
+    echo
+    echo -e "✅ That is correct!"
+    echo
+    ((index+=step_size))
+    echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):1" >> "\$grading_log"
+    echo "\$index" > "\$index_file"
+  elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
+    echo
+    echo "❌ Try again. Your last command was: \$last_command  -- Hint: '\$hint'"
+    echo
+  fi
+fi
+if [[ \$(( index/step_size )) -ge \$((size_prompts/step_size)) ]]; then
+  echo "> 🏁 All commands completed!"
+  return_code=0
+  exit 0
+fi
+local current_prompt="\${prompts[\$index]}"
+local current_index="\$((index / step_size + 1))"
+local total_prompts="\$((size_prompts / step_size))"
+echo "\$(render_prompt \$current_index \$total_prompts "\$current_prompt")"
+)
+EOT
 }
 export -f check_command
 PROMPT_COMMAND=check_command
-
 export TERM=xterm-256color
 export USER=$(whoami)
 export HISTFILE="$history_log"
@@ -303,6 +319,20 @@ history -r
 EOF
 cat > "$temp_script" <<EOF
 #!/bin/bash
+strip_nl() {
+  echo "\$1" | tr -d '\n'
+}
+render_prompt() {
+  local task="\$1"
+  local num_tasks="\$2"
+  local prompt=\$(echo "\$3" | tr '@@' '\n' )
+  echo -e "Task \$task of \$num_tasks \$(emoji finger_pointing_right) \$prompt"
+  echo
+  echo '---'
+
+}
+export -f render_prompt
+export step_size=3
 load_lesson() {
   local lesson="\$1"
   local prompts="\$2"
@@ -314,22 +344,21 @@ load_lesson() {
   prompt_string=\$(cat \$prompt_file | tr -d '\n')
   # Split into array
   IFS=';' read -ra prompts <<< "\$prompt_string"
-  clear
-  size_prompts="\${#prompts[@]}"
-  cat <<EOT | fold -s -w 80 | render_markdown
-  $( echo -e "$(emoji sunglasses) Student Name: ${FIRSTNAME} ${LASTNAME} (${STUDENT_ID})"
-    echo -e "$lesson_title"
-    echo "---"
-    echo -e "$lesson"
-    echo "---"
-    cat "${TOP_DIR}/common_instructions.md"
-    echo "---"
-    echo -e "> Task 1 of \$(( size_prompts / 3 )) $(emoji finger_pointing_right) \${prompts[0]}"
-    )
+  tasks=\$((\${#prompts[@]}/step_size))
+  local current_prompt=\${prompts[0]}
+  cat << EOT
+$(emoji sunglasses) Student Name: ${FIRSTNAME} ${LASTNAME} (${STUDENT_ID})
+$lesson_title
+---
+$lesson
+\$(cat "${TOP_DIR}/common_instructions.md")
+---
+\$(render_prompt 1 \$tasks "\$current_prompt")
 EOT
 }
 export -f load_lesson
-load_lesson "$expected" "${prompts[$index]}"
+clear
+echo "\$(load_lesson "$expected" "${prompts[$index]}")" | render_markdown
 exec  bash --rcfile "$temp_rc" -i
 EOF
       script -q -c "bash -i $temp_script"  "$session_log"
