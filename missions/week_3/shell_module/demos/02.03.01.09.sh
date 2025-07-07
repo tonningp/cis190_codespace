@@ -67,7 +67,7 @@ re:mv n223wx.cfg ../mq-1c/|mv n223wx.cfg ../mq-1c|mv n223wx.cfg ../mq-1c/.;
 Use \`mv\` with a relative path. Try ../mq-1c/;
 
 Move 'n901uv.cfg' to the 'mojave' directory, using a relative path.;
-mv n901uv.cfg ../mojave/;
+re:mv n901uv.cfg ../mojave/|mv n901uv.cfg ../mojave|mv n901uv.cfg ../mojave/.;
 Use \`mv\` with a relative path.  Try ../mojave/;
 
 Navigate to the parent directory of 'mq-9' using a relative path.;
