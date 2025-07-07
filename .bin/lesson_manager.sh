@@ -231,11 +231,18 @@ check_command() {
 expected_command="\$(echo \"\$expected_command\" | xargs)"  # remove leading/trailing whitespace
 local hint="\${prompts[\$((index+2))]}"
 last_command="\$(fc -ln -1 | sed 's/^[[:space:]]*//')"
-if [[ "\$last_command" =~ ^#\ *reset ]]; then
+if [[ "\$last_command" =~ ^#\ *skip ]]; then
+    ((index+=step_size))
+    echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):0" >> "\$grading_log"
+    echo "\$index" > "\$index_file"
+    sed -i '/^#\ *skip/d' "\$HISTFILE"
+elif [[ "\$last_command" =~ ^#\ *reset ]]; then
   echo "Resetting lesson..."
+  echo
   echo "-1" > "\$index_file"
   echo "0" > "\$index_file"
-  echo "Resetting grading log..."
+  echo "Resetting scoring log..."
+  echo
   echo "" > "\$grading_log"
   index=\$(< "\$index_file")
   sed -i '/^#\ *reset/d' "\$HISTFILE"
@@ -259,13 +266,7 @@ elif [[ "\$last_command" =~ ^#\ *hint ]]; then
   fi
   echo
   sed -i '/^#\ *hint/d' "\$HISTFILE"
-elif [[ "\$last_command" =~ "#\ *skip" ]]; then
-    ((index+=step_size))
-    echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):0" >> "\$grading_log"
-    echo "\$index" > "\$index_file"
-    sed -i '/^#\ *skip/d' "\$HISTFILE"
-fi
-if [[ "\$expected_command" =~ ^re:.* ]]; then
+elif [[ "\$expected_command" =~ ^re:.* ]]; then
   # If using regex match
   local regex="\${expected_command#re:}"
   if [[ "\$last_command" =~ \$regex ]]; then
@@ -277,7 +278,7 @@ if [[ "\$expected_command" =~ ^re:.* ]]; then
     echo "\$index" > "\$index_file"
   elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
     echo
-    echo "❌ Try again. Your last command was: \$last_command  -- Hint: '\$hint'"
+    echo "❌ Try again. Your last command was: \$last_command  -- Hint: \$hint"
     echo
   fi
 else
@@ -291,7 +292,7 @@ else
     echo "\$index" > "\$index_file"
   elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
     echo
-    echo "❌ Try again. Your last command was: \$last_command  -- Hint: '\$hint'"
+    echo "❌ Try again. Your last command was: \$last_command  -- Hint: \$hint"
     echo
   fi
 fi
@@ -499,7 +500,7 @@ EOF
             continue
             ;;
         reset_lesson|reset_to\ *)
-            echo "Resetting lesson..."
+            echo "Resetting lesson . . ."
             if [[ $user_input == "reset_lesson" ]]; then
                 :
             else

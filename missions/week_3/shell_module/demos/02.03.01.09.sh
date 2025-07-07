@@ -44,7 +44,7 @@ cd /data;
 Use an absolute path that starts with \`/\`.;
 
 Use the find command to locate the 'mq-9' directory from the current location.;
-re:find . -type d -name mq-9|find /data -type d -name mq-9|find . -name mq-9 -type d;
+re:find . -type d -name mq-9|find /data -type d -name mq-9|find . -name mq-9 -type d|find . -name mq-9;
 Use \`find\` to search for directories named 'mq-9', try \`find . -type d -name mq-9\` .;
 
 Navigate to the 'mq-9' directory using an absolute path.;
@@ -57,7 +57,7 @@ Use \`pwd\` to print the current working directory.;
 
 Navigate to the 'xq-67a' directory using a relative path from the 'mq-9' directory.;
 cd ../xq-67a;
-You can use a relative path from the current directory to go up one level and then into 'xq-67a' think of using \`..\`.;
+You can use a relative path from the current directory to go up one level and then into 'xq-67a' think of using \`..\`;
 
 List all files in the 'xq-67a' directory.;
 re:ls -l|ls -l .|ls;
