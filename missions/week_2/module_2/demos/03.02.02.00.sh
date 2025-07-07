@@ -94,8 +94,7 @@ declare -g -a patterns=(
 # 0: List contents in the work directory
 "re:^ls +${WORK_DIR}/?$|^tree +${WORK_DIR}/?$"
 # 1: Create subdirectories
-"re:^mkdir +(-p +)?${WORK_DIR}/(configs|logs|projects)( +${WORK_DIR}/(configs|logs|projects)){2}$\
-@@re:^mkdir +(-p +)?${WORK_DIR}/\{configs,logs,projects\}$"
+"re:^mkdir +(-p +)?${WORK_DIR}/(configs|logs|projects)( +${WORK_DIR}/(configs|logs|projects)){2}$|re:^mkdir +(-p +)?${WORK_DIR}/\{configs,logs,projects\}$"
 # 2: Move .log files to logs/
 "re:^mv +${WORK_DIR}/\*\.log +${LOG_DIR}/?$"
 # 3: List ordinary files in logs/
