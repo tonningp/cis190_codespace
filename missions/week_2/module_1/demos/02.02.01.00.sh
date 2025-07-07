@@ -29,25 +29,21 @@ declare -g -a prompts=(
 "Use the \`echo\` command to print a backslash"
 "Use the \`echo\` command to print a * character"
 "Use the \`echo\` command to print an unquoted * character"
-"Use the \`echo\` command to print a ' between single quotes"
 )
 declare -g -a hints=(
   "Remember to escape the backslash with another backslash."
   'Use single quotes to treat * literally, otherwise it will expand what is in the current working directory.'
   "This will print the * character as is, without any special meaning."
-  "Use single quotes and a backslash. "
 )
 declare -g -a patterns=(
   "echo \\"
   "echo '*'"
   "echo *"
-  "echo '\\''"
 )
 declare -g -a evals=(
   1
   1
   1
-  "2@echo 'This is a single-quoted text with a : '\\' '"
 )
 
 source ${TOP_DIR}/lesson_manager.sh
