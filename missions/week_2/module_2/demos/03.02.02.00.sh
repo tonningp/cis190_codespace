@@ -92,8 +92,7 @@ declare -g -a hints=(
 
 declare -g -a patterns=(
 # 0: List contents in the work directory
-"re:^ls +${WORK_DIR}/?$\
-@@re:^tree +${WORK_DIR}/?$"
+"re:^ls +${WORK_DIR}/?$|^tree +${WORK_DIR}/?$"
 # 1: Create subdirectories
 "re:^mkdir +(-p +)?${WORK_DIR}/(configs|logs|projects)( +${WORK_DIR}/(configs|logs|projects)){2}$\
 @@re:^mkdir +(-p +)?${WORK_DIR}/\{configs,logs,projects\}$"
