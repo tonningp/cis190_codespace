@@ -14,25 +14,10 @@ export lesson="$(cat<<EOF
 
 ***This lesson focuses on:***
 1. Viewing File Contents:
-   - Prompt: Display the contents of the mission1.conf file.
-   - Skill: Use \`cat\` to quickly view file contents directly in the terminal.
-
 2. Concatenate Multiple Files:
-   - Prompt: Concatenate and display all .log files in the logs directory.
-   - Skill: Use \`cat\` to merge and display content from multiple files, useful for comprehensive data review.
-
 3. Create a New Configuration File:
-   - Prompt: Create a new file mission3.conf with sample content using \`cat\`.
-   - Skill: Learn to create new files by redirecting the output of \`cat\`.
-
 4. Number Lines in a File:
-   - Prompt: Show the status.log file with line numbers.
-   - Skill: Use the \`-n\` option with \`cat\` to aid in log review and troubleshooting.
-
 5. Combine and Redirect Output:
-   - Prompt: Combine mission1.conf and mission2.conf into a new file called combined_missions.conf.
-   - Skill: Redirect the output of concatenated files into a new file for unified configurations.
-
 EOF
 )"
 
@@ -82,7 +67,6 @@ EOT
 declare -g -a prompts=(
   "Display the contents of the ${CONFIG_DIR}/mission1.conf file using \`cat\`."
   "Concatenate and display all .log files in the ${LOG_DIR} directory."
-  "Create a new file mission3.conf with sample content using \`cat\`."
   "Show the contents of ${LOG_DIR}/2023-10-19_status.log with line numbers."
   "Combine mission1.conf and mission2.conf into a new file called combined_missions.conf."
 )
@@ -98,7 +82,6 @@ declare -g -a hints=(
 declare -g -a patterns=(
   "cat ${CONFIG_DIR}/mission1.conf"
   "cat ${LOG_DIR}/*.log"
-  "cat > ${CONFIG_DIR}/mission3.conf <<< 'Sample content for mission3'"
   "cat -n ${LOG_DIR}/2023-10-19_status.log"
   "cat ${CONFIG_DIR}/mission1.conf ${CONFIG_DIR}/mission2.conf > ${CONFIG_DIR}/combined_missions.conf"
 )
