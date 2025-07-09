@@ -236,6 +236,17 @@ if [[ "\$last_command" =~ ^#\ *skip ]]; then
     echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):0" >> "\$grading_log"
     echo "\$index" > "\$index_file"
     sed -i '/^#\ *skip/d' "\$HISTFILE"
+elif [[ "\$last_command" =~ ^#\ *jump ]]; then
+    local target="\$(echo "\$last_command" | grep -oP '^#\ *jump \K[0-9]+')"
+    if [[ -z "\$target" || ! "\$target" =~ ^[0-9]+$ || \$target -lt 1 || \$target -gt \$((size_prompts / step_size)) ]]; then
+        echo "Invalid jump target: \$target"
+        echo
+        target=1
+    fi
+    (( index=step_size*(target - 1) ))
+    echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):0" >> "\$grading_log"
+    echo "\$index" > "\$index_file"
+    sed -i '/^#\ *jump/d' "\$HISTFILE"
 elif [[ "\$last_command" =~ ^#\ *reset ]]; then
   echo "Resetting lesson..."
   echo

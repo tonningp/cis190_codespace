@@ -82,10 +82,6 @@ Create a backup directory in the 'aircraft' directory;
 re:mkdir ../backup|mkdir ../backup/|mkdir /data/aircraft/backup|mkdir /data/aircraft/backup/;
 Use \`mkdir\` with a relative path ../backup and \`cp\` with wildcard and relative paths.;
 
-Copy all the configuration files into the ../backup/ directory.;
-cp \*/\*.cfg ../backup/;
-Use the relative path ../backup and \`cp\` with wildcards.;
-
 List the i-nodes of all configuration files in 'mq-20'.;
 ls -i mq-20/*.cfg;
 Use \`ls -i\` to list i-nodes.;
