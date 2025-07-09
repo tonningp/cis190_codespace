@@ -290,6 +290,7 @@ elif [[ "\$expected_command" =~ ^re:.* ]]; then
   elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
     echo
     echo "❌ Try again. Your last command was: \$last_command  -- Hint: \$hint"
+    echo -e "\nYour current directory is: \$(pwd)"
     echo
   fi
 else
