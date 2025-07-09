@@ -168,7 +168,7 @@ EOT
 #!/bin/bash
 export HISTFILE="$history_log"
 export HISTTIMEFORMAT="%F %T "
-export PS1="[$BASE_NAME] $ "
+export PS1="[Exercise-$BASE_NAME] $ "
 touch "$HISTFILE"
 history -r
 cat $temp_file | fold -s -w 80 | render_markdown
@@ -305,6 +305,7 @@ else
   elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
     echo
     echo "❌ Try again. Your last command was: \$last_command  -- Hint: \$hint"
+    echo -e "\nYour current directory is: \$(pwd)"
     echo
   fi
 fi
@@ -327,7 +328,7 @@ export USER=$(whoami)
 export HISTFILE="$history_log"
 export HISTSIZE=1000
 export HISTTIMEFORMAT="%F %T "
-export PS1="[$BASE_NAME] $ "
+export PS1="[Exercise-$BASE_NAME] $ "
 history -r
 EOF
 cat > "$temp_script" <<EOF

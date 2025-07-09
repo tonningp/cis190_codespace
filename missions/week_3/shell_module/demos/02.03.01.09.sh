@@ -25,7 +25,7 @@ declare -g -a prompts=(
   "$(cat <<'EOS'
 Navigate to the working directory ${WORK_DIR}.;
 re:cd ${WORK_DIR}|cd ${WORK_DIR}/;
-Use 'cd' to change to the working directory defined by the WORK_DIR variable.;
+Use 'cd' to change to the working directory ${WORK_DIR}.;
 
 Print the current working directory to confirm your location.;
 pwd;
@@ -35,7 +35,7 @@ Get a long directory listing of the root directory using an absolute path.;
 ls -l /;
 Use \`ls -l\` with an absolute path starting with \`/\`.;
 
-You should notice the root directory contains several directories including 'data'.  Acknowledge the presence of 'data' and by entering name of the user that owns it as a comment \`# username\`;
+You should notice the root directory contains several directories including 'data'.  Acknowledge the existence of 'data' by entering the name of the user that owns it as a comment \`# username\`;
 re:# codespace|\$(whoami);
 Acknowledge the presence of 'data' in the root directory normally # codespace.;
 
