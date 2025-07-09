@@ -74,7 +74,6 @@ declare -g -a prompts=(
 declare -g -a hints=(
   "Use \`cat <filename>\` to display the contents of a file."
   "Use \`cat\` with wildcards \`*.log\` to concatenate multiple files."
-  "Redirect the output of \`cat\` to create a new file using \`>\`."
   "Use \`-n\` option with \`cat\` to number lines."
   "Combine files with \`cat\` and redirect to a new file."
 )
@@ -91,7 +90,7 @@ declare -g -a evals=(
   1
   1
   1
-  1
+ 
 )
 
 export TREE_VIEW="$(tree -C $ROOT_DIR)"
