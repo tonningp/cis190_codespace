@@ -16,22 +16,12 @@ export lesson="$(cat<<EOF
 
 **Using sort:**
 - Basic Sorting:
-   - Prompt: Sort the entries in telemetry.log alphabetically.
-   - Skill: Use \`sort\` to arrange entries in a file.
 - Numeric Sorting:
-   - Prompt: Sort mission1.conf by altitude in ascending order.
-   - Skill: Use \`sort -n\` to sort numerically.
 - Reverse Sorting:
-   - Prompt: Sort the entries in status.log in reverse chronological order.
-   - Skill: Use \`sort -r\` to sort in reverse.
 
 **Using uniq:**
 - Remove Duplicates:
-   - Prompt: Find and list unique operator names from a file.
-   - Skill: Use \`uniq\` to filter out duplicate lines in a file after sorting.
 - Count Duplicates:
-   - Prompt: Count occurrences of duplicate entries in the status.log.
-   - Skill: Use \`uniq -c\` to count occurrences of unique entries.
 EOF
 )"
 
@@ -78,7 +68,7 @@ declare -g -a prompts=(
   "Sort the entries in the ${CONFIG_DIR}/mission1.conf by altitude in ascending order using \`sort -k5 -n\`."
   "Sort the entries in the ${LOG_DIR}/status.log in reverse chronological order based on timestamp using \`sort -r\`."
   "Find and list unique operator names in the ${CONFIG_DIR}/mission1.conf file after sorting the file using \`sort | uniq\`."
-  "Count occurrences of duplicate entries in the ${LOG_DIR}/status.log using \`sort | uniq -c\`."
+  "Count occurrences of duplicate entries in the ${LOG_DIR}/status.log using \`sort <filename> | uniq -c\`."
 )
 
 declare -g -a hints=(
