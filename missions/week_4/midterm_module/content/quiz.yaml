@@ -1,0 +1,85 @@
+quiz:
+  title: "Midterm Quiz – Chapters 2–5"
+  description: "This quiz assesses understanding of key Linux shell concepts from Chapters 2–5."
+  questions:
+    - id: ch2_q1
+      type: mc
+      prompt: "Which directory typically contains user home directories?"
+      choices: ["~/", "/etc", "/usr", "/home"]
+      answer: "/home"
+
+    - id: ch2_q2
+      type: tf
+      prompt: "The root directory is represented by a single slash (/)."
+      answer: "true"
+
+    - id: ch2_q3
+      type: sa
+      prompt: "Write the absolute path to the /bin directory."
+      answer: re:^/bin$
+
+    - id: ch2_q4
+      type: mc
+      prompt: "Which command prints the current working directory?"
+      choices: ["pwd", "cd", "echo", "print"]
+      answer: "pwd"
+
+    - id: ch3_q1
+      type: mc
+      prompt: "Which command creates a new empty file?"
+      choices: ["cat", "mv", "touch", "nano"]
+      answer: "touch"
+
+    - id: ch3_q2
+      type: tf
+      prompt: "The `cp` command is used to delete files."
+      answer: "false"
+
+    - id: ch3_q3
+      type: sa
+      prompt: "What command copies file1.txt to file2.txt?"
+      answer: "cp file1.txt file2.txt"
+
+    - id: ch3_q4
+      type: mc
+      prompt: "Which command moves a file?"
+      choices: ["mv", "cp", "rm", "ls"]
+      answer: "mv"
+
+    - id: ch4_q1
+      type: mc
+      prompt: "What does the permission string -rw-r--r-- mean for the owner?"
+      choices: ["read", "read/write", "write only", "execute only"]
+      answer: "read/write"
+
+    - id: ch4_q2
+      type: tf
+      prompt: "chmod 755 script.sh gives execute permission to everyone."
+      answer: "true"
+
+    - id: ch4_q3
+      type: sa
+      prompt: "Which command changes ownership of a file to user 'alice'?"
+      answer: re:^chown alice\s
+
+    - id: ch4_q4
+      type: mc
+      prompt: "Which of the following sets read/write permissions for the owner only?"
+      choices: ["chmod 777", "chmod 600", "chmod 644", "chmod 444"]
+      answer: "chmod 600"
+
+    - id: ch5_q1
+      type: sa
+      prompt: "Redirect stdout of `ls` to a file named output.txt."
+      answer: "ls > output.txt"
+
+    - id: ch5_q2
+      type: tf
+      prompt: "Pipes (|) can be used to send the output of one command as input to another."
+      answer: "true"
+
+    - id: ch5_q3
+      type: mc
+      prompt: "Which command brings a background job to the foreground?"
+      choices: ["jobs", "fg", "bg", "ps"]
+      answer: "fg"
