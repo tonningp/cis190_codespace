@@ -54,7 +54,7 @@ declare -g -a prompts=(
 # 1
   "Identify the difference between ordinary files and directories in $WORK_DIR using \`ls -l\`."
 # 2
-  "Display your current working directory using \`pwd\`, then change to the $WORK_DIR using \`cd\`, then display the current working directory again. Use \`&&\` between the commands. (pwd && cd <dir> && pwd)"
+  "Display your current working directory using \`pwd\`, then change to the $WORK_DIR using \`cd\`, then display the current working directory again. Use \`&&\` between the commands. eg. (pwd && cd 'dir' && pwd)"
 # 3
   "Change to the parent directory of $WORK_DIR using \`cd ..\` and confirm your location with \`pwd\` use \`&&\` between the commands."
 )
