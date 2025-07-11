@@ -67,7 +67,7 @@ declare -g -a prompts=(
   "Sort the entries in the ${LOG_DIR}/telemetry.log alphabetically using \`sort\`."
   "Sort the entries in the ${CONFIG_DIR}/mission1.conf by altitude in ascending order using \`sort -k5 -n\`."
   "Sort the entries in the ${LOG_DIR}/status.log in reverse chronological order based on timestamp using \`sort -r\`."
-  "Find and list unique operator names in the ${CONFIG_DIR}/mission1.conf file after sorting the file using \`sort | uniq\`."
+  "Find and list unique operator names in the ${CONFIG_DIR}/mission1.conf file after sorting the file using \`sort <filename> | uniq\`."
   "Count occurrences of duplicate entries in the ${LOG_DIR}/status.log using \`sort <filename> | uniq -c\`."
 )
 
