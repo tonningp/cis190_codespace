@@ -36,7 +36,7 @@ ls -l /;
 Use \`ls -l\` with an absolute path starting with \`/\`.;
 
 You should notice the root directory contains several directories including 'data'.  Acknowledge the existence of 'data' by entering the name of the user that owns it as a comment \`# username\`;
-re:# codespace|\$(whoami);
+re:#\ *codespace|$(whoami);
 Acknowledge the presence of 'data' in the root directory normally # codespace.;
 
 Navigate to the '/data' directory using an absolute path.;
@@ -91,7 +91,7 @@ rmdir mq-9b;
 It will fail if the directory is not empty.;
 
 Explain why 'rmdir' failed to remove 'mq-9b' with a comment (just put the error message).;
-re: # .*;
+re:^#.*empty.*|# The directory 'mq-9b' is not empty, so 'rmdir' cannot remove it.|# The directory 'mq-9b' is not empty, so 'rmdir' cannot remove it.;
 The directory 'mq-9b' is not empty, so 'rmdir' cannot remove it.;
 
 Create a 'locations' directory in 'aircraft' using a relative path ../.;
