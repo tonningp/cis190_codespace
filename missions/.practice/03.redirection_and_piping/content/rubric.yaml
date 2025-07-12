@@ -1,0 +1,76 @@
+rubric:
+  module: midterm.module.review.ch2toch5
+  outcomes:
+  - id: create-log-archive
+    description: Student created a 'log_archive' directory in the home folder.
+    checks:
+    - type: history_contains
+      match: mkdir log_archive
+    - type: file_exists
+      filename: log_archive
+    points: 2
+  - id: navigate-directory
+    description: Student navigated into the 'log_archive' directory.
+    checks:
+    - type: history_contains
+      match: cd log_archive
+    - type: log_contains
+      match: log_archive
+    points: 2
+  - id: file-creation
+    description: Student created 'notes.txt' in the current directory.
+    checks:
+    - type: history_contains
+      match: touch notes.txt
+    - type: file_exists
+      filename: notes.txt
+    points: 2
+  - id: file-copy
+    description: Student copied 'notes.txt' to 'backup_notes.txt'.
+    checks:
+    - type: history_contains
+      match: cp notes.txt backup_notes.txt
+    - type: file_exists
+      filename: backup_notes.txt
+    points: 2
+  - id: chmod-correct
+    description: Student set correct permissions on 'notes.txt'.
+    checks:
+    - type: history_contains
+      match: chmod
+    - type: log_contains
+      match: -rw-------
+    points: 2
+  - id: ls-permissions
+    description: Student listed files to verify permissions.
+    checks:
+    - type: history_contains
+      match: ls -l
+    - type: log_contains
+      match: notes.txt
+    points: 1
+  - id: redirection
+    description: Student redirected `ls` output to a file.
+    checks:
+    - type: history_contains
+      match: ls > dir_list.txt
+    - type: file_exists
+      filename: dir_list.txt
+    points: 2
+  - id: chained-commands
+    description: Student chained commands using ';' or '&&'.
+    checks:
+    - type: history_contains
+      match: ls ; echo Done
+    - type: log_contains
+      match: Done
+    points: 2
+  - id: quiz-submission
+    description: Quiz submission is present and complete.
+    checks:
+    - type: file_exists
+      filename: quiz.yaml
+    - type: file_nonempty
+      filename: quiz.yaml
+    points: 2
+  total_points: 15

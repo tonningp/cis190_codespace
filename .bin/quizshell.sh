@@ -114,7 +114,7 @@ EOF
 export -f render_incorrect
 
 if [[ -f "$TOP_DIR/requirements.txt" ]]; then 
-    echo -e "  $(emoji gear) $(bright_cyan 'Setting up lesson environment, please wait...')"
+    echo -e "  $(emoji gear) $(bright_cyan 'Setting up quiz environment, please wait...')"
     if [[ ! -d "$TOP_DIR/venv" ]]; then
         python3 -m venv "$TOP_DIR/venv"
     fi
@@ -124,7 +124,7 @@ if [[ -f "$TOP_DIR/requirements.txt" ]]; then
 fi
 source "$TOP_DIR/environment.sh"
 
-function display_lesson()  {
+function display_quiz()  {
     clear
     cat <<EOS | fold -s -w 80 | render_markdown
 # $(emoji sunglasses) Student Name: ${FIRSTNAME} ${LASTNAME} (${STUDENT_ID})
@@ -168,7 +168,7 @@ EOT
 #!/bin/bash
 export HISTFILE="$history_log"
 export HISTTIMEFORMAT="%F %T "
-export PS1="[Exercise-$BASE_NAME # $index] $ "
+export PS1="[Exercise-$BASE_NAME] $ "
 touch "$HISTFILE"
 history -r
 cat $temp_file | fold -s -w 80 | render_markdown
@@ -194,6 +194,7 @@ check_command() {
   }
   local hash_commands=(
     '^#\ *answer'
+    '^#\ *help'
     '^#\ *guide'
     '^#\ *reset'
     '^#\ *train'
@@ -211,7 +212,9 @@ check_command() {
   local step_size=3
 
   grading_log="\$(dirname \$(realpath $0))/../history/grading_${BASE_NAME}.txt"
-  GUIDE_LOG="\$(dirname \$(realpath $0))/../history/guide_${BASE_NAME}.md"
+  GUIDE_LOG="$(dirname $(realpath $0))/../history/guide_${BASE_NAME}.md"
+  touch "\$grading_log"
+  touch "\${GUIDE_LOG}"
   #local lesson_file="\$HOME/.current_lesson.txt"
   # Read index value
   local index=\$(< "\$index_file")
@@ -227,22 +230,20 @@ check_command() {
   size_prompts=\${#prompts[@]}
   # Extract expected command and trim whitespace
   local expected_command="\${prompts[\$((index+1))]}"
-  last_command="\$(fc -ln -1 | sed 's/^[[:space:]]*//')"
-  hash_command=0
-  if in_list "\$last_command" "\${hash_commands[@]}"; then
-       hash_command=1
-  fi
   cat << EOT| fold -s -w 80 | render_markdown
 \$( 
 expected_command="\$(echo \"\$expected_command\" | xargs)"  # remove leading/trailing whitespace
 quizshell=0
 if echo "\$expected_command" | grep -q '^quizshell:'; then
     expected_command="\${expected_command#re:}"
-    echo -e "\$(emoji lightbulb) This step is in a quiz shell."
     quizshell=1
 fi
 local hint="\${prompts[\$((index+2))]}"
-#last_command="\$(fc -ln -1 | sed 's/^[[:space:]]*//')"
+last_command="\$(fc -ln -1 | sed 's/^[[:space:]]*//')"
+hash_command=0
+if in_list "\$last_command" "\${hash_commands[@]}"; then
+   hash_command=1
+fi
 if [[ "\$last_command" =~ ^#\ *skip ]]; then
     ((index+=step_size))
     echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):0" >> "\$grading_log"
@@ -294,9 +295,8 @@ elif [[ "\$last_command" =~ ^#\ *guide\ *(.*) ]]; then
   -F "total_tasks=\$total_prompts" \
   -F "prompt_context=\$current_prompt" \
   -F "expected_response=\$expected_command" \
-  -F "hint=\$hint" \
   -F "directory_context=\$(pwd)" \
-  -F "activity_type=lesson" \
+  -F "activity_type=quiz" \
   -F "last_name=$LASTNAME" \
   -F "student_id=$STUDENT_ID" \
   -F "prompt=\$extracted" \
@@ -304,8 +304,7 @@ elif [[ "\$last_command" =~ ^#\ *guide\ *(.*) ]]; then
   -F "files=@\$GUIDE_LOG" \
   -OJ
    echo -e "---"
-   printf "%b" "\n\$(emoji robot) \$(sed 's/\n/\\n/g' "\$temp_response")" | xargs -0 \
-   | fold -s -w 80
+   printf "%b" "\n\$(emoji robot) \$(sed 's/\n/\\n/g' "\$temp_response")" | xargs -0 
    echo -e ""
    echo -e "---"
    printf "%b" "System:\n \$(cat "\$temp_response")" >> "\$GUIDE_LOG"
@@ -313,6 +312,7 @@ elif [[ "\$last_command" =~ ^#\ *guide\ *(.*) ]]; then
    rm -f "\$temp_response"
    hash_command=1
    unset last_command
+
 elif [[ "\$last_command" =~ ^#\ *hint ]]; then
   echo
   if [[ -n "\$hint" ]]; then
@@ -322,56 +322,24 @@ elif [[ "\$last_command" =~ ^#\ *hint ]]; then
   fi
   echo
   sed -i '/^#\ *hint/d' "\$HISTFILE"
-elif [[ "\$expected_command" =~ ^re:.* ]]; then
-  # If using regex match
-  local regex="\${expected_command#re:}"
-  if [[ "\$last_command" =~ \$regex ]]; then
-    echo
-    echo -e "✅ That is correct!"
-    echo
-    ((index+=step_size))
-    echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):1" >> "\$grading_log"
-    echo "\$index" > "\$index_file"
-  elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
-    echo
-    echo "❌ Try again. Your last command was: \$last_command  -- Hint: \$hint"
-    echo -e "\nYour current directory is: \$(pwd)"
-    echo
-  fi
+fi
+if [[ \$hash_command -eq 1 ]]; then
+      hash_command=0
 else
-  # Use literal string comparison
-  if [[ \$last_command != '# reset' && "\$last_command" == "\$expected_command" ]]; then
-    echo
-    echo -e "✅ That is correct!"
-    echo
-    ((index+=step_size))
-    echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):1" >> "\$grading_log"
-    echo "\$index" > "\$index_file"
-  elif ! in_list "\$last_command" "\${hash_commands[@]}"; then
-    echo
-    echo "❌ Try again. Your last command was: \$last_command  -- Hint: \$hint"
-    echo -e "\nYour current directory is: \$(pwd)"
-    echo
-  fi
+        echo "\$(date +%s):\$(( index / step_size)):\$(( size_prompts / step_size )):1" >> "\$grading_log"
+        local current_prompt="\${prompts[\$index]}"
+        local current_index="\$((index / step_size + 1))"
+        local total_prompts="\$((size_prompts / step_size))"
+        ((index+=step_size))
+        if [[ \$(( index/step_size )) -ge \$((size_prompts/step_size)) ]]; then
+          echo "> 🏁 All commands completed!"
+          echo "Enter 'exit' to finish." 
+        else
+            echo "\$(render_prompt \$current_index \$total_prompts "\$current_prompt")"
+        fi
 fi
-if [[ \$(( index/step_size )) -ge \$((size_prompts/step_size)) ]]; then
-  echo "> 🏁 All commands completed!"
-  return_code=0
-  exit 0
-fi
-local current_prompt="\${prompts[\$index]}"
-export current_index="\$((index / step_size + 1))"
-local total_prompts="\$((size_prompts / step_size))"
-echo "\$(render_prompt \$current_index \$total_prompts "\$current_prompt")"
-echo "[Exercise-\$BASE_NAME # \$current_index] \$ " > "\$HOME/.bash_prompt"
 )
 EOT
-# weird things happening with PS1, so we write it to a file, it's subshells
-# creating subshells, so we need to export it to a file
-# hacky way to set PS1 in subshells
-# It's a workaround for the issue with PS1 not being set correctly in subshells
-# This workaround is also used with the index and lesson files
-PS1=\$(< "\${HOME}/.bash_prompt")
 }
 export -f check_command
 PROMPT_COMMAND=check_command
@@ -380,12 +348,11 @@ export USER=$(whoami)
 export HISTFILE="$history_log"
 export HISTSIZE=1000
 export HISTTIMEFORMAT="%F %T "
+export PS1="[Prompt-$BASE_NAME] $ "
 history -r
-export current_index=1
-export PS1="[Exercise-$BASE_NAME # \$current_index] \$ "
 EOF
 cat > "$temp_script" <<EOF
-#!/bin/bash
+#!/bin/bash -x
 strip_nl() {
   echo "\$1" | tr -d '\n'
 }
@@ -396,10 +363,10 @@ render_prompt() {
   echo -e "Task \$task of \$num_tasks \$(emoji finger_pointing_right) \$prompt"
   echo
   echo '---'
+
 }
 export -f render_prompt
 export step_size=3
-export current_index=1
 load_lesson() {
   local lesson="\$1"
   local prompts="\$2"
@@ -420,7 +387,7 @@ $lesson_title
 $lesson
 \$(cat "${TOP_DIR}/common_instructions.md")
 ---
-\$(render_prompt \$current_index \$tasks "\$current_prompt")
+\$(render_prompt 1 \$tasks "\$current_prompt")
 EOT
 }
 export -f load_lesson
@@ -436,7 +403,7 @@ EOF
 }
 export -f run_shell_exercise
 
-run_exercises() {
+run_quizzes() {
     local start_index=0
     if [[ -z "$prompts" ]];then
         echo "Error: prompts array is not set."
@@ -452,9 +419,6 @@ run_exercises() {
         local session_log="$(dirname $(realpath $0))/../history/session_${BASE_NAME}_$(printf "%02d" "$index").log"
         local history_log="$(dirname $(realpath $0))/../history/history_${BASE_NAME}_$(printf "%02d" "$index").txt"
         run_shell_exercise "$index" "shell" "$session_log" "$history_log"
-        #echo "exit code: $?" 
-        #echo "read_return_code: $read_return_code" 
-        #echo "return_code: $return_code" 
         if [[ $read_return_code =~ ^10[0-9]+$ ]]; then
             echo "read_return_code is : $read_return_code"
         elif [[ $return_code =~ ^10[0-9]+$ ]]; then
@@ -471,7 +435,7 @@ run_exercises() {
     done
     mark_time "End of exercise ${BASE_NAME}"
 }
-export -f run_exercises
+export -f run_quizzes
 
 grade_shell_exercise() {
     local expected="$1"
@@ -602,7 +566,7 @@ EOF
             ;;
         instruct)
             clear
-            display_lesson "$lesson"
+            display_quiz "$lesson"
             continue 
             ;;
         skip)
@@ -650,64 +614,7 @@ function mark_time() {
 }
 export -f mark_time
 
-function do_training() {
-    local START_INDEX=$1
-    declare -n PROMPTS=$2
-    declare -n PATTERNS=$3
-    declare -n HINTS=$4
-    declare -n EVALS=$5
-    declare -n RESET=$6
-    if [[ -z "$PROMPTS" || -z "$PATTERNS" || -z "$HINTS" || -z "$EVALS" ]]; then
-        echo "Error: One or more required arrays are empty."
-        exit 1
-    fi
-    #START_INDEX=0
-    hr >> "$LOG_FILE"
-    mark_time "Start of Lesson ${BASE_NAME}"
-    display_lesson "$lesson" | tee -a "$LOG_FILE"
 
-    end_index=${#PROMPTS[@]}
-    i=$START_INDEX
-    while true; do
-        if (( i > end_index-1 )); then
-            break
-        fi
-        history -r $HISTFILE
-        echo "Start: Step $((i + 1)) of ${#PROMPTS[@]} for topic $BASE_NAME" >> "$LOG_FILE"
-        echo -e "***$(emoji directhit) Step $((i + 1)) of ${#PROMPTS[@]}***       \`Topic: ${BASE_NAME}\`" | render_markdown
-        prompt="${PROMPTS[$i]}"
-        pattern="${PATTERNS[$i]}"
-        hint="${HINTS[$i]}"
-        _eval="${EVALS[$i]}"
-        #echo "DEBUG: pattern: $pattern"
-        #pause
-        wait_for_correct_input "${prompt}" "${pattern}" "${hint}" "${_eval}" | tee -a "$LOG_FILE"
-        return_code=${PIPESTATUS[0]}
-        if [[ $return_code =~ ^10[0-9]+$ ]]; then
-            :
-        else
-            echo "🏁 End of Step $((i + 1)) of ${#PROMPTS[@]} with return code $return_code" >> "$LOG_FILE"
-            echo "==> Step $((i + 1)) of ${#PROMPTS[@]} completed."
-        fi
-        if [[ $return_code == 0 || $return_code == 2 ]]; then
-           break
-        elif [[ $return_code =~ ^10[0-9]+$ ]]; then
-           new_index=$((return_code - 100))
-           if (( new_index > 0 && new_index <= ${#PROMPTS[@]} )); then
-               i=$((new_index - 1))
-             continue
-           fi
-        fi
-        ((i++))
-    done
-    mark_time "End of Lesson ${BASE_NAME}"
-    hr  >> "$LOG_FILE"
-}
-
-if [[ -z "$lesson" ]]; then
-    echo "Error: lesson is not set."
-    exit 1
-fi
 # get index of the lesson --index=<number> in $1
 if [[ -n $start_index && $start_index =~ ^[0-9]+$ ]]; then
     index="$start_index"
@@ -724,18 +631,10 @@ if [[ -z "$reset" ]]; then
 fi
 
 if [[ -n "$TRAINING_SHELL" ]]; then
-
-  run_exercises
-  #grade_exercises
-
-
-else
-    # This is the old way of running the training session
-    # If TRAINING_SHELL is not set, run the old training session
-    do_training index prompts patterns hints evals reset
+  run_quizzes
 fi
 
 echo
-echo "$(emoji checkered_flag) Training session complete!"
+echo "$(emoji checkered_flag) Shell Quiz Complete!"
 echo
 

@@ -1,0 +1,10 @@
+Category,Points,Criteria
+Directory creation (log_archive),10,Directory exists and is in correct location
+Navigation into directory,5,Used 'cd' correctly
+File creation (notes.txt),10,Used 'touch' correctly
+File copy (backup_notes.txt),10,Used 'cp' correctly
+Permissions change,15,Used correct chmod numeric or symbolic
+Listing permissions,5,Used 'ls -l' or equivalent
+Redirection to file,10,Used '>' operator correctly
+Command chaining,10,Used ';' or '&&' correctly
+Quiz accuracy,25,Correct answers in quiz.yaml

@@ -3,6 +3,7 @@ START_DATE="2025-06-23"
 #START_DATE="2025-05-08"
 export TZ="America/Los_Angeles"
 
+export ASK_URL="https://cis.vvc.edu/quizzes/ask"
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 cp $TOP_DIR/tmux.conf ~/.tmux.conf
 if [[ ! -d "$TOP_DIR/venv" ]];then
@@ -126,6 +127,15 @@ main() {
 
 	    module_dirs=("Quit" "${module_dirs[@]}")  # Add "Quit" option at the beginning
 	    modules=("Quit" "${modules[@]}")  # Add "Quit" option at the beginning
+        # Add practice exercises
+        for d in practice/*; do
+            if [[ -d "$d" ]]; then
+                module_dirs+=("practice/$(basename "$d")")
+                module=$(basename "$d" | sed 's/_/ /g')
+                # make week and module names capitalized
+                modules+=("Practice - ${module^}")
+            fi
+        done
         default_item=$(( (WEEK_NUMBER - 1) * 2 + 1 ))
 	    # Exit if no modules found
 	    if [[ ${#modules[@]} -eq 0 ]]; then
@@ -167,12 +177,12 @@ main() {
         cd "$module" || exit 1
 	    #cd "$module"
 	    source "$TOP_DIR/environment.sh"
-	    if [[ ${BASE_DIR} != *module* ]]; then
-	      echo "❌ This script must be run in a module directory."
-	      echo "Please navigate to a module directory and try again."
-	      echo $(ls -1 ${BASE_DIR})
-	      exit 1
-	    fi
+	    #if [[ ${BASE_DIR} != *module* ]]; then
+	    #  echo "❌ This script must be run in a module directory."
+	    #  echo "Please navigate to a module directory and try again."
+	    #  echo $(ls -1 ${BASE_DIR})
+	    #  exit 1
+	    #fi
 	    run_module_start $module
         status=$?
         if [[ $status -eq 130 ]]; then
