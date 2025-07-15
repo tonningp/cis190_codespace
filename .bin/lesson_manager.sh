@@ -195,6 +195,7 @@ check_command() {
   local hash_commands=(
     '^#\ *answer'
     '^#\ *guide'
+    '^#\ *g \ *.*'
     '^#\ *reset'
     '^#\ *train'
     '^#\ *files'
@@ -274,7 +275,7 @@ elif [[ "\$last_command" =~ ^#\ *answer ]]; then
     echo -e "$(emoji hint) Answer: \$expected_command"
   fi
   sed -i '/^#\ *answer/d' "\$HISTFILE"
-elif [[ "\$last_command" =~ ^#\ *guide\ *(.*) ]]; then
+elif [[ "\$last_command" =~ ^#\ *guide\ *(.*)|^#\ *g\ *(.*) ]]; then
     local current_prompt="\${prompts[\$index]}"
     local current_index="\$((index / step_size + 1))"
     local total_prompts="\$((size_prompts / step_size))"
@@ -284,7 +285,11 @@ elif [[ "\$last_command" =~ ^#\ *guide\ *(.*) ]]; then
         echo "User: \$extracted" >> "\$GUIDE_LOG"
         echo >> "\$GUIDE_LOG"
     fi
-    sed -i '/^#\ *guide/d' "\$HISTFILE"
+    if [[ -f "\$HISTFILE" ]]; then
+        sed -i '/^#\ *guide/d' "\$HISTFILE"
+    else
+        touch "\$HISTFILE"
+    fi
     curl -o \$temp_response --silent -X POST $ASK_URL \
   -H "Authorization: Bearer token1" \
   -F "first_name=$FIRSTNAME" \
