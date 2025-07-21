@@ -1,0 +1,14 @@
+title: Exercise – Using || for Failover Commands
+
+content: |
+  Use `||` to run a command **only if** the first one fails.
+  ## :try: Try it
+  ```bash
+  ls missing_file.txt || echo "File not found – skipping analysis"
+  ```
+  Try again with a real file:
+  ```bash
+  touch found.log
+  ls found.log || echo "Missing"
+  ```
+  ✅ `||` is helpful for fallback messages and error handling.

@@ -1,0 +1,17 @@
+title: Exercise – Identifying Built-In Commands
+
+content: |
+  Use `type` to find out how Bash treats a command.
+
+  ## :try: Try it
+
+  ```bash
+  type cd
+  type ls
+  type echo
+  ````
+  * `cd` is built-in
+  * `ls` is external (usually `/bin/ls`)
+
+  ✅ Use `type` to distinguish between shell features and binaries.
+

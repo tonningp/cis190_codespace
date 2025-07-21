@@ -1,0 +1,23 @@
+title: Exercise – While and Until Loops
+
+content: |
+  Try both `while` and `until` loops in an interactive shell.
+  ## :try: Try it
+  ```bash
+  count=1
+  while [ $count -le 3 ]; do
+    echo "System check $count"
+    ((count++))
+  done
+  ````
+  Then test:
+  ```bash
+  x=5
+  until [ "$x" -eq 0 ]; do
+    echo "$x seconds remaining"
+    ((x--))
+  done
+  ```
+
+  ✅ Loops help monitor and retry operations until successful.
+

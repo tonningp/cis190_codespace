@@ -1,0 +1,19 @@
+title: Exercise – Output Redirection (Overwrite vs Append)
+
+content: |
+  Practice redirecting command output using `>` and `>>`.
+  ## :try: Try It
+  1. Redirect system info to a file:
+     ```bash
+     uname -a > os_info.txt
+     ```
+  2. Append a timestamp:
+     ```bash
+     date >> os_info.txt
+     ```
+  3. View the file:
+     ```bash
+     cat os_info.txt
+     # :tip:
+     # Use `>` to overwrite and `>>` to append.
+     ```

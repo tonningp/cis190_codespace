@@ -1,0 +1,19 @@
+title: Exercise – Quotes and Variable Expansion
+
+content: |
+  Understand how quoting affects variables in Bash.
+  ## :try: Try It
+  1. Define:
+     ```bash
+     status="GPS locked"
+     ```
+  2. Try:
+     ```bash
+     echo "$status"
+     echo '$status'
+     ```
+  3. Observe the difference.
+  > :note: Note
+  > - Double quotes: expand variables
+  > - Single quotes: literal value
+

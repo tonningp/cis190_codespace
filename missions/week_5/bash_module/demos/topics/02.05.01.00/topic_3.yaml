@@ -1,0 +1,16 @@
+title: Navigating the Filesystem
+
+content: |
+  ## 🛠️ Objective
+  Move confidently between system directories using `cd`, `ls`, and `pwd`.
+
+  ## 📂 Technician Example
+  Accessing `/data/aircraft/logs/` for mission review data.
+
+  ## 📌 Try It
+  ```bash
+  cd /data/aircraft/logs/
+  ls -lh
+  pwd
+  ```
+

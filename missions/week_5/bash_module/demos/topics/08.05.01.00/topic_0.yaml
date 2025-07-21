@@ -1,0 +1,17 @@
+title: Exercise – Create a Shell Script with vim
+
+content: |
+  Open `vim` and start writing your first Bash script.
+
+  > :filetree: Create the File
+
+  ```bash
+  vim startup_check.sh
+  # Then enter insert mode (i) and type:
+  
+  #!/bin/bash
+  echo "Running pre-flight system checks..."
+  ```
+  > Exit with Esc, then type :wq to save and quit.
+
+  > ✅ You've created a shell script file.

@@ -1,0 +1,19 @@
+title: Exercise – Accessing Command Help
+
+content: |
+  Use `help` for built-in commands, and `man` for others.
+
+  ## :try: Try it
+
+  ```bash
+  help export
+  help if
+  man ls
+  man grep
+  ```
+
+  * `help` gives short Bash explanations
+  * `man` gives full manual pages
+
+  ✅ These tools are essential when you’re working offline in the field.
+

@@ -1,0 +1,22 @@
+title: Exercise – Create a Bash Function
+
+content: |
+  Define a function in your script to check battery status.
+
+  ## :filetree: Add this to your `startup_check.sh` script:
+
+  ```bash
+  check_battery() {
+    echo "Battery voltage: 25.6V"
+  }
+
+  check_battery
+  ````
+
+  Save and run it:
+
+  ```bash
+  ./startup_check.sh
+  ```
+  ✅ Functions make your code modular and reusable.
+

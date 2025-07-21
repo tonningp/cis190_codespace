@@ -1,0 +1,17 @@
+title: Redirection and Piping for Log Analysis
+
+content: |
+  ## 🛠️ Objective
+  Redirect output and combine commands with pipes to process log files.
+
+  ## 📊 Use Case
+  Extract altitude anomalies from drone telemetry logs.
+
+  ## 📌 Try It
+  ```bash
+  # The telemetry log is in the /data/aircraft/logs/ directory
+  # remember to use the cd command to navigate there first
+  # Extract lines with "ALT" from the drone flight log for tail number n101gh
+  grep "ALT" n101gh_telemetry.log | sort | uniq -c 
+  ```
+

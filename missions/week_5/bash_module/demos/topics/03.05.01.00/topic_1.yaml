@@ -1,0 +1,19 @@
+title: Exercise – Variable Expansion and Editing
+
+content: |
+  ## :check: Goal
+  Practice variable usage and inline editing shortcuts.
+  ## :try: Try It
+  1. Create a variable:
+     ```bash
+     drone_id="MQ9-R01"
+     ```
+  2. Use it in a message:
+     ```bash
+     echo "Preparing diagnostics for $drone_id"
+     ```
+  3. Press `Ctrl+A` to jump to the start of the line.  
+     Press `Ctrl+E` to jump to the end.
+  ## :tip:
+  Use `Ctrl+U` to erase from cursor to start of the line.
+

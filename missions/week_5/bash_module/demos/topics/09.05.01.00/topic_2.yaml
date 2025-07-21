@@ -1,0 +1,20 @@
+title: Exercise – Writing an if/then/else Bash Script
+
+content: |
+  Add a conditional check to your `startup_check.sh` script.
+
+  ## :filetree: Edit your `startup_check.sh` file and add the following
+  ```bash
+  if [ -f drone_config.txt ]; then
+    echo "Drone config file found."
+  else
+    echo "No config found. Please upload it."
+  fi
+  ```
+  Save it and run the script:
+  ```bash
+  ./startup_check.sh
+  ```
+  ✅ This is your first conditional logic in a Bash script.
+
+

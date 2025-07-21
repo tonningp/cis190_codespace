@@ -1,0 +1,14 @@
+title: Starting Bash and Shell Environment
+
+content: |
+  > When logging into the ground station’s Linux system, `.bashrc` might preload 
+  > aliases for diagnostics. The `.bashrc` file is a script that runs every time 
+  > you start a new terminal session.  Check the contents of your `.bashrc` file
+  > using less.  Be careful not to modify it unless you know what you're doing.
+
+  ## 📌 Try it
+  ```bash
+  less ~/.bashrc
+  ```
+
+

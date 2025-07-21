@@ -1,0 +1,15 @@
+title: Basic Shell Syntax and Commands
+
+content: |
+  ## 🛩️ Scenario
+  > You often need to verify software versions before updating drone firmware.
+  > In order to do this, you will use basic shell commands to check the current
+  > software versions installed on the system. Part of this process involves
+  > checking the kernel version and maybe Python interpreter version.
+
+  ## 📌 Try It
+  ```bash
+  uname -r
+  which python3
+  ```
+

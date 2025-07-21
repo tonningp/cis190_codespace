@@ -1,0 +1,22 @@
+title: Exercise – Using Command History
+
+content: |
+  ## :check: Goal
+  Reuse and edit previous commands using history and arrow keys.
+
+  ## :try: Try It
+  1. Run a few commands:
+     ```bash
+     echo "test one"
+     echo "test two"
+     echo "test three"
+     ```
+  2. Press the `↑` arrow to scroll through command history.
+  3. Type:
+     ```bash
+     history | tail -n 5
+     ```
+  4. Use `!<number>` to repeat a previous command.
+  ## :tip:
+  Try `!!` to rerun the last command.
+

@@ -1,0 +1,19 @@
+title: Exercise – Pipes for Log Analysis
+
+content: |
+  Chain commands using the pipe operator `|`.
+  ## :try: Try It
+  1. Simulate a drone log:
+     ```bash
+     echo -e "OK\nLOW BATTERY\nOK" > status.log
+     ```
+  2. Count only battery alerts:
+     ```bash
+     cat status.log | grep "BATTERY" | wc -l
+     ```
+  3. View results:
+     - `grep` filters lines
+     - `wc -l` counts them
+  ## :filetree:
+  Pipes are essential in real-time log processing.
+

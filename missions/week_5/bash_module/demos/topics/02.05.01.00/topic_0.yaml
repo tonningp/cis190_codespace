@@ -1,0 +1,18 @@
+title: Introduction to the Bash Shell
+
+content: |
+  ```
+  As a tech, you'll likely use Bash to configure UAV operating systems, 
+  automate pre-flight checks, and parse mission logs,
+  telemetry data, or manage flight parameters.
+  ```
+  ## :pushpin: You Try It
+    ```
+    In the following exercise, you will use the vim editor to open a 
+    configuration file for an imaginary UAV system and add a comment
+    Add a date at the top as a comment.
+    # 07/10/2023
+    ```
+    ```bash
+    vim /data/aircraft/configurations/mq-9/n112op.cfg
+    ```

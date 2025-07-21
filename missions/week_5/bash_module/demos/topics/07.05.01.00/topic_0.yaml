@@ -1,0 +1,16 @@
+title: Exercise – Defining and Using Variables
+
+content: |
+  Learn how to define and access variables in Bash.
+  ## :try: Try It
+  1. Assign a drone name:
+     ```bash
+     drone="MQ9-Reaper"
+     ```
+  2. Use it in a message:
+     ```bash
+     echo "System check for $drone"
+     ```
+  3. Try using `echo $drone` and `echo "$drone"` and `echo '$drone'`.
+  > :tip: No spaces around `=` when assigning variables!
+

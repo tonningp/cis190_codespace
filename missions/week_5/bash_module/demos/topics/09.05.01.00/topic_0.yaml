@@ -1,0 +1,15 @@
+title: Exercise – Using && for Success Chains
+
+content: |
+  Chain commands so the second one only runs if the first succeeds.
+  ## :try: Try it
+  ```bash
+  mkdir ~/drone_toolkit/test && echo "Test folder created"
+  ```
+  Now try:
+  ```bash
+  mkdir ~/drone_toolkit/test && echo "Second attempt"
+  ```
+  Only the first `echo` should run — the second `mkdir` fails.
+
+  ✅ `&&` helps avoid running follow-up commands unnecessarily.

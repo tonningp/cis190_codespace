@@ -1,0 +1,15 @@
+title: Exercise – Command Substitution with Variables
+
+content: |
+  Store command output in a variable using `$(...)`.
+  ## :try: Try It
+  1. Capture current date:
+     ```bash
+     now=$(date)
+     ```
+  2. Display a timestamped message:
+     ```bash
+     echo "System check started at: $now"
+     ```
+  > :tip: `$(command)` runs the command and captures its output.
+

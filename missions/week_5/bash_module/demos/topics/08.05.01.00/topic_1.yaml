@@ -1,0 +1,15 @@
+title: Exercise – Run the Script
+
+content: |
+  Use `chmod` to give the script execute permissions.
+  ## :try:
+  ```bash
+  chmod +x startup_check.sh
+  ```
+  ✅ You've made the script executable.
+  Now, let's run it to see the output:
+
+  ```bash
+  ./startup_check.sh
+  ```
+

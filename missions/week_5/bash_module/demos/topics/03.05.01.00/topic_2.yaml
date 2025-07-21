@@ -1,0 +1,27 @@
+title: Exercise – Job Control and Background Tasks
+content: |
+  ## :check: Goal
+  Explore how Bash manages jobs in the background.
+  ## :try: Try It
+  1. Start a long-running job:
+     ```bash
+     sleep 60
+     ```
+  2. While it's running, press `Ctrl+Z` to suspend it.
+  3. Type:
+     ```bash
+     bg
+     ```
+  4. List running jobs:
+     ```bash
+     jobs
+     ```
+
+  5. Bring it back to foreground:
+     ```bash
+     fg
+     ```
+
+  ## :warn:
+  These tools are useful when multitasking in a terminal!
+

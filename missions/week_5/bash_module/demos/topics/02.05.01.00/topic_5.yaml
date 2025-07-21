@@ -1,0 +1,16 @@
+title: Bash Variables and Quoting
+
+content: |
+  ## 🛠️ Objective
+  Define variables and understand quoting behavior in Bash scripts.
+
+  ## 🧪 Scenario
+  Store drone ID and use it in automated logging.
+
+  ## 📌 Try It
+  ```bash
+  # type this in the terminal
+  drone_id="MQ9-R04"
+  echo "Mission initialized for drone: $drone_id"
+  ```
+

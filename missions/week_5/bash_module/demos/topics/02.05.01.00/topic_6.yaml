@@ -1,0 +1,16 @@
+title: Command History and Editing
+
+content: |
+  ## 🛠️ Objective
+  Use command history and editing to efficiently rerun or modify commands.
+
+  ## ⌨️ Technician Tip
+  Use `history` to repeat pre-flight commands from earlier missions.
+
+  ## 📌 Try It
+  ```bash
+  history | tail -n 5
+  !!   # Repeat last command
+  !45  # Repeat command number 45
+  ```
+

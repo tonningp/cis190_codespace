@@ -1,0 +1,20 @@
+title: Exercise – Input Redirection from File
+
+content: |
+  Use input redirection (`<`) to supply data to a command.
+  ## :try: Try It
+  1. Create a test file:
+     ```bash
+     echo "UAV, Ground Station, Ready" > config_input.txt
+     ```
+  2. Pass it to `cat` using `<`:
+     ```bash
+     cat < config_input.txt
+     ```
+  3. Try with other tools like `wc`:
+     ```bash
+     wc -w < config_input.txt
+     ```
+  ## :note:
+  `< file` replaces keyboard input.
+

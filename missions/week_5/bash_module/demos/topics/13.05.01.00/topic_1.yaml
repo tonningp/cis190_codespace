@@ -1,0 +1,15 @@
+title: Exercise – Locating Executables
+
+content: |
+  Use `which` and `command -v` to find where a command is installed.
+
+  ## :try: Try it
+
+  ```bash
+  which bash
+  command -v apt
+  ```
+
+  Both commands will show the full path to the executable.
+
+  ✅ This helps confirm what version or location you're using.

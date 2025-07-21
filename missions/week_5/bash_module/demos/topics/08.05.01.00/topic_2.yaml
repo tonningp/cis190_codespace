@@ -1,0 +1,19 @@
+title: Exercise – Add Variables to the Script
+
+content: |
+  Reopen the script in `vim` to add variables and timestamps.
+
+  ```bash
+  vim startup_check.sh
+  ```
+  > Modify it to look like this:
+    ```
+    #!/bin/bash
+    drone_id="MQ9-A22"
+    now=$(date)
+    echo "Starting diagnostics for $drone_id at $now"
+    ```
+  > Save and exit with :wq, then run:
+  ```bash
+  ./startup_check.sh
+  ```

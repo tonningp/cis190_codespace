@@ -1,0 +1,18 @@
+title: Exercise – Using a for Loop to Process Logs
+
+content: |
+  Use a `for` loop to iterate over flight log files.
+
+  ## :try:  Try it
+
+  ```bash
+  for log in ~/drone_toolkit/flight_logs/*.log; do
+    echo "Processing: $log"
+    wc -l "$log"
+  done
+  ````
+
+  This counts the number of lines in each log file.
+
+  ✅ `for` loops are useful for batch operations in automation scripts.
+
