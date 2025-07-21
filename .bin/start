@@ -4,6 +4,7 @@ START_DATE="2025-06-23"
 export TZ="America/Los_Angeles"
 
 export ASK_URL="https://cis.vvc.edu/quizzes/ask"
+export SUBMIT_URL="https://cis.vvc.edu/submit_assignment/submit-file"
 export TOP_DIR="$(dirname "$(realpath "$0")")"
 cp $TOP_DIR/tmux.conf ~/.tmux.conf
 if [[ ! -d "$TOP_DIR/venv" ]];then
