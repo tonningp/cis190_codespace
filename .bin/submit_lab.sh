@@ -33,6 +33,7 @@ if [[  -d "/data" ]]; then
   cp -r "/data" "$TMPDIR/data" 2>/dev/null
 fi
 cp -r "${BASE_DIR}/home" "$TMPDIR/home" 2>/dev/null
+cp -r "~/home" "$TMPDIR/host_home" 2>/dev/null
 cp -r ${LOG_BASE} "$TMPDIR/logs" 2>/dev/null
 rm -r ${LOG_BASE}/* 2>/dev/null
 cp -r ${MARKDOWN_DIR} "$TMPDIR/content" 2>/dev/null
