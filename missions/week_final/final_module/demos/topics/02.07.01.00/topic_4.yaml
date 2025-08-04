@@ -1,0 +1,10 @@
+title: "Task 4: Create a script to automate a task"
+
+content: |
+  1.  In the `final` directory, run the tar command to create a compressed tar file called `backup.tgz` that contains the `data` directory.
+  1. Verify that the file contains the correct directory structure, if you don't remember how to do this use the man pages for the `tar` command and look for how to list the contents of a tar file.
+  1. When you have verified that the tar file is correct, create a script file called `backup.sh`  and put the commands that you just did in the file.
+  1. Make the script executable by running the command `chmod +x backup.sh`.
+  1. Run the script to verify that it works correctly.
+  1. Create a directory called `backups` in the `final` directory, then move the tar file to that directory.
+

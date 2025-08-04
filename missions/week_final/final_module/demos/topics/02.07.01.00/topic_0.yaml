@@ -1,0 +1,11 @@
+title: "Topic 0: Copying and Untarring Files"
+
+content: |
+  ```
+  Copying files and untarring files.
+  ```
+  ## :pushpin: Complete the following tasks
+  1. cd to your home directory. (hint: use the command `cd ~`)
+  1. In your home directory create a directory called *final*
+  1. Change to this directory and follow the instructions 
+     in the subsequent slides.

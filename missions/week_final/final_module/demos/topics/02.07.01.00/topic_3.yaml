@@ -1,0 +1,7 @@
+title: "Task 3: - Navigating the Filesystem"
+
+content: |
+  ## :graph: Log File Analysis
+  1. Use the `grep` command to search and print all the lines for all files that contin the string GPS and redirect the output to a file called `gps_summary.txt` in the `data/aircraft/logs` directory.
+  1. Do the same for all files that contin the string BAT and redirect the output to a file called `battery_summary.txt` in the same directory.
+
